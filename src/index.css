@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+/* Your custom styles */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@theme {
+  --font-playfair: 'Playfair Display', serif;
+  --font-inter: 'Inter', sans-serif;
+  
+  --color-gold-50: #FFF9E6;
+  --color-gold-100: #FDF0CC;
+  --color-gold-200: #FBE199;
+  --color-gold-300: #F9D266;
+  --color-gold-400: #F7C333;
+  --color-gold-500: #F5B400;
+  --color-gold-600: #C49000;
+  --color-gold-700: #936C00;
+  --color-gold-800: #624800;
+  --color-gold-900: #312400;
+  
+  --color-dark-100: #E0E0E0;
+  --color-dark-200: #C1C1C1;
+  --color-dark-300: #A2A2A2;
+  --color-dark-400: #838383;
+  --color-dark-500: #646464;
+  --color-dark-600: #454545;
+  --color-dark-700: #262626;
+  --color-dark-800: #1A1A1A;
+  --color-dark-900: #0D0D0D;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: var(--font-inter);
+    color: var(--color-dark-800);
+    background-color: white;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-playfair);
+  }
+}
+
+@layer components {
+  .container-custom {
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  @media (min-width: 640px) {
+    .container-custom {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .container-custom {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+  
+  .gradient-gold {
+    background-image: linear-gradient(to right, var(--color-gold-400), var(--color-gold-500), var(--color-gold-600));
+  }
+  
+  .hover-gold {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+  }
+  
+  .hover-gold:hover {
+    color: var(--color-gold-500);
+  }
+}
