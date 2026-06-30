@@ -3,24 +3,33 @@ import { motion } from "framer-motion";
 const Button = ({
   children,
   variant = "primary",
+  size = "md",
   className = "",
   ...props
 }) => {
   const baseStyles = `
-  relative overflow-hidden
-  inline-flex
-  items-center
-  justify-center
-  gap-2
-  px-7 py-3.5
-  rounded-full
-  font-semibold
-  text-sm
-  cursor-pointer
-  select-none
-  whitespace-nowrap
-  group
-`;
+    relative overflow-hidden
+    inline-flex
+    items-center
+    justify-center
+    gap-2
+    rounded-full
+    font-semibold
+    cursor-pointer
+    select-none
+    whitespace-nowrap
+    group
+    transition-all
+    duration-300
+  `;
+
+  const sizes = {
+    xs: "px-3 py-1.5 text-[10px] sm:px-4 sm:py-2 sm:text-xs",
+    sm: "px-4 py-2 text-xs sm:px-5 sm:py-2.5 sm:text-sm",
+    md: "px-6 py-3 text-sm sm:px-7 sm:py-3.5 sm:text-sm",
+    lg: "px-8 py-3.5 text-base sm:px-10 sm:py-4 sm:text-lg",
+    xl: "px-10 py-4 text-lg sm:px-12 sm:py-5 sm:text-xl",
+  };
 
   const variants = {
     primary: `
@@ -52,23 +61,23 @@ const Button = ({
   const hoverOverlay = {
     primary: `
       bg-gradient-to-r
-      from-[#FFE9A3]
-      via-[#FFD700]
-      to-[#CFA200]
+      from-pink-400
+      via-rose-400
+      to-orange-400
     `,
 
     secondary: `
       bg-gradient-to-r
-      from-[#FFE9A3]
-      via-[#FFD700]
-      to-[#CFA200]
+      from-pink-400
+      via-rose-400
+      to-orange-400
     `,
 
     outline: `
       bg-gradient-to-r
-      from-[#FFE9A3]
-      via-[#FFD700]
-      to-[#CFA200]
+      from-pink-400
+      via-rose-400
+      to-orange-400
     `,
   };
 
@@ -86,24 +95,23 @@ const Button = ({
         stiffness: 350,
         damping: 20,
       }}
-      className={`${baseStyles} ${variants[variant]} ${className}`}
+      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
       {...props}
     >
       {/* Gold Fill Animation */}
       <span
         className={`
-  absolute
-  inset-0
-  rounded-full
-  origin-left
-  scale-x-0
-  group-hover:scale-x-100
-  transition-transform
-  duration-700
-  ease-out
-  animate-gold-flow
-  ${hoverOverlay[variant]}
-`}
+          absolute
+          inset-0
+          rounded-full
+          origin-left
+          scale-x-0
+          group-hover:scale-x-100
+          transition-transform
+          duration-700
+          ease-out
+          ${hoverOverlay[variant]}
+        `}
       />
 
       {/* Shine Animation */}
@@ -144,7 +152,7 @@ const Button = ({
         className={`
           relative z-10
           inline-flex items-center gap-2
-    whitespace-nowrap
+          whitespace-nowrap
           transition-colors
           duration-500
           ${

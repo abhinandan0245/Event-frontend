@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Sparkles } from "lucide-react";
+import { Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Stars, Float, Sphere, Ring } from "@react-three/drei";
 import * as THREE from "three";
@@ -129,7 +129,7 @@ const SkyBackground = () => {
   );
 };
 
-// Image data - only images
+// Image data
 const celebrations = [
   {
     id: 1,
@@ -168,6 +168,17 @@ const FeaturedCelebrations = () => {
   const cardsRef = useRef([]);
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     cardsRef.current.forEach((card, i) => {
@@ -202,17 +213,17 @@ const FeaturedCelebrations = () => {
     return "small";
   };
 
-  const getCardWidth = (size) => {
-    if (size === "large") return "w-[30%]";
-    if (size === "medium") return "w-[22%]";
-    return "w-[16%]";
+  const getWidthClass = (size) => {
+    if (size === "large") return "w-[32%] md:w-[30%]";
+    if (size === "medium") return "w-[28%] md:w-[22%]";
+    return "w-[24%] md:w-[16%]";
   };
 
-  // Progressive heights: Center tallest, then medium, then small
-  const getMinHeight = (position) => {
-    if (position === 3) return "min-h-[420px]"; // Center - Tallest
-    if (position === 2 || position === 4) return "min-h-[400px]"; // Adjacent - Medium
-    return "min-h-[360px]"; // Outer - Smallest
+  const getHeightClass = (position) => {
+    if (position === 3) return "h-[320px] sm:h-[380px] md:h-[420px]";
+    if (position === 2 || position === 4)
+      return "h-[280px] sm:h-[340px] md:h-[380px]";
+    return "h-[240px] sm:h-[300px] md:h-[340px]";
   };
 
   const handleMouseMove = (e, index) => {
@@ -235,10 +246,36 @@ const FeaturedCelebrations = () => {
     return "perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1) translateZ(0px)";
   };
 
+  // Mobile Slide Navigation
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % celebrations.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide(
+      (prev) => (prev - 1 + celebrations.length) % celebrations.length,
+    );
+  };
+
+  // Get visible cards for mobile (showing 2 at a time)
+  const getVisibleCards = () => {
+    if (!isMobile) return celebrations;
+
+    const visible = [];
+    for (let i = 0; i < celebrations.length; i++) {
+      const index = (currentSlide + i) % celebrations.length;
+      visible.push(celebrations[index]);
+      if (visible.length === 2) break;
+    }
+    return visible;
+  };
+
+  const visibleCards = getVisibleCards();
+
   return (
     <section
       ref={sectionRef}
-      className="py-20 bg-gradient-to-b from-dark-900 via-dark-800 to-dark-900 relative overflow-hidden"
+      className="w-full bg-gradient-to-b from-dark-900 via-dark-800 to-dark-900 relative overflow-hidden py-12 sm:py-16 md:py-20"
     >
       {/* 3D Sky Background */}
       <div className="absolute inset-0 pointer-events-none">
@@ -271,7 +308,7 @@ const FeaturedCelebrations = () => {
       <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-rose-500/5 rounded-full blur-3xl" />
 
       {/* Floating Sparkles */}
-      {[...Array(8)].map((_, i) => (
+      {[...Array(6)].map((_, i) => (
         <motion.div
           key={i}
           className="absolute text-pink-400/20"
@@ -294,265 +331,314 @@ const FeaturedCelebrations = () => {
         </motion.div>
       ))}
 
-      <div className="container-custom relative z-10">
-        {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <span className="text-pink-400 font-semibold text-sm uppercase tracking-widest inline-flex items-center gap-2">
-            <Sparkles className="w-4 h-4" />
-            FEATURED CELEBRATIONS
-            <Sparkles className="w-4 h-4" />
-          </span>
-          <h2 className="text-3xl md:text-5xl font-playfair font-bold text-white mt-2">
-            Our Most Memorable
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-rose-400 block">
-              Wedding Stories
+      <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12">
+        <div className="max-w-7xl mx-auto">
+          {/* Section Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-8 sm:mb-12"
+          >
+            <span className="text-pink-400 font-semibold text-xs sm:text-sm uppercase tracking-widest inline-flex items-center gap-2">
+              <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
+              FEATURED CELEBRATIONS
+              <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
             </span>
-          </h2>
-          <p className="text-gray-400 text-lg mt-4 max-w-2xl mx-auto">
-            Each celebration is a unique masterpiece crafted with love and
-            perfection
-          </p>
-        </motion.div>
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-playfair font-bold text-white mt-2">
+              Our Most Memorable
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-rose-400 block">
+                Wedding Stories
+              </span>
+            </h2>
+            <p className="text-gray-400 text-sm sm:text-base md:text-lg mt-3 sm:mt-4 max-w-2xl mx-auto px-4">
+              Each celebration is a unique masterpiece crafted with love and
+              perfection
+            </p>
+          </motion.div>
 
-        {/* 3D Image Cards - Single Row with Progressive Heights */}
-        <div className="flex justify-center items-end gap-3 mt-12">
-          {celebrations.map((celebration, index) => {
-            const size = getCardSize(celebration.position);
-            const isLarge = size === "large";
-            const isMedium = size === "medium";
-            const height = getMinHeight(celebration.position);
-
-            return (
-              <motion.div
-                key={celebration.id}
-                ref={(el) => (cardsRef.current[index] = el)}
-                className={`relative rounded-2xl overflow-hidden transition-all duration-500 shadow-2xl ${getCardWidth(size)} ${height} group cursor-pointer`}
-                style={{
-                  transform: getTiltTransform(index),
-                  transition: "transform 0.3s ease-out",
-                  transformStyle: "preserve-3d",
-                }}
-                onMouseMove={(e) => handleMouseMove(e, index)}
-                onMouseLeave={handleMouseLeave}
-                whileHover={{
-                  scale: isLarge ? 1.06 : isMedium ? 1.08 : 1.1,
-                  transition: { duration: 0.3 },
-                }}
+          {/* Mobile Slide Controls - Only on Mobile */}
+          {isMobile && (
+            <div className="flex items-center justify-between gap-4 mb-4 sm:hidden">
+              <button
+                onClick={prevSlide}
+                className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300"
+                aria-label="Previous"
               >
-                {/* Image */}
-                <div className="absolute inset-0">
-                  <img
-                    src={celebration.image}
-                    alt={`Celebration ${celebration.id}`}
-                    className="w-full h-full object-cover transition-transform duration-700"
-                    style={{
-                      transform:
-                        hoveredIndex === index ? "scale(1.15)" : "scale(1)",
-                    }}
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <div className="flex gap-1.5">
+                {celebrations.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentSlide(idx)}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      idx === currentSlide ? "bg-pink-500 w-6" : "bg-white/30"
+                    }`}
                   />
-                  {/* Subtle Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-dark-900/60 via-transparent to-transparent" />
-                </div>
+                ))}
+              </div>
+              <button
+                onClick={nextSlide}
+                className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300"
+                aria-label="Next"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+          )}
 
-                {/* Animated Border Glow */}
+          {/* 3D Image Cards - Desktop: Single Row, Mobile: Slide */}
+          <div className="flex justify-center items-end gap-2 sm:gap-3 md:gap-4 mt-4 sm:mt-8">
+            {isMobile ? (
+              // Mobile: Slide Cards (2 at a time)
+              <AnimatePresence mode="wait">
                 <motion.div
-                  className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-pink-400 via-rose-400 to-pink-400 opacity-0"
-                  animate={{
-                    opacity: hoveredIndex === index ? 1 : 0,
-                  }}
+                  key={currentSlide}
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -50 }}
                   transition={{ duration: 0.4 }}
-                  style={{ zIndex: -1 }}
-                />
+                  className="flex justify-center items-end gap-3 w-full"
+                >
+                  {visibleCards.map((celebration, idx) => {
+                    const size = getCardSize(celebration.position);
+                    const isLarge = size === "large";
+                    const isMedium = size === "medium";
+                    const widthClass = "w-[48%]";
+                    const heightClass = "h-[280px]";
 
-                {/* Floating Particles on Hover */}
-                {hoveredIndex === index && (
-                  <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
-                    {[...Array(15)].map((_, i) => (
+                    return (
                       <motion.div
-                        key={i}
-                        className="absolute rounded-full"
+                        key={celebration.id}
+                        className={`relative rounded-2xl overflow-hidden shadow-2xl ${widthClass} ${heightClass} group cursor-pointer flex-shrink-0`}
+                        whileHover={{ scale: 1.05 }}
+                      >
+                        <img
+                          src={celebration.image}
+                          alt={`Celebration ${celebration.id}`}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-dark-900/60 via-transparent to-transparent" />
+
+                        {/* Position Number */}
+                        <div className="absolute bottom-3 right-3 z-20 text-white/20 text-4xl font-bold">
+                          {String(celebration.position).padStart(2, "0")}
+                        </div>
+
+                        {/* Image Counter */}
+                        <div className="absolute bottom-3 left-3 z-20 text-white/60 text-xs font-light">
+                          <span className="bg-dark-900/50 backdrop-blur-sm px-2 py-0.5 rounded-full">
+                            {idx + 1} / {visibleCards.length}
+                          </span>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </motion.div>
+              </AnimatePresence>
+            ) : (
+              // Desktop: All 5 cards in a row
+              celebrations.map((celebration, index) => {
+                const size = getCardSize(celebration.position);
+                const isLarge = size === "large";
+                const isMedium = size === "medium";
+                const widthClass = getWidthClass(size);
+                const heightClass = getHeightClass(celebration.position);
+
+                let visibilityClass = "";
+                if (celebration.position === 3) {
+                  visibilityClass = "flex";
+                } else if (
+                  celebration.position === 2 ||
+                  celebration.position === 4
+                ) {
+                  visibilityClass = "hidden sm:flex";
+                } else {
+                  visibilityClass = "hidden md:flex";
+                }
+
+                return (
+                  <motion.div
+                    key={celebration.id}
+                    ref={(el) => (cardsRef.current[index] = el)}
+                    className={`relative rounded-2xl overflow-hidden transition-all duration-500 shadow-2xl ${widthClass} ${heightClass} ${visibilityClass} group cursor-pointer flex-shrink-0`}
+                    style={{
+                      transform: getTiltTransform(index),
+                      transition: "transform 0.3s ease-out",
+                      transformStyle: "preserve-3d",
+                    }}
+                    onMouseMove={(e) => handleMouseMove(e, index)}
+                    onMouseLeave={handleMouseLeave}
+                    whileHover={{
+                      scale: isLarge ? 1.06 : isMedium ? 1.08 : 1.1,
+                      transition: { duration: 0.3 },
+                    }}
+                  >
+                    <div className="absolute inset-0">
+                      <img
+                        src={celebration.image}
+                        alt={`Celebration ${celebration.id}`}
+                        className="w-full h-full object-cover transition-transform duration-700"
                         style={{
-                          width: 2 + Math.random() * 5,
-                          height: 2 + Math.random() * 5,
-                          background: i % 2 === 0 ? "#EC4899" : "#F43F5E",
-                        }}
-                        initial={{
-                          x: Math.random() * 100 + "%",
-                          y: Math.random() * 100 + "%",
-                          scale: 0,
-                        }}
-                        animate={{
-                          x: `${Math.random() * 100}%`,
-                          y: `${Math.random() * 100}%`,
-                          scale: [0, 3.5, 0],
-                          opacity: [0, 1, 0],
-                        }}
-                        transition={{
-                          duration: 1.5 + Math.random(),
-                          repeat: Infinity,
-                          delay: Math.random() * 0.5,
+                          transform:
+                            hoveredIndex === index ? "scale(1.15)" : "scale(1)",
                         }}
                       />
-                    ))}
-                  </div>
-                )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-dark-900/60 via-transparent to-transparent" />
+                    </div>
 
-                {/* Featured Badge for Center Card */}
-                {isLarge && (
-                  <motion.div
-                    className="absolute top-4 right-4 z-20 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-lg shadow-pink-500/40"
-                    initial={{ opacity: 0, scale: 0, y: -20 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    transition={{ delay: 0.7, type: "spring" }}
-                  >
-                     FEATURED
+                    {/* Animated Border Glow */}
+                    <motion.div
+                      className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-pink-400 via-rose-400 to-pink-400 opacity-0"
+                      animate={{
+                        opacity: hoveredIndex === index ? 1 : 0,
+                      }}
+                      transition={{ duration: 0.4 }}
+                      style={{ zIndex: -1 }}
+                    />
+
+                    {/* Floating Particles on Hover */}
+                    {hoveredIndex === index && (
+                      <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
+                        {[...Array(10)].map((_, i) => (
+                          <motion.div
+                            key={i}
+                            className="absolute rounded-full"
+                            style={{
+                              width: 2 + Math.random() * 4,
+                              height: 2 + Math.random() * 4,
+                              background: i % 2 === 0 ? "#EC4899" : "#F43F5E",
+                            }}
+                            initial={{
+                              x: Math.random() * 100 + "%",
+                              y: Math.random() * 100 + "%",
+                              scale: 0,
+                            }}
+                            animate={{
+                              x: `${Math.random() * 100}%`,
+                              y: `${Math.random() * 100}%`,
+                              scale: [0, 3, 0],
+                              opacity: [0, 1, 0],
+                            }}
+                            transition={{
+                              duration: 1.5 + Math.random(),
+                              repeat: Infinity,
+                              delay: Math.random() * 0.5,
+                            }}
+                          />
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Featured Badge for Center Card */}
+                    {isLarge && (
+                      <motion.div
+                        className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-[8px] sm:text-[10px] font-bold px-2 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-lg shadow-pink-500/40"
+                        initial={{ opacity: 0, scale: 0, y: -20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        transition={{ delay: 0.7, type: "spring" }}
+                      >
+                        ✨ FEATURED
+                      </motion.div>
+                    )}
+
+                    {/* Position Number */}
+                    <motion.div
+                      className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-20 text-white/20 text-4xl sm:text-6xl font-bold"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 0.2 }}
+                      transition={{ delay: 0.5 }}
+                    >
+                      {String(celebration.position).padStart(2, "0")}
+                    </motion.div>
+
+                    {/* Hover Indicator Overlay */}
+                    <motion.div
+                      className="absolute inset-0 flex items-center justify-center pointer-events-none z-10 bg-dark-900/0"
+                      initial={{ opacity: 0 }}
+                      animate={{
+                        opacity: hoveredIndex === index ? 1 : 0,
+                      }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <motion.div
+                        className="bg-white/10 backdrop-blur-sm rounded-full p-3 sm:p-4 border-2 border-white/40 shadow-2xl"
+                        initial={{ scale: 0, rotate: -45 }}
+                        animate={{
+                          scale: hoveredIndex === index ? 1 : 0,
+                          rotate: hoveredIndex === index ? 0 : -45,
+                        }}
+                        transition={{ duration: 0.4, type: "spring" }}
+                      >
+                        <Sparkles className="w-5 h-5 sm:w-8 sm:h-8 text-white" />
+                      </motion.div>
+                    </motion.div>
+
+                    {/* Glow Ring on Hover */}
+                    <motion.div
+                      className="absolute inset-0 rounded-2xl border-2 border-pink-400/0 pointer-events-none"
+                      animate={{
+                        borderColor:
+                          hoveredIndex === index
+                            ? "rgba(236, 72, 153, 0.5)"
+                            : "rgba(236, 72, 153, 0)",
+                        boxShadow:
+                          hoveredIndex === index
+                            ? "inset 0 0 80px rgba(236, 72, 153, 0.15)"
+                            : "inset 0 0 0px rgba(236, 72, 153, 0)",
+                      }}
+                      transition={{ duration: 0.4 }}
+                    />
+
+                    {/* Image Counter on Hover */}
+                    <motion.div
+                      className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 z-20 text-white/60 text-[10px] sm:text-xs font-light"
+                      initial={{ opacity: 0 }}
+                      animate={{
+                        opacity: hoveredIndex === index ? 1 : 0,
+                      }}
+                      transition={{ duration: 0.3, delay: 0.1 }}
+                    >
+                      <span className="bg-dark-900/50 backdrop-blur-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-full">
+                        {index + 1} / {celebrations.length}
+                      </span>
+                    </motion.div>
                   </motion.div>
-                )}
+                );
+              })
+            )}
+          </div>
 
-                {/* Position Number */}
-                <motion.div
-                  className="absolute bottom-4 right-4 z-20 text-white/20 text-6xl font-bold"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 0.2 }}
-                  transition={{ delay: 0.5 }}
+          {/* View All Button */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="text-center mt-8 sm:mt-12"
+          >
+            <button className="relative px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold text-white border-2 border-pink-500/50 hover:border-pink-400 transition-all duration-300 group overflow-hidden text-sm sm:text-base">
+              <span className="relative z-10 flex items-center gap-2">
+                View All Celebrations
+                <svg
+                  className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                 >
-                  {String(celebration.position).padStart(2, "0")}
-                </motion.div>
-
-                {/* Hover Indicator Overlay */}
-                <motion.div
-                  className="absolute inset-0 flex items-center justify-center pointer-events-none z-10 bg-dark-900/0"
-                  initial={{ opacity: 0 }}
-                  animate={{
-                    opacity: hoveredIndex === index ? 1 : 0,
-                  }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <motion.div
-                    className="bg-white/10 backdrop-blur-sm rounded-full p-4 border-2 border-white/40 shadow-2xl"
-                    initial={{ scale: 0, rotate: -45 }}
-                    animate={{
-                      scale: hoveredIndex === index ? 1 : 0,
-                      rotate: hoveredIndex === index ? 0 : -45,
-                    }}
-                    transition={{ duration: 0.4, type: "spring" }}
-                  >
-                    <Sparkles className="w-8 h-8 text-white" />
-                  </motion.div>
-                </motion.div>
-
-                {/* Glow Ring on Hover */}
-                <motion.div
-                  className="absolute inset-0 rounded-2xl border-2 border-pink-400/0 pointer-events-none"
-                  animate={{
-                    borderColor:
-                      hoveredIndex === index
-                        ? "rgba(236, 72, 153, 0.5)"
-                        : "rgba(236, 72, 153, 0)",
-                    boxShadow:
-                      hoveredIndex === index
-                        ? "inset 0 0 80px rgba(236, 72, 153, 0.15)"
-                        : "inset 0 0 0px rgba(236, 72, 153, 0)",
-                  }}
-                  transition={{ duration: 0.4 }}
-                />
-
-                {/* Image Counter on Hover */}
-                <motion.div
-                  className="absolute bottom-4 left-4 z-20 text-white/60 text-xs font-light"
-                  initial={{ opacity: 0 }}
-                  animate={{
-                    opacity: hoveredIndex === index ? 1 : 0,
-                  }}
-                  transition={{ duration: 0.3, delay: 0.1 }}
-                >
-                  <span className="bg-dark-900/50 backdrop-blur-sm px-3 py-1 rounded-full">
-                    {index + 1} / {celebrations.length}
-                  </span>
-                </motion.div>
-
-                {/* Height Indicator Line */}
-                <motion.div
-                  className="absolute -right-0.5 top-0 bottom-0 w-0.5 bg-gradient-to-b from-pink-400/0 via-pink-400/30 to-pink-400/0"
-                  initial={{ opacity: 0 }}
-                  animate={{
-                    opacity: hoveredIndex === index ? 1 : 0,
-                  }}
-                  transition={{ duration: 0.3 }}
-                />
-              </motion.div>
-            );
-          })}
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </span>
+              <span className="absolute inset-0 bg-gradient-to-r from-pink-500/20 to-rose-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            </button>
+          </motion.div>
         </div>
-
-        {/* View All Button */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="text-center mt-12"
-        >
-          <button className="relative px-8 py-3 rounded-full font-semibold text-white border-2 border-pink-500/50 hover:border-pink-400 transition-all duration-300 group overflow-hidden">
-            <span className="relative z-10 flex items-center gap-2">
-              View All Celebrations
-              <svg
-                className="w-4 h-4 group-hover:translate-x-1 transition-transform"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </span>
-            <span className="absolute inset-0 bg-gradient-to-r from-pink-500/20 to-rose-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          </button>
-        </motion.div>
       </div>
-
-      {/* Responsive Styles */}
-      <style jsx>{`
-        @media (max-width: 1024px) {
-          .flex {
-            gap: 0.5rem !important;
-          }
-          .flex > div {
-            min-height: 280px !important;
-          }
-        }
-        @media (max-width: 768px) {
-          .flex > div:nth-child(1),
-          .flex > div:nth-child(5) {
-            display: none;
-          }
-          .flex > div {
-            width: 33.33% !important;
-            min-height: 260px !important;
-          }
-        }
-        @media (max-width: 640px) {
-          .flex > div:nth-child(2),
-          .flex > div:nth-child(4) {
-            display: none;
-          }
-          .flex > div:nth-child(3) {
-            width: 85% !important;
-            min-height: 300px !important;
-          }
-          .flex {
-            gap: 0 !important;
-          }
-        }
-      `}</style>
     </section>
   );
 };

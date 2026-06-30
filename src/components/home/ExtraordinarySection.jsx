@@ -5,11 +5,11 @@ import Button from "../ui/Button";
 
 const ExtraordinarySection = () => {
   return (
-    <section className=" bg-gradient-to-b from-white to-pink-50/30 relative overflow-hidden">
+    <section className="w-full bg-gradient-to-b from-white to-pink-50/30 relative overflow-hidden  sm:py-12 md:py-16">
       {/* Decorative Elements */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-pink-200 to-transparent" />
-      <div className="absolute -top-20 -right-20 w-64 h-64 bg-pink-500/5 rounded-full blur-3xl" />
-      <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-rose-500/5 rounded-full blur-3xl" />
+      <div className="absolute -top-20 -right-20 w-48 h-48 md:w-64 md:h-64 bg-pink-500/5 rounded-full blur-3xl" />
+      <div className="absolute -bottom-20 -left-20 w-48 h-48 md:w-64 md:h-64 bg-rose-500/5 rounded-full blur-3xl" />
 
       {/* Floating Sparkles */}
       {[...Array(4)].map((_, i) => (
@@ -31,42 +31,42 @@ const ExtraordinarySection = () => {
             delay: Math.random() * 4,
           }}
         >
-          <Sparkles size={24 + Math.random() * 20} />
+          <Sparkles size={20 + Math.random() * 20} />
         </motion.div>
       ))}
 
-      <div className="relative z-10">
-        {/* Full Width Banner Section */}
+      {/* Full Width Banner - No Container */}
+      <div className="relative z-10 w-full">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="relative overflow-hidden"
+          className="relative overflow-hidden rounded-none sm:rounded-2xl shadow-2xl"
         >
           {/* Banner Image - Full Width */}
-          <div className="relative h-[300px] md:h-[400px] lg:h-[450px] w-full">
+          <div className="relative w-full">
             <img
-              src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1200&h=600&fit=crop"
+              src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1920&h=600&fit=crop"
               alt="Extraordinary Celebrations"
-              className="w-full h-full object-cover"
+              className="w-full h-[220px] sm:h-[300px] md:h-[380px] lg:h-[420px] xl:h-[460px] object-cover"
             />
 
-            {/* Dark Overlay - Dark on Left for Text */}
+            {/* Dark Overlay */}
             <div className="absolute inset-0 bg-gradient-to-r from-dark-900/85 via-dark-900/60 to-dark-900/20" />
             <div className="absolute inset-0 bg-gradient-to-t from-dark-900/40 via-transparent to-transparent" />
 
-            {/* Content on Left - Full Width Padding */}
-            <div className="absolute inset-0 flex items-center">
+            {/* Content - Centered on Mobile, Left on Desktop */}
+            <div className="absolute inset-0 flex items-center justify-center sm:justify-start">
               <div className="w-full px-4 sm:px-8 md:px-12 lg:px-16 xl:px-20">
-                <div className="max-w-xl text-left">
+                <div className="max-w-xl text-center sm:text-left mx-auto sm:mx-0">
                   {/* Badge */}
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
                   >
-                    <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-pink-300 text-xs font-semibold border border-white/20">
-                      <Heart className="w-3 h-3" />
+                    <span className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-white/10 backdrop-blur-sm rounded-full text-pink-300 text-[8px] sm:text-xs font-semibold border border-white/20">
+                      <Heart className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                       FEATURED CELEBRATIONS
                     </span>
                   </motion.div>
@@ -76,7 +76,7 @@ const ExtraordinarySection = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="text-3xl md:text-5xl lg:text-6xl font-playfair font-bold text-white mt-4 leading-tight"
+                    className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-playfair font-bold text-white mt-2 sm:mt-3 md:mt-4 leading-tight"
                   >
                     Extraordinary
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-rose-400 block">
@@ -89,7 +89,7 @@ const ExtraordinarySection = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 }}
-                    className="text-gray-300 text-base md:text-lg mt-3 max-w-lg leading-relaxed"
+                    className="text-gray-300 text-xs sm:text-sm md:text-base lg:text-lg mt-1.5 sm:mt-2 md:mt-3 max-w-lg leading-relaxed mx-auto sm:mx-0"
                   >
                     Share your vision with us and let us craft a wedding that is
                     as unique as your love story.
@@ -100,24 +100,29 @@ const ExtraordinarySection = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6 }}
-                    className="flex flex-wrap gap-4 mt-6"
+                    className="flex flex-col sm:flex-row gap-2 sm:gap-3 md:gap-4 mt-3 sm:mt-4 md:mt-6 justify-center sm:justify-start"
                   >
-                    <Link to="/portfolio">
+                    <Link to="/portfolio" className="w-full sm:w-auto">
                       <Button
                         variant="primary"
-                        className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 shadow-lg shadow-pink-500/30 group text-white"
+                        size="xs"
+                        className="w-full sm:w-auto"
                       >
                         View Our Portfolio
-                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-1 sm:ml-2 group-hover:translate-x-1 transition-transform" />
                       </Button>
                     </Link>
-                    <Link to="/plan-your-celebration">
+                    <Link
+                      to="/plan-your-celebration"
+                      className="w-full sm:w-auto"
+                    >
                       <Button
                         variant="outline"
-                        className="border-white/50 text-white hover:bg-white/10 hover:border-white"
+                        size="xs"
+                        className="w-full sm:w-auto"
                       >
                         Plan Your Celebration
-                        <Sparkles className="w-4 h-4 ml-2" />
+                        <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 ml-1 sm:ml-2" />
                       </Button>
                     </Link>
                   </motion.div>
@@ -130,7 +135,7 @@ const ExtraordinarySection = () => {
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.8 }}
-              className="absolute bottom-4 right-8 text-white/10 text-7xl font-bold font-playfair hidden lg:block"
+              className="absolute bottom-3 right-4 sm:bottom-4 sm:right-6 md:right-8 text-white/10 text-3xl sm:text-5xl md:text-7xl font-bold font-playfair hidden sm:block"
             >
               ✦
             </motion.div>

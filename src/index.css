@@ -98,4 +98,22 @@
   }
 }
 
+/* Shimmer Animation */
+@keyframes shimmer {
+  0% { transform: translateX(-100%) rotate(30deg); }
+  100% { transform: translateX(100%) rotate(30deg); }
+}
+.animate-shimmer {
+  animation: shimmer 3s infinite;
+}
 
+/* Perspective */
+.perspective-1200 {
+  perspective: 1200px;
+}
+
+/* 3D Transform */
+.transform-gpu {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
