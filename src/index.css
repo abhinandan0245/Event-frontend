@@ -45,6 +45,21 @@
   }
 }
 
+@keyframes goldFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+.animate-gold-flow {
+  background-size: 200% 100%;
+  animation: goldFlow 2.5s linear infinite;
+}
+
 @layer components {
   .container-custom {
     max-width: 80rem;
@@ -82,3 +97,5 @@
     color: var(--color-gold-500);
   }
 }
+
+

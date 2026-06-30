@@ -211,8 +211,8 @@ const FeaturedCelebrations = () => {
   // Progressive heights: Center tallest, then medium, then small
   const getMinHeight = (position) => {
     if (position === 3) return "min-h-[420px]"; // Center - Tallest
-    if (position === 2 || position === 4) return "min-h-[360px]"; // Adjacent - Medium
-    return "min-h-[300px]"; // Outer - Smallest
+    if (position === 2 || position === 4) return "min-h-[400px]"; // Adjacent - Medium
+    return "min-h-[360px]"; // Outer - Smallest
   };
 
   const handleMouseMove = (e, index) => {
@@ -410,7 +410,7 @@ const FeaturedCelebrations = () => {
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     transition={{ delay: 0.7, type: "spring" }}
                   >
-                    ✨ FEATURED
+                     FEATURED
                   </motion.div>
                 )}
 

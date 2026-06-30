@@ -96,31 +96,31 @@ const DestinationsSection = () => {
     return "w-[16%]";
   };
 
-  // Get min height based on size
-  const getMinHeight = (size) => {
-    if (size === "large") return "min-h-[380px]";
-    if (size === "medium") return "min-h-[320px]";
-    return "min-h-[260px]";
+  // Progressive Heights - Subtle differences
+  const getMinHeight = (position) => {
+    if (position === 3) return "min-h-[400px]"; // Center - Tallest
+    if (position === 2 || position === 4) return "min-h-[380px]"; // Adjacent - Medium
+    return "min-h-[360px]"; // Outer - Smallest
   };
 
-  // Get text size based on card size
-  const getTextSize = (size) => {
-    if (size === "large") return "text-2xl md:text-3xl";
-    if (size === "medium") return "text-xl md:text-2xl";
+  // Get text size based on position
+  const getTextSize = (position) => {
+    if (position === 3) return "text-2xl md:text-3xl";
+    if (position === 2 || position === 4) return "text-xl md:text-2xl";
     return "text-lg md:text-xl";
   };
 
-  // Get description text size based on card size
-  const getDescSize = (size) => {
-    if (size === "large") return "text-xs md:text-sm";
-    if (size === "medium") return "text-xs";
+  // Get description text size based on position
+  const getDescSize = (position) => {
+    if (position === 3) return "text-xs md:text-sm";
+    if (position === 2 || position === 4) return "text-xs";
     return "text-[10px]";
   };
 
-  // Get padding based on size
-  const getCardPadding = (size) => {
-    if (size === "large") return "p-6";
-    if (size === "medium") return "p-5";
+  // Get padding based on position
+  const getCardPadding = (position) => {
+    if (position === 3) return "p-6";
+    if (position === 2 || position === 4) return "p-5";
     return "p-4";
   };
 
@@ -163,18 +163,19 @@ const DestinationsSection = () => {
           subtitleColor="text-pink-500"
         />
 
-        {/* Single Row with 5 Cards - Center Largest */}
-        <div className="flex justify-center items-stretch gap-3 mt-12">
+        {/* Single Row with 5 Cards - Subtle Progressive Heights */}
+        <div className="flex justify-center items-end gap-4 mt-12">
           {destinations.map((dest, index) => {
             const size = getCardSize(dest.position);
             const isLarge = size === "large";
             const isMedium = size === "medium";
+            const height = getMinHeight(dest.position);
 
             return (
               <motion.div
                 key={dest.name}
                 ref={(el) => (cardsRef.current[index] = el)}
-                className={`relative rounded-2xl overflow-hidden transition-all duration-500 shadow-lg hover:shadow-2xl ${getCardWidth(size)} ${getMinHeight(size)}`}
+                className={`relative rounded-2xl overflow-hidden transition-all duration-500 shadow-lg hover:shadow-2xl ${getCardWidth(size)} ${height}`}
                 style={{
                   transform: getTiltTransform(index),
                   transition: "transform 0.3s ease-out",
@@ -232,13 +233,13 @@ const DestinationsSection = () => {
                 {/* Content at Bottom */}
                 <div className="absolute bottom-0 left-0 right-0 z-10">
                   <div
-                    className={`bg-white/95 backdrop-blur-sm rounded-t-2xl ${getCardPadding(size)}`}
+                    className={`bg-white/95 backdrop-blur-sm rounded-t-2xl ${getCardPadding(dest.position)}`}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         {/* Destination Name */}
                         <motion.h3
-                          className={`font-bold text-dark-800 ${getTextSize(size)}`}
+                          className={`font-bold text-dark-800 ${getTextSize(dest.position)}`}
                           animate={{
                             color:
                               hoveredIndex === index ? "#EC4899" : "#1A1A1A",
@@ -249,14 +250,14 @@ const DestinationsSection = () => {
 
                         {/* Type */}
                         <p
-                          className={`text-dark-500 font-medium ${getDescSize(size)}`}
+                          className={`text-dark-500 font-medium ${getDescSize(dest.position)}`}
                         >
                           {dest.type}
                         </p>
 
                         {/* Description */}
                         <motion.p
-                          className={`text-dark-600 mt-1 leading-relaxed ${getDescSize(size)}`}
+                          className={`text-dark-600 mt-1 leading-relaxed ${getDescSize(dest.position)}`}
                           initial={{ opacity: 0, height: 0 }}
                           animate={{
                             opacity: hoveredIndex === index ? 1 : 0,
@@ -329,7 +330,7 @@ const DestinationsSection = () => {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.5 }}
                   >
-                    ✨ FEATURED
+                    FEATURED
                   </motion.div>
                 )}
               </motion.div>
@@ -340,7 +341,7 @@ const DestinationsSection = () => {
         <div className="text-center mt-12">
           <Button
             variant="secondary"
-            className="border-pink-300 text-pink-600 hover:bg-pink-50 group"
+            className=" border-pink-300 text-pink-600 hover:bg-pink-50 group"
           >
             Explore All Destinations
             <ChevronRight
@@ -378,7 +379,7 @@ const DestinationsSection = () => {
           }
           .flex > div:nth-child(3) {
             width: 85% !important;
-            min-height: 300px !important;
+            min-height: 340px !important;
           }
           .flex {
             gap: 0 !important;

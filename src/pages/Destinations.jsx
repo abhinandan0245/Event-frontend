@@ -4,460 +4,403 @@ import {
   MapPin,
   Star,
   Heart,
-  Search,
-  Filter,
-  ChevronDown,
+  ChevronRight,
   Calendar,
   Users,
   Sparkles,
-  ChevronRight,
-  X,
+  Clock,
+  Award,
+  Globe,
+  Camera,
 } from "lucide-react";
 import Button from "../components/ui/Button";
 
 const Destinations = () => {
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterOpen, setFilterOpen] = useState(false);
-
-  const categories = [
-    "All",
-    "Royal Heritage",
-    "Beach & Luxury",
-    "Backwaters & Traditions",
-    "Mountains & Serenity",
-    "Hills & Spirituality",
-    "Scenic Beauty",
-  ];
+  const [activeDestination, setActiveDestination] = useState("Phuket");
+  const [activeVenue, setActiveVenue] = useState(0);
 
   const destinations = [
     {
-      id: 1,
-      name: "Jaipur",
-      state: "Rajasthan",
-      category: "Royal Heritage",
+      id: "phuket",
+      name: "Phuket",
+      tag: "Vibrant & Exotic",
       image:
-        "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=600&h=400&fit=crop",
-      rating: 4.9,
-      reviews: 128,
-      price: "₹45,000",
+        "https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=800&h=500&fit=crop",
       description:
-        "Experience royal weddings in the Pink City with its magnificent palaces and forts.",
-      tags: ["Palaces", "Heritage", "Royal"],
-      featured: true,
+        "Thailand's largest island, Phuket offers vibrant nightlife, stunning beaches, and luxury resorts perfect for an exotic wedding celebration.",
+      features: [
+        "White sandy beaches",
+        "Luxury resorts",
+        "Vibrant nightlife",
+        "Island hopping",
+      ],
     },
     {
-      id: 2,
-      name: "Udaipur",
-      state: "Rajasthan",
-      category: "Royal Heritage",
+      id: "koh-samui",
+      name: "Koh Samui",
+      tag: "Tropical & Serene",
       image:
-        "https://images.unsplash.com/photo-1592656094267-764a45160876?w=600&h=400&fit=crop",
-      rating: 4.8,
-      reviews: 96,
-      price: "₹55,000",
+        "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=800&h=500&fit=crop",
       description:
-        "The City of Lakes offers romantic settings with stunning lake-facing palaces.",
-      tags: ["Lakes", "Romantic", "Palace"],
-      featured: true,
+        "Koh Samui is a tropical paradise with coconut groves, crystal-clear waters, and a serene atmosphere for intimate and luxurious weddings.",
+      features: [
+        "Coconut groves",
+        "Crystal waters",
+        "Luxury villas",
+        "Peaceful ambiance",
+      ],
     },
     {
-      id: 3,
-      name: "Goa",
-      state: "Goa",
-      category: "Beach & Luxury",
+      id: "krabi",
+      name: "Krabi",
+      tag: "Scenic & Tranquil",
       image:
-        "https://images.unsplash.com/photo-1512343879784-9602d5de7a10?w=600&h=400&fit=crop",
-      rating: 4.7,
-      reviews: 84,
-      price: "₹50,000",
+        "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=800&h=500&fit=crop",
       description:
-        "Beach weddings with golden sands, blue waters, and luxury resorts.",
-      tags: ["Beach", "Luxury", "Sunset"],
-      featured: true,
+        "Krabi's limestone cliffs, emerald waters, and tranquil beaches create a dramatic and romantic setting for your dream wedding.",
+      features: [
+        "Limestone cliffs",
+        "Emerald waters",
+        "Hidden beaches",
+        "Romantic sunsets",
+      ],
     },
     {
-      id: 4,
-      name: "Kerala",
-      state: "Kerala",
-      category: "Backwaters & Traditions",
+      id: "bangkok",
+      name: "Bangkok",
+      tag: "Modern & Dynamic",
       image:
-        "https://images.unsplash.com/photo-1593693397690-362cb9666fc2?w=600&h=400&fit=crop",
-      rating: 4.6,
-      reviews: 72,
-      price: "₹48,000",
+        "https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=800&h=500&fit=crop",
       description:
-        "God's Own Country offers serene backwaters, lush greenery, and cultural traditions.",
-      tags: ["Backwaters", "Traditions", "Ayurveda"],
-      featured: true,
+        "Bangkok offers a perfect blend of modern luxury and traditional Thai culture with world-class venues and vibrant city energy.",
+      features: [
+        "World-class venues",
+        "Modern luxury",
+        "Cultural experiences",
+        "City vibrancy",
+      ],
     },
     {
-      id: 5,
-      name: "Kashmir",
-      state: "Jammu & Kashmir",
-      category: "Mountains & Serenity",
+      id: "chiang-mai",
+      name: "Chiang Mai",
+      tag: "Cultural & Charming",
       image:
-        "https://images.unsplash.com/photo-1536697246787-1f7ae568d89a?w=600&h=400&fit=crop",
-      rating: 4.5,
-      reviews: 63,
-      price: "₹52,000",
+        "https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?w=800&h=500&fit=crop",
       description:
-        "Paradise on Earth with snow-capped mountains, gardens, and houseboats.",
-      tags: ["Mountains", "Serenity", "Houseboats"],
-      featured: false,
-    },
-    {
-      id: 6,
-      name: "Uttarakhand",
-      state: "Uttarakhand",
-      category: "Hills & Spirituality",
-      image:
-        "https://images.unsplash.com/photo-1585409677983-0f6c41ca9c3b?w=600&h=400&fit=crop",
-      rating: 4.4,
-      reviews: 58,
-      price: "₹42,000",
-      description:
-        "Spiritual and scenic weddings in the foothills of the Himalayas.",
-      tags: ["Hills", "Spirituality", "Temples"],
-      featured: false,
-    },
-    {
-      id: 7,
-      name: "Himachal Pradesh",
-      state: "Himachal Pradesh",
-      category: "Scenic Beauty",
-      image:
-        "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=600&h=400&fit=crop",
-      rating: 4.3,
-      reviews: 51,
-      price: "₹40,000",
-      description:
-        "Breathtaking mountain views and charming hill stations for intimate weddings.",
-      tags: ["Mountains", "Scenic", "Adventure"],
-      featured: false,
-    },
-    {
-      id: 8,
-      name: "Jodhpur",
-      state: "Rajasthan",
-      category: "Royal Heritage",
-      image:
-        "https://images.unsplash.com/photo-1590582007337-f5d55ec5aaf0?w=600&h=400&fit=crop",
-      rating: 4.2,
-      reviews: 45,
-      price: "₹38,000",
-      description:
-        "The Blue City with its majestic Mehrangarh Fort and royal hospitality.",
-      tags: ["Forts", "Blue City", "Heritage"],
-      featured: false,
+        "Chiang Mai's ancient temples, lush mountains, and charming old city provide a culturally rich and spiritually meaningful wedding destination.",
+      features: [
+        "Ancient temples",
+        "Mountain views",
+        "Rich culture",
+        "Spiritual ambiance",
+      ],
     },
   ];
 
-  const filteredDestinations = destinations.filter((dest) => {
-    const matchesCategory =
-      selectedCategory === "All" || dest.category === selectedCategory;
-    const matchesSearch =
-      dest.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      dest.state.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  const venues = [
+    {
+      name: "Anantara Koh Samui",
+      image:
+        "https://images.unsplash.com/photo-1584132967335-2d5a7bda06f0?w=400&h=300&fit=crop",
+      rating: 4.9,
+    },
+    {
+      name: "Rosewood Phuket",
+      image:
+        "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop",
+      rating: 4.8,
+    },
+    {
+      name: "JW Marriott Phuket",
+      image:
+        "https://images.unsplash.com/photo-1571896349842-33c89424ffe2?w=400&h=300&fit=crop",
+      rating: 4.7,
+    },
+    {
+      name: "Six Senses Yao Noi",
+      image:
+        "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=400&h=300&fit=crop",
+      rating: 4.9,
+    },
+    {
+      name: "Banyan Tree Phuket",
+      image:
+        "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=400&h=300&fit=crop",
+      rating: 4.8,
+    },
+  ];
 
-  const featuredDestinations = destinations.filter((d) => d.featured);
+  const activeDest = destinations.find((d) => d.id === activeDestination);
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-dark-900 via-dark-800 to-dark-900">
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1519741497674-611481863552?w=1600')] bg-cover bg-center opacity-20"></div>
+      {/* Hero Section - Thailand Destination */}
+      <section className="relative min-h-[90vh] flex items-center overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=1600&h=900&fit=crop&q=80"
+            alt="Thailand Wedding Destination"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-dark-900/90 via-dark-900/70 to-dark-900/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-dark-900/80 via-dark-900/20 to-transparent" />
         </div>
 
-        <div className="container-custom relative z-10">
+        {/* Decorative Elements */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-20 right-20 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-20 left-20 w-80 h-80 bg-rose-500/10 rounded-full blur-3xl" />
+        </div>
+
+        <div className="container-custom relative z-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto"
+            transition={{ duration: 0.8 }}
+            className="max-w-3xl"
           >
-            <span className="text-gold-500 font-semibold text-sm uppercase tracking-widest">
-              Destinations
-            </span>
-            <h1 className="text-4xl md:text-6xl font-playfair font-bold text-white mt-4">
-              Find Your Perfect
-              <span className="gradient-gold bg-clip-text text-transparent block">
-                Event Destination
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 mb-6">
+              <Sparkles className="w-4 h-4 text-pink-300" />
+              <span className="text-pink-200 text-xs sm:text-sm font-semibold tracking-wider">
+                DESTINATION WEDDINGS IN
               </span>
+            </div>
+
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white leading-[1.1]">
+              <span className="block">THAILAND</span>
             </h1>
-            <p className="text-dark-200 text-lg mt-6">
-              From royal palaces to pristine beaches, discover India's most
-              breathtaking locations for your celebration.
+            <p className="text-xl sm:text-2xl md:text-3xl text-pink-200 font-light mt-2">
+              Where Romance Meets Paradise
+            </p>
+            <p className="text-gray-300 text-base sm:text-lg max-w-xl mt-6 leading-relaxed">
+              From turquoise waters to golden sunsets, Thailand offers the
+              perfect backdrop for your dream wedding. Celebrate your love in a
+              land of breathtaking beauty, warm hospitality and unforgettable
+              experiences.
             </p>
 
-            {/* Search Bar */}
-            <div className="mt-8 max-w-2xl mx-auto">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search destinations by name or location..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-sm text-white placeholder-gray-400 rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-transparent transition-all"
-                />
-              </div>
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 mt-8">
+              <Button
+                variant="primary"
+                className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 shadow-lg shadow-pink-500/30 text-white px-8 py-3.5 text-sm sm:text-base group"
+              >
+                PLAN YOUR THAILAND WEDDING
+                <ChevronRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              </Button>
+              <Button
+                variant="outline"
+                className="border-white/50 text-white hover:bg-white/10 hover:border-white px-8 py-3.5 text-sm sm:text-base"
+              >
+                <Camera className="w-4 h-4 mr-2" />
+                WATCH THAILAND FILM
+              </Button>
+            </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mt-12 pt-8 border-t border-white/10">
+              {[
+                { icon: Globe, label: "Stunning Beach Destinations" },
+                { icon: Award, label: "World Class Hospitality" },
+                { icon: Star, label: "Rich Culture & Traditions" },
+                { icon: Calendar, label: "Seamless Planning & Experiences" },
+              ].map((item, index) => (
+                <div key={index} className="flex items-start gap-2">
+                  <item.icon className="w-5 h-5 text-pink-400 flex-shrink-0 mt-0.5" />
+                  <span className="text-white text-xs sm:text-sm font-medium leading-tight">
+                    {item.label}
+                  </span>
+                </div>
+              ))}
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Featured Destinations */}
-      {searchTerm === "" && selectedCategory === "All" && (
-        <section className="py-16 bg-gray-50">
-          <div className="container-custom">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="flex items-center justify-between mb-8"
-            >
-              <div>
-                <span className="text-gold-500 font-semibold text-sm uppercase tracking-widest">
-                  Featured
-                </span>
-                <h2 className="text-3xl font-playfair font-bold text-dark-900 mt-1">
-                  Most Popular Destinations
-                </h2>
-              </div>
-            </motion.div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredDestinations.map((dest, index) => (
-                <motion.div
-                  key={dest.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  whileHover={{ y: -8 }}
-                  className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300"
-                >
-                  <div className="relative overflow-hidden h-64">
-                    <img
-                      src={dest.image}
-                      alt={dest.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-dark-900/60 via-transparent to-transparent" />
-                    <div className="absolute top-4 left-4 bg-gold-500 text-dark-900 px-3 py-1 rounded-full text-xs font-bold">
-                      Featured
-                    </div>
-                    <div className="absolute bottom-4 left-4 flex items-center space-x-2 bg-dark-900/70 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                      <Star className="w-4 h-4 text-gold-500 fill-gold-500" />
-                      <span className="text-white text-sm font-semibold">
-                        {dest.rating}
-                      </span>
-                      <span className="text-gray-300 text-sm">
-                        ({dest.reviews})
-                      </span>
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h3 className="text-xl font-bold text-dark-800 group-hover:text-gold-500 transition-colors">
-                          {dest.name}
-                        </h3>
-                        <div className="flex items-center text-gray-500 text-sm mt-1">
-                          <MapPin className="w-4 h-4 mr-1" />
-                          {dest.state}
-                        </div>
-                      </div>
-                      <span className="text-gold-500 font-bold">
-                        {dest.price}
-                      </span>
-                    </div>
-                    <p className="text-gray-600 text-sm mt-3">
-                      {dest.description}
-                    </p>
-                    <div className="flex flex-wrap gap-2 mt-3">
-                      {dest.tags.map((tag, idx) => (
-                        <span
-                          key={idx}
-                          className="px-3 py-1 bg-gold-50 text-gold-600 text-xs font-semibold rounded-full"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* All Destinations */}
-      <section className="py-16 bg-white">
-        <div className="container-custom">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
-            <div>
-              <span className="text-gold-500 font-semibold text-sm uppercase tracking-widest">
-                Explore All
-              </span>
-              <h2 className="text-3xl font-playfair font-bold text-dark-900 mt-1">
-                Our Destinations
-              </h2>
-            </div>
-
-            {/* Category Filter */}
-            <div className="relative">
-              <button
-                onClick={() => setFilterOpen(!filterOpen)}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-              >
-                <Filter className="w-4 h-4" />
-                <span>{selectedCategory}</span>
-                <ChevronDown className="w-4 h-4" />
-              </button>
-              {filterOpen && (
-                <div className="absolute top-full right-0 mt-2 bg-white rounded-xl shadow-lg border border-gray-100 p-2 min-w-[200px] z-10">
-                  {categories.map((category) => (
-                    <button
-                      key={category}
-                      onClick={() => {
-                        setSelectedCategory(category);
-                        setFilterOpen(false);
-                      }}
-                      className={`w-full text-left px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors ${
-                        selectedCategory === category
-                          ? "bg-gold-50 text-gold-500 font-semibold"
-                          : ""
-                      }`}
-                    >
-                      {category}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <AnimatePresence>
-              {filteredDestinations.map((dest, index) => (
-                <motion.div
-                  key={dest.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -30 }}
-                  transition={{ duration: 0.4, delay: index * 0.05 }}
-                  whileHover={{ y: -5 }}
-                  className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100"
-                >
-                  <div className="relative overflow-hidden h-56">
-                    <img
-                      src={dest.image}
-                      alt={dest.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-dark-900/50 via-transparent to-transparent" />
-                    <div className="absolute top-3 right-3">
-                      <button className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-gold-500 hover:text-white transition-colors">
-                        <Heart className="w-4 h-4" />
-                      </button>
-                    </div>
-                    <div className="absolute bottom-3 left-3 flex items-center space-x-2 bg-dark-900/70 backdrop-blur-sm px-2 py-1 rounded-full">
-                      <Star className="w-3 h-3 text-gold-500 fill-gold-500" />
-                      <span className="text-white text-xs font-semibold">
-                        {dest.rating}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="p-5">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h3 className="text-lg font-bold text-dark-800 group-hover:text-gold-500 transition-colors">
-                          {dest.name}
-                        </h3>
-                        <div className="flex items-center text-gray-500 text-xs mt-1">
-                          <MapPin className="w-3 h-3 mr-1" />
-                          {dest.state}
-                        </div>
-                      </div>
-                      <span className="text-gold-500 font-bold text-sm">
-                        {dest.price}
-                      </span>
-                    </div>
-                    <p className="text-gray-600 text-xs mt-2 line-clamp-2">
-                      {dest.description}
-                    </p>
-                    <div className="flex flex-wrap gap-1 mt-2">
-                      {dest.tags.map((tag, idx) => (
-                        <span
-                          key={idx}
-                          className="px-2 py-0.5 bg-gold-50 text-gold-600 text-xs rounded-full"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="mt-3 pt-3 border-t border-gray-100">
-                      <button className="text-gold-500 text-sm font-semibold flex items-center hover:gap-2 transition-all">
-                        Explore More
-                        <ChevronRight className="w-4 h-4 ml-1" />
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
-
-          {filteredDestinations.length === 0 && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-12"
-            >
-              <p className="text-dark-600 text-lg">
-                No destinations found matching your criteria.
-              </p>
-              <button
-                onClick={() => {
-                  setSelectedCategory("All");
-                  setSearchTerm("");
-                }}
-                className="text-gold-500 font-semibold mt-2 hover:underline"
-              >
-                Clear filters
-              </button>
-            </motion.div>
-          )}
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-gold-500 to-gold-600">
-        <div className="container-custom">
+      {/* Popular Destinations */}
+      <section className="py-20 bg-gray-50">
+        <div className="container-custom px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center"
+            className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-playfair font-bold text-dark-900">
-              Ready to Plan Your Dream Event?
+            <span className="text-pink-500 font-semibold text-sm uppercase tracking-widest">
+              Explore
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold text-dark-900 mt-2">
+              Popular Destinations
             </h2>
-            <p className="text-dark-800 text-lg mt-4 mb-8 max-w-2xl mx-auto">
-              Let us help you choose the perfect destination for your special
-              day.
-            </p>
-            <Button
-              variant="secondary"
-              className="bg-white text-dark-900 hover:bg-dark-900 hover:text-white border-white"
+          </motion.div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {destinations.map((dest) => (
+              <motion.button
+                key={dest.id}
+                onClick={() => setActiveDestination(dest.id)}
+                whileHover={{ y: -4 }}
+                className={`group relative rounded-2xl overflow-hidden aspect-[4/3] transition-all duration-300 ${
+                  activeDestination === dest.id
+                    ? "ring-4 ring-pink-500 ring-offset-2"
+                    : "hover:shadow-xl"
+                }`}
+              >
+                <img
+                  src={dest.image}
+                  alt={dest.name}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-dark-900/70 via-dark-900/30 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-4 text-left">
+                  <h3 className="text-white font-bold text-sm sm:text-base">
+                    {dest.name}
+                  </h3>
+                  <p className="text-pink-300 text-xs sm:text-sm">{dest.tag}</p>
+                </div>
+              </motion.button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Active Destination Details */}
+      {activeDest && (
+        <section className="py-20 bg-white">
+          <div className="container-custom px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            <motion.div
+              key={activeDest.id}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
             >
-              Schedule a Consultation
-              <Calendar size={20} className="ml-2" />
+              <div className="relative">
+                <div className="rounded-2xl overflow-hidden shadow-2xl">
+                  <img
+                    src={activeDest.image}
+                    alt={activeDest.name}
+                    className="w-full h-[400px] object-cover"
+                  />
+                </div>
+                <div className="absolute -bottom-6 -right-6 bg-gradient-to-r from-pink-500 to-rose-500 text-white px-6 py-3 rounded-xl shadow-lg">
+                  <span className="text-sm font-semibold">Featured</span>
+                </div>
+              </div>
+              <div>
+                <span className="text-pink-500 font-semibold text-sm uppercase tracking-widest">
+                  Featured Destination
+                </span>
+                <h2 className="text-4xl font-bold text-dark-900 mt-2">
+                  {activeDest.name}
+                </h2>
+                <p className="text-pink-400 text-lg font-medium mt-1">
+                  {activeDest.tag}
+                </p>
+                <p className="text-gray-600 mt-4 leading-relaxed">
+                  {activeDest.description}
+                </p>
+                <div className="grid grid-cols-2 gap-3 mt-6">
+                  {activeDest.features.map((feature, idx) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-pink-500" />
+                      <span className="text-gray-700 text-sm">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+                <Button className="mt-8 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3">
+                  Explore {activeDest.name}
+                  <ChevronRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+      )}
+
+      {/* Exclusive Venues */}
+      <section className="py-20 bg-gray-50">
+        <div className="container-custom px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <span className="text-pink-500 font-semibold text-sm uppercase tracking-widest">
+              Luxury
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold text-dark-900 mt-2">
+              Exclusive Venues
+            </h2>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+            {venues.map((venue, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ y: -6 }}
+                className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300"
+              >
+                <div className="relative overflow-hidden aspect-[4/3]">
+                  <img
+                    src={venue.image}
+                    alt={venue.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  {/* <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1">
+                    <Star className="w-3 h-3 text-pink-500 fill-pink-500" />
+                    <span className="text-xs font-bold text-dark-900">
+                      {venue.rating}
+                    </span>
+                  </div> */}
+                </div>
+                <div className="p-4 text-center">
+                  <h3 className="text-sm font-bold text-dark-900 group-hover:text-pink-500 transition-colors line-clamp-1">
+                    {venue.name}
+                  </h3>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section - Plan Your Dream Wedding */}
+      <section className="relative py-24 overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1519741497674-611481863552?w=1600&h=600&fit=crop&q=80"
+            alt="Dream Wedding"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-dark-900/90 to-dark-900/70" />
+        </div>
+
+        <div className="container-custom relative z-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-3xl mx-auto"
+          >
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-tight">
+              Let Us Plan Your
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-rose-400">
+                Dream Wedding in Thailand
+              </span>
+            </h2>
+            <p className="text-gray-300 text-lg mt-4">
+              Our experts are here to curate a celebration that reflects your
+              love story.
+            </p>
+            <Button className="mt-8 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white px-10 py-4 text-base shadow-lg shadow-pink-500/30 group">
+              SCHEDULE A CONSULTATION
+              <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
           </motion.div>
         </div>

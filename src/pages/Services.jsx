@@ -14,222 +14,209 @@ import {
   Palette,
   Gift,
   PenTool,
-  Truck,
-  Hotel,
-  Mic,
   Heart,
+  Globe,
+  Plane,
+  ChefHat,
+  PartyPopper,
+  Film,
+  Award,
+  ChevronRight,
 } from "lucide-react";
 import Button from "../components/ui/Button";
 
 const Services = () => {
-  const [selectedService, setSelectedService] = useState(null);
+  const [activeService, setActiveService] = useState(null);
 
   const services = [
     {
       id: 1,
       icon: Calendar,
-      title: "Full Event Planning",
+      title: "Planning & Management",
       description:
-        "From concept to execution, we handle every detail of your event.",
+        "Strategic planning, timelines and flawless execution - handled with perfection.",
       features: [
         "Initial Consultation",
         "Budget Planning",
         "Timeline Management",
         "Vendor Coordination",
       ],
-      price: "Starting ₹50,000",
-      popular: true,
       delay: 0,
     },
     {
       id: 2,
-      icon: MapPin,
-      title: "Venue Selection & Design",
-      description: "Find and design the perfect venue for your celebration.",
-      features: [
-        "Venue Sourcing",
-        "Site Visits",
-        "Layout Planning",
-        "Theme Design",
-      ],
-      price: "Starting ₹30,000",
-      popular: false,
-      delay: 0.1,
-    },
-    {
-      id: 3,
       icon: Palette,
-      title: "Event Decor & Styling",
-      description: "Transform your venue with stunning decor and styling.",
+      title: "Design & Decor",
+      description:
+        "Bespoke themes, stunning décor and immersive designs that bring your story to life.",
       features: [
         "Theme Development",
         "Floral Design",
         "Lighting Setup",
         "Furniture Styling",
       ],
-      price: "Starting ₹40,000",
-      popular: false,
-      delay: 0.2,
+      delay: 0.1,
     },
     {
-      id: 4,
+      id: 3,
       icon: Users,
-      title: "Guest Management",
+      title: "Hospitality & Guest Experience",
       description:
-        "Ensure your guests have a seamless experience from start to finish.",
+        "Curated hospitality and guest experiences that make your loved ones feel special.",
       features: [
         "Guest List Management",
         "RSVP Tracking",
         "Concierge Service",
-        "Transportation",
+        "Welcome Events",
       ],
-      price: "Starting ₹25,000",
-      popular: false,
-      delay: 0.3,
+      delay: 0.2,
     },
     {
-      id: 5,
-      icon: Camera,
-      title: "Photography & Film",
+      id: 4,
+      icon: PartyPopper,
+      title: "Entertainment & Production",
       description:
-        "Capture every magical moment with professional photography.",
-      features: [
-        "Pre-event Shoot",
-        "Event Coverage",
-        "Cinematic Film",
-        "Photo Albums",
-      ],
-      price: "Starting ₹60,000",
-      popular: false,
-      delay: 0.4,
-    },
-    {
-      id: 6,
-      icon: Music,
-      title: "Entertainment & Events",
-      description: "Curate unforgettable entertainment for your guests.",
+        "World-class entertainment and production for unforgettable celebrations.",
       features: [
         "Live Music",
         "DJ Services",
         "Cultural Performances",
         "Interactive Activities",
       ],
-      price: "Starting ₹35,000",
-      popular: false,
-      delay: 0.5,
+      delay: 0.3,
     },
     {
-      id: 7,
-      icon: Utensils,
-      title: "Catering & Culinary",
-      description: "Delight your guests with exceptional cuisine and service.",
-      features: [
-        "Menu Planning",
-        "Food Tasting",
-        "Beverage Services",
-        "Dining Setup",
-      ],
-      price: "Starting ₹45,000",
-      popular: false,
-      delay: 0.6,
-    },
-    {
-      id: 8,
-      icon: PenTool,
-      title: "Destination Management",
-      description: "Expertly handle all logistics for destination events.",
+      id: 5,
+      icon: Plane,
+      title: "Logistics & Travel",
+      description:
+        "Seamless travel, logistics and on-ground support, anywhere in the world.",
       features: [
         "Travel Arrangements",
         "Accommodation Booking",
         "Local Tours",
-        "Welcome Events",
+        "Transportation",
       ],
-      price: "Starting ₹70,000",
-      popular: false,
-      delay: 0.7,
+      delay: 0.4,
+    },
+    {
+      id: 6,
+      icon: Award,
+      title: "Bespoke Services & Concierge",
+      description:
+        "Personalized services and thoughtful touches that go beyond expectations.",
+      features: [
+        "Personal Shopping",
+        "Spa Services",
+        "Special Requests",
+        "24/7 Support",
+      ],
+      delay: 0.5,
     },
   ];
 
   const processSteps = [
     {
       step: "01",
-      title: "Discovery",
-      description: "We understand your vision, preferences, and requirements.",
-      icon: Heart,
+      title: "Discover",
+      description: "We get to know you and your vision.",
     },
     {
       step: "02",
-      title: "Planning",
-      description:
-        "We create a detailed plan with timelines, budgets, and vendors.",
-      icon: PenTool,
+      title: "Design",
+      description: "We conceptualize your dream celebration.",
     },
     {
       step: "03",
-      title: "Execution",
-      description: "We bring your vision to life with flawless coordination.",
-      icon: CheckCircle,
+      title: "Plan",
+      description: "We plan every detail flawlessly.",
     },
     {
       step: "04",
-      title: "Celebration",
-      description:
-        "You enjoy your special day while we handle everything behind the scenes.",
-      icon: Sparkles,
+      title: "Execute",
+      description: "We bring your dream to life.",
+    },
+    {
+      step: "05",
+      title: "Celebrate",
+      description: "You live the moments, we handle the rest.",
     },
   ];
 
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-dark-900 via-dark-800 to-dark-900">
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1600')] bg-cover bg-center opacity-20"></div>
+      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1600&h=900&fit=crop&q=80"
+            alt="Our Services"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-dark-900/90 via-dark-900/70 to-dark-900/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-dark-900/80 via-dark-900/20 to-transparent" />
         </div>
 
-        <div className="container-custom relative z-10">
+        {/* Decorative Elements */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-20 right-20 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-20 left-20 w-80 h-80 bg-rose-500/10 rounded-full blur-3xl" />
+        </div>
+
+        <div className="container-custom relative z-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto"
+            transition={{ duration: 0.8 }}
+            className="max-w-4xl text-center mx-auto"
           >
-            <span className="text-gold-500 font-semibold text-sm uppercase tracking-widest">
-              Our Services
-            </span>
-            <h1 className="text-4xl md:text-6xl font-playfair font-bold text-white mt-4">
-              Comprehensive Event
-              <span className="gradient-gold bg-clip-text text-transparent block">
-                Planning Solutions
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 mb-6">
+              <Sparkles className="w-4 h-4 text-pink-300" />
+              <span className="text-pink-200 text-xs sm:text-sm font-semibold tracking-wider">
+                OUR SERVICES
+              </span>
+            </div>
+
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
+              End-to-End Wedding
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-rose-400 to-pink-400 mt-2">
+                & Celebration Solutions
               </span>
             </h1>
-            <p className="text-dark-200 text-lg mt-6">
-              From concept to execution, we offer end-to-end services to make
-              your celebration truly extraordinary.
+            <p className="text-gray-300 text-base sm:text-lg max-w-3xl mx-auto mt-6 leading-relaxed">
+              At Violin Events, we take care of every detail so you can
+              celebrate every moment. From the first idea to the final farewell,
+              we create experiences that are seamless, stunning and
+              unforgettable.
             </p>
+
+            {/* CTA Button */}
+            <div className="mt-8">
+              <Button className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3.5 text-sm sm:text-base shadow-lg shadow-pink-500/30 group">
+                EXPLORE OUR SERVICES
+                <ChevronRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Services Grid */}
-      <section className="py-20 bg-white">
-        <div className="container-custom">
+      {/* What We Offer */}
+      <section className="py-20 bg-gray-50">
+        <div className="container-custom px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-12"
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
           >
-            <span className="text-gold-500 font-semibold text-sm uppercase tracking-widest">
+            <span className="text-pink-500 font-semibold text-sm uppercase tracking-widest">
               What We Offer
             </span>
-            <h2 className="text-3xl md:text-4xl font-playfair font-bold text-dark-900 mt-2">
-              Tailored Services For Every Occasion
+            <h2 className="text-3xl md:text-4xl font-bold text-dark-900 mt-2">
+              Comprehensive Services for Extraordinary Celebrations
             </h2>
-            <p className="text-dark-600 mt-4 max-w-2xl mx-auto">
-              Choose from our comprehensive range of services or create a custom
-              package that perfectly fits your needs.
-            </p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -239,86 +226,26 @@ const Services = () => {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: service.delay }}
-                whileHover={{ y: -8 }}
-                className={`group bg-white rounded-2xl p-8 border-2 hover:shadow-xl transition-all duration-300 cursor-pointer relative ${
-                  service.popular
-                    ? "border-gold-500 shadow-lg"
-                    : "border-gray-100 hover:border-gold-300"
-                }`}
-                onClick={() =>
-                  setSelectedService(
-                    selectedService === service.id ? null : service.id,
-                  )
-                }
+                whileHover={{ y: -6 }}
+                className="group bg-white rounded-2xl p-8 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100 hover:border-pink-200"
+                onMouseEnter={() => setActiveService(service.id)}
+                onMouseLeave={() => setActiveService(null)}
               >
-                {service.popular && (
-                  <div className="absolute -top-3 right-6 bg-gold-500 text-dark-900 px-4 py-1 rounded-full text-xs font-bold">
-                    Popular
-                  </div>
-                )}
-
                 {/* Icon */}
-                <motion.div
-                  whileHover={{ rotate: 10, scale: 1.1 }}
-                  className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-4 ${
-                    service.popular
-                      ? "bg-gold-500"
-                      : "bg-gold-50 group-hover:bg-gold-500"
-                  } transition-colors duration-300`}
-                >
-                  <service.icon
-                    className={`w-8 h-8 ${
-                      service.popular
-                        ? "text-white"
-                        : "text-gold-500 group-hover:text-white"
-                    } transition-colors duration-300`}
-                  />
-                </motion.div>
+                <div className="w-16 h-16 bg-pink-50 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-pink-500 transition-colors duration-300">
+                  <service.icon className="w-8 h-8 text-pink-500 group-hover:text-white transition-colors duration-300" />
+                </div>
 
-                <h3 className="text-xl font-bold text-dark-900 mb-2 group-hover:text-gold-500 transition-colors">
+                <h3 className="text-xl font-bold text-dark-900 mb-3 group-hover:text-pink-500 transition-colors">
                   {service.title}
                 </h3>
-                <p className="text-dark-600 text-sm mb-4">
+                <p className="text-gray-600 text-sm leading-relaxed mb-4">
                   {service.description}
                 </p>
 
-                <p className="text-gold-500 font-semibold text-sm mb-4">
-                  {service.price}
-                </p>
-
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{
-                    height: selectedService === service.id ? "auto" : 0,
-                    opacity: selectedService === service.id ? 1 : 0,
-                  }}
-                  transition={{ duration: 0.3 }}
-                  className="overflow-hidden"
-                >
-                  <div className="pt-4 border-t border-gray-100 space-y-2">
-                    {service.features.map((feature, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-center text-sm text-dark-600"
-                      >
-                        <CheckCircle className="w-4 h-4 text-gold-500 mr-2 flex-shrink-0" />
-                        {feature}
-                      </div>
-                    ))}
-                    <Button variant="secondary" className="mt-2 w-full text-sm">
-                      Learn More
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
-                  </div>
-                </motion.div>
-
-                <button className="text-gold-500 text-sm font-medium mt-2 flex items-center group-hover:gap-2 transition-all">
-                  {selectedService === service.id ? "Show Less" : "Learn More"}
-                  <ArrowRight
-                    className={`w-4 h-4 ml-1 transition-transform ${
-                      selectedService === service.id ? "rotate-90" : ""
-                    }`}
-                  />
+                <button className="text-pink-500 text-sm font-semibold flex items-center group-hover:gap-2 transition-all">
+                  LEARN MORE
+                  <ArrowRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
                 </button>
               </motion.div>
             ))}
@@ -326,129 +253,101 @@ const Services = () => {
         </div>
       </section>
 
-      {/* Process Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="container-custom">
+      {/* Our Process */}
+      <section className="py-20 bg-white">
+        <div className="container-custom px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-12"
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
           >
-            <span className="text-gold-500 font-semibold text-sm uppercase tracking-widest">
+            <span className="text-pink-500 font-semibold text-sm uppercase tracking-widest">
               Our Process
             </span>
-            <h2 className="text-3xl md:text-4xl font-playfair font-bold text-dark-900 mt-2">
-              How We Bring Your Vision to Life
+            <h2 className="text-3xl md:text-4xl font-bold text-dark-900 mt-2">
+              Thoughtfully Crafted. Perfectly Planned.
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
             {processSteps.map((step, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -5 }}
-                className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-center"
+                className="text-center group"
               >
-                <div className="text-4xl font-playfair font-bold text-gold-500 mb-4">
-                  {step.step}
+                <div className="relative">
+                  <div className="text-5xl font-bold text-pink-100 group-hover:text-pink-500 transition-colors duration-300">
+                    {step.step}
+                  </div>
+                  {index < processSteps.length - 1 && (
+                    <div className="hidden lg:block absolute top-8 left-1/2 w-full h-0.5 bg-pink-100">
+                      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-pink-300 rounded-full" />
+                    </div>
+                  )}
                 </div>
-                <div className="w-14 h-14 bg-gold-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <step.icon className="w-7 h-7 text-gold-500" />
+                <div className="mt-4">
+                  <div className="w-12 h-12 bg-pink-50 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-pink-500 transition-colors duration-300">
+                    <div className="w-3 h-3 bg-pink-500 rounded-full group-hover:bg-white transition-colors duration-300" />
+                  </div>
+                  <h3 className="text-lg font-bold text-dark-900">
+                    {step.title}
+                  </h3>
+                  <p className="text-gray-500 text-sm mt-1">
+                    {step.description}
+                  </p>
                 </div>
-                <h3 className="text-lg font-bold text-dark-900 mb-2">
-                  {step.title}
-                </h3>
-                <p className="text-dark-600 text-sm">{step.description}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Why Choose Us */}
-      <section className="py-20 bg-white">
-        <div className="container-custom">
+      {/* Ready to Begin CTA */}
+      <section className="relative py-24 overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1519741497674-611481863552?w=1600&h=600&fit=crop&q=80"
+            alt="Ready to Begin"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-dark-900/90 to-dark-900/70" />
+        </div>
+
+        <div className="container-custom relative z-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-12"
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-3xl mx-auto"
           >
-            <span className="text-gold-500 font-semibold text-sm uppercase tracking-widest">
-              Why Choose Us
-            </span>
-            <h2 className="text-3xl md:text-4xl font-playfair font-bold text-dark-900 mt-2">
-              Your Dream Event, Our Expertise
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-tight">
+              Ready to Begin?
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-rose-400 mt-2">
+                Let's Create Something Extraordinary Together
+              </span>
             </h2>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {[
-                {
-                  icon: Sparkles,
-                  title: "15+ Years Experience",
-                  description: "Trusted by hundreds of happy clients",
-                },
-                {
-                  icon: Users,
-                  title: "100+ Expert Team",
-                  description: "Dedicated professionals at your service",
-                },
-                {
-                  icon: Star,
-                  title: "4.9/5 Client Rating",
-                  description: "Based on 500+ satisfied clients",
-                },
-                {
-                  icon: Gift,
-                  title: "Custom Packages",
-                  description: "Tailored solutions for every budget",
-                },
-              ].map((item, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
-                  className="bg-gray-50 p-6 rounded-2xl hover:shadow-lg transition-all duration-300"
-                >
-                  <div className="w-12 h-12 bg-gold-50 rounded-xl flex items-center justify-center mb-3">
-                    <item.icon className="w-6 h-6 text-gold-500" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-dark-900">
-                    {item.title}
-                  </h3>
-                  <p className="text-dark-600 text-sm">{item.description}</p>
-                </motion.div>
-              ))}
+            <p className="text-gray-300 text-lg mt-4">
+              Share your vision with us and let our experts craft a celebration
+              that will be remembered for a lifetime.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+              <Button className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white px-10 py-4 text-base shadow-lg shadow-pink-500/30 group">
+                SCHEDULE A CONSULTATION
+                <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+              </Button>
+              <Button
+                variant="outline"
+                className="border-white/50 text-white hover:bg-white/10 hover:border-white px-10 py-4 text-base"
+              >
+                WATCH SHOWREEL
+                <ChevronRight className="w-5 h-5 ml-2" />
+              </Button>
             </div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="relative"
-            >
-              <div className="bg-gradient-to-br from-gold-500/10 to-amber-500/10 p-8 rounded-2xl border border-gold-200/30">
-                <h3 className="text-2xl font-playfair font-bold text-dark-900 mb-4">
-                  Ready to Get Started?
-                </h3>
-                <p className="text-dark-600 mb-6">
-                  Contact us today for a free consultation and let's start
-                  planning your extraordinary event.
-                </p>
-                <Button variant="primary">
-                  Schedule Consultation
-                  <ArrowRight size={20} className="ml-2" />
-                </Button>
-              </div>
-            </motion.div>
-          </div>
+          </motion.div>
         </div>
       </section>
     </div>
