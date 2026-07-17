@@ -1,12 +1,11 @@
-import { useRef, useMemo, useState } from "react";
+import { useRef, useMemo } from "react";
 import { motion } from "framer-motion";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Sparkles, MapPin, Calendar, Award } from "lucide-react";
+import { Heart, MapPin, Calendar, Award } from "lucide-react";
 import Button from "../ui/Button";
 import { Link } from "react-router-dom";
-import { Tilt } from "react-tilt";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -16,81 +15,144 @@ const stats = [
   { icon: Calendar, value: "12+", label: "Years of Excellence" },
 ];
 
-const defaultOptions = {
-  reverse: false,
-  max: 20, // Max tilt rotation (degrees)
-  perspective: 1500,
-  scale: 1.03, // Zoom effect on hover
-  speed: 1000,
-  transition: true,
-  axis: null,
-  reset: true,
-  easing: "cubic-bezier(.03,.98,.52,.99)",
-};
-
 const WelcomeSection = () => {
   const sectionRef = useRef(null);
-  const cardContainerRef = useRef(null);
   const cardRef = useRef(null);
   const glowRef = useRef(null);
-  const bgFrameRef = useRef(null);
+  const ringRef = useRef(null);
 
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [isHovered, setIsHovered] = useState(false);
+  // Fixed random values — sirf ek baar generate honge, re-render pe change nahi honge
+  const heartPositions = useMemo(
+    () =>
+      [...Array(6)].map(() => ({
+        left: 5 + Math.random() * 90,
+        top: 5 + Math.random() * 90,
+        size: 20 + Math.random() * 20,
+        duration: 4 + Math.random() * 3,
+        delay: Math.random() * 4,
+      })),
+    []
+  );
 
-  // Safely calculate random particles only once per mounting
   const particlePositions = useMemo(
     () =>
-      [...Array(10)].map(() => ({
+      [...Array(12)].map(() => ({
         startX: Math.random() * 100,
         startY: Math.random() * 100,
         endX: Math.random() * 100,
         endY: Math.random() * 100,
-        duration: 4 + Math.random() * 4,
+        duration: 3 + Math.random() * 3,
         delay: Math.random() * 2,
       })),
-    [],
+    []
   );
 
   useGSAP(
     () => {
       const card = cardRef.current;
       const glow = glowRef.current;
-      const bgFrame = bgFrameRef.current;
+      const ring = ringRef.current;
 
-      // Soft ambient pulsing glow
+      // Glow pulse (yoyo — array syntax hata diya)
       gsap.to(glow, {
-        scale: 1.25,
-        opacity: 0.4,
-        duration: 2.5,
+        scale: 1.3,
+        opacity: 0.7,
+        duration: 1.5,
         repeat: -1,
         yoyo: true,
         ease: "sine.inOut",
       });
 
-      // Subtle rotation on the background luxury lines frame
-      gsap.to(bgFrame, {
-        rotate: 360,
-        duration: 45,
+      // Decorative ring — opposite direction rotation (parallax depth feel)
+      gsap.to(ring, {
+        rotate: -360,
+        duration: 30,
         repeat: -1,
         ease: "none",
       });
 
-      // Staggered entrance animation for left-side typography
+      const startRotation = () => {
+        gsap.to(card, {
+          rotateY: 360,
+          rotateX: 15,
+          duration: 20,
+          repeat: -1,
+          ease: "none",
+          overwrite: true,
+        });
+      };
+
+      const startFloat = () => {
+        gsap.to(card, {
+          y: -15,
+          duration: 2.5,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          overwrite: "auto",
+        });
+      };
+
+      const handleMouseEnter = () => {
+        gsap.to(card, {
+          rotateY: 0,
+          rotateX: 0,
+          y: 0,
+          scale: 1.03,
+          duration: 0.8,
+          ease: "power2.out",
+          overwrite: true,
+        });
+      };
+
+      const handleMouseLeave = () => {
+        gsap.to(card, { scale: 1, duration: 0.5, ease: "power2.out" });
+        startRotation();
+        startFloat();
+      };
+
+      card.addEventListener("mouseenter", handleMouseEnter);
+      card.addEventListener("mouseleave", handleMouseLeave);
+
+      // Entrance — card
+      gsap.fromTo(
+        card,
+        { opacity: 0, scale: 0.8, rotateY: 30, rotateX: 20 },
+        {
+          opacity: 1,
+          scale: 1,
+          rotateY: 0,
+          rotateX: 0,
+          duration: 1.2,
+          delay: 0.3,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: card,
+            start: "top 80%",
+            toggleActions: "play none none reverse",
+          },
+          onComplete: () => {
+            startRotation();
+            startFloat();
+          },
+        }
+      );
+
+      // Entrance — left text content (stagger)
       gsap.from(".welcome-stagger", {
-        y: 40,
+        y: 30,
         opacity: 0,
-        duration: 1.2,
+        duration: 0.8,
         stagger: 0.15,
         ease: "power3.out",
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: "top 80%",
+          start: "top 70%",
         },
       });
 
-      // High-Performance GSAP numeric counters
-      gsap.utils.toArray(".welcome-stat-number").forEach((el) => {
+      // Stats counter
+      gsap.utils.toArray(".stat-number").forEach((el) => {
         const target = parseFloat(el.dataset.value);
         const suffix = el.dataset.suffix || "";
         gsap.fromTo(
@@ -98,175 +160,186 @@ const WelcomeSection = () => {
           { textContent: 0 },
           {
             textContent: target,
-            duration: 2,
-            ease: "power2.out",
+            duration: 1.8,
+            ease: "power1.out",
             snap: { textContent: 1 },
-            scrollTrigger: {
-              trigger: el,
-              start: "top 90%",
-            },
+            scrollTrigger: { trigger: el, start: "top 85%" },
             onUpdate: function () {
-              el.textContent =
-                Math.ceil(this.targets()[0].textContent) + suffix;
+              el.textContent = Math.ceil(this.targets()[0].textContent) + suffix;
             },
-          },
+          }
         );
       });
+
+      return () => {
+        card.removeEventListener("mouseenter", handleMouseEnter);
+        card.removeEventListener("mouseleave", handleMouseLeave);
+      };
     },
-    { scope: sectionRef },
+    { scope: sectionRef }
   );
-
-  const handleMouseMove = (e) => {
-    if (!cardContainerRef.current) return;
-    const rect = cardContainerRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    setMousePos({ x, y });
-    setIsHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-    setMousePos({ x: 0, y: 0 });
-  };
 
   return (
     <section
       ref={sectionRef}
-      className="relative w-full overflow-hidden text-neutral-800"
-      style={{
-        backgroundColor: "#FAF9F5", // Dynamic warm light ivory theme
-        paddingTop: "7rem",
-        paddingBottom: "7rem",
-      }}
+      className="w-full bg-white relative overflow-hidden py-12 md:py-20 lg:py-24"
     >
-      {/* Ambient background light orbs */}
-      <div
-        className="absolute top-0 left-1/4 w-[500px] h-[500px] pointer-events-none rounded-full blur-[130px] z-0"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(245,238,220,0.5) 0%, rgba(245,238,220,0) 70%)",
-        }}
-      />
-      <div
-        className="absolute bottom-0 right-1/4 w-[500px] h-[500px] pointer-events-none rounded-full blur-[130px] z-0"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(250,230,220,0.4) 0%, rgba(250,230,220,0) 70%)",
-        }}
-      />
+      {/* Decorative Elements */}
+      <div className="absolute -top-20 -right-20 w-48 h-48 md:w-64 md:h-64 lg:w-96 lg:h-96 bg-pink-500/5 rounded-full blur-3xl" />
+      <div className="absolute -bottom-20 -left-20 w-48 h-48 md:w-64 md:h-64 lg:w-96 lg:h-96 bg-rose-500/5 rounded-full blur-3xl" />
 
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          {/* Left Content Side */}
-          <div className="order-1 flex flex-col justify-center">
-            <span className="welcome-stagger text-amber-800 tracking-[0.35em] font-medium text-xs uppercase inline-flex items-center gap-2 mb-4">
-              <Sparkles className="w-3.5 h-3.5 text-amber-700" />
-              WELCOME TO VIOLIN EVENTS
-            </span>
+      {/* Floating Hearts — fixed positions via useMemo */}
+      {heartPositions.map((pos, i) => (
+        <motion.div
+          key={i}
+          className="absolute text-pink-300/20 pointer-events-none"
+          style={{ left: `${pos.left}%`, top: `${pos.top}%` }}
+          animate={{
+            scale: [0, 1.5, 0],
+            opacity: [0, 0.5, 0],
+            rotate: [0, 180, 360],
+          }}
+          transition={{
+            duration: pos.duration,
+            repeat: Infinity,
+            delay: pos.delay,
+          }}
+        >
+          <Heart size={pos.size} />
+        </motion.div>
+      ))}
 
-            <h2 className="welcome-stagger text-4xl lg:text-5xl font-serif font-light tracking-tight text-neutral-900 leading-tight">
-              Redefining luxury <br />
-              <span className="italic font-normal text-amber-700">
-                Weddings & Celebrations
+      <div className="w-full px-4 md:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10 lg:gap-16 items-center">
+            {/* Left Content */}
+            <div className="order-1">
+              <span className="welcome-stagger text-pink-500 font-semibold text-sm uppercase tracking-widest inline-flex items-center gap-2">
+                <Heart className="w-4 h-4" />
+                WELCOME TO VIOLIN EVENTS LLP
               </span>
-            </h2>
 
-            <p className="welcome-stagger text-xs lg:text-sm text-neutral-500 font-light leading-relaxed tracking-wide mt-6 max-w-xl">
-              At Violin Events, we believe every celebration should be a
-              singular masterpiece. With a passion for perfection and an eye for
-              architectural detail, we curate momentous celebrations that blend
-              timeless traditions, uncompromised elegance, and unforgettable
-              memories.
-            </p>
+              <h2 className="welcome-stagger text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-playfair font-bold text-dark-800 mt-3 md:mt-4 leading-tight">
+                Redefining Luxury
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-500 block">
+                  Weddings & Celebrations
+                </span>
+              </h2>
 
-            {/* Premium Stats Row */}
-            <div className="welcome-stagger mt-10 grid grid-cols-3 gap-6 border-t border-neutral-200/60 pt-8">
-              {stats.map(({ icon: Icon, value, label }, i) => {
-                const numMatch = value.match(/[\d.]+/)?.[0] || "0";
-                const suffix = value.replace(numMatch, "");
-                return (
-                  <div key={i} className="text-left">
-                    <div className="w-8 h-8 rounded-full bg-amber-950/5 text-amber-800 flex items-center justify-center mb-3">
-                      <Icon className="w-4 h-4 stroke-[1.25]" />
-                    </div>
-                    <div className="text-xl sm:text-2xl font-serif tracking-tight text-neutral-950 font-semibold">
-                      <span
-                        className="welcome-stat-number"
-                        data-value={numMatch}
-                        data-suffix={suffix}
-                      >
-                        0{suffix}
-                      </span>
-                    </div>
-                    <div className="text-[10px] tracking-widest text-neutral-400 uppercase mt-1">
-                      {label}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Redesigned Minimalist Quote block */}
-            <div className="welcome-stagger mt-10 relative pl-6 border-l-2 border-amber-700/30">
-              <span className="absolute -left-[5px] -top-2 text-3xl text-amber-700/30 font-serif italic">
-                “
-              </span>
-              <p className="text-neutral-700 text-sm md:text-base font-serif italic leading-relaxed">
-                We don't merely produce events — we manifest living tapestries
-                of your imagination.
+              <p className="welcome-stagger text-dark-600 text-sm sm:text-base md:text-lg mt-4 md:mt-6 leading-relaxed">
+                At Violin Events, we believe every celebration should be a
+                masterpiece. With our passion for perfection and eye for
+                detail, we curate weddings that blend tradition, elegance and
+                unforgettable moments.
               </p>
+
+              {/* Stats Row */}
+              <div className="welcome-stagger mt-8 grid grid-cols-3 gap-3 sm:gap-4">
+                {stats.map(({ icon: Icon, value, label }, i) => {
+                  const numMatch = value.match(/[\d.]+/)?.[0] || "0";
+                  const suffix = value.replace(numMatch, "");
+                  return (
+                    <div
+                      key={i}
+                      className="text-center sm:text-left border-l-2 border-pink-100 pl-3 sm:pl-4"
+                    >
+                      <Icon className="w-4 h-4 text-pink-500 mx-auto sm:mx-0 mb-1" />
+                      <div className="text-xl sm:text-2xl font-playfair font-bold text-dark-800">
+                        <span
+                          className="stat-number"
+                          data-value={numMatch}
+                          data-suffix={suffix}
+                        >
+                          0{suffix}
+                        </span>
+                      </div>
+                      <div className="text-[11px] sm:text-xs text-dark-500 mt-0.5">
+                        {label}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="welcome-stagger mt-8 md:mt-10">
+                <Link to="/about">
+                  <Button
+                    variant="secondary"
+                    className="border-pink-300 text-pink-600 hover:bg-pink-50 group text-sm sm:text-base px-6 md:px-8 py-2.5 md:py-3"
+                  >
+                    Our Story
+                    <span className="ml-2 group-hover:translate-x-1 transition-transform">
+                      →
+                    </span>
+                  </Button>
+                </Link>
+              </div>
+
+              {/* Quote — visually distinct card style */}
+              <div className="welcome-stagger mt-8 md:mt-10 relative pl-6 border-l-2 border-pink-300">
+                <span className="absolute -left-[9px] top-0 text-3xl text-pink-300 font-playfair">
+                  "
+                </span>
+                <p className="text-dark-800 text-sm sm:text-base md:text-lg font-playfair italic">
+                  We don't just plan — we create memories
+                </p>
+              </div>
             </div>
 
-            {/* Elegant Redirect Link CTA */}
-            <div className="welcome-stagger mt-10">
-              <Link to="/about">
-                <Button
-                  variant="secondary"
-                  className="border-neutral-300 text-amber-800 hover:bg-neutral-100 hover:border-amber-700 px-8 py-3.5 rounded-full text-xs font-semibold tracking-widest uppercase transition-all duration-300 shadow-sm"
+            {/* Right Image - 3D Square Card */}
+            <div className="order-2 flex justify-center items-center perspective-1200">
+              <div className="relative w-full max-w-[400px] aspect-square">
+                {/* Glow Effect */}
+                <div
+                  ref={glowRef}
+                  className="absolute -inset-8 bg-gradient-to-r from-pink-500/20 via-rose-500/20 to-pink-500/20 rounded-3xl blur-3xl"
+                />
+
+                {/* Rotating dashed ring — new decorative element */}
+                <div
+                  ref={ringRef}
+                  className="absolute -inset-6 rounded-full border-2 border-dashed border-pink-300/40 pointer-events-none"
+                />
+
+                {/* 3D Card - Square Shape */}
+                <div
+                  ref={cardRef}
+                  className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl cursor-pointer transform-gpu"
+                  style={{
+                    transformStyle: "preserve-3d",
+                    perspective: "1000px",
+                  }}
                 >
-                  Our Story
-                </Button>
-              </Link>
-            </div>
-          </div>
-
-          {/* Right Side: Architectural 3D Layered Card Frame */}
-          {/* Right Side: Architectural 3D Layered Card Frame */}
-          <div className="order-2 flex justify-center items-center">
-            <div className="relative w-full max-w-[420px] aspect-[4/5]">
-              {/* Back Soft Glow */}
-              <div
-                ref={glowRef}
-                className="absolute -inset-10 bg-gradient-to-tr from-amber-200/10 via-rose-200/10 to-transparent rounded-full blur-3xl opacity-50 z-0 pointer-events-none"
-              />
-
-              {/* Rotating background geometric line ring */}
-              <div
-                ref={bgFrameRef}
-                className="absolute -inset-6 rounded-full border border-dashed border-amber-800/15 pointer-events-none z-0"
-              />
-
-              {/* NEW: Tilt Implementation */}
-              <Tilt options={defaultOptions} className="relative w-full h-full">
-                <div className="relative w-full h-full rounded-[3.5rem] overflow-hidden shadow-2xl border border-white/60 transform-gpu z-10">
-                  {/* Main Portrait Media Content */}
+                  {/* Image */}
                   <img
-                    src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&h=1000&fit=crop"
-                    alt="Luxury Wedding Celebration"
+                    src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&h=800&fit=crop"
+                    alt="Luxury Wedding"
                     className="w-full h-full object-cover"
                   />
 
-                  {/* Overlay Layers */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/40 via-transparent to-transparent z-10" />
-                  <div className="absolute inset-4 rounded-[2.5rem] border border-white/20 pointer-events-none z-20" />
+                  {/* Gradient Overlay - Subtle */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-pink-500/10 via-transparent to-transparent" />
 
-                  {/* Particles */}
-                  <div className="absolute inset-0 pointer-events-none overflow-hidden z-20">
+                  {/* Shimmer Effect */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent animate-shimmer" />
+
+                  {/* 3D Border Layers */}
+                  <div className="absolute inset-0 rounded-2xl border-2 border-pink-400/20" />
+                  <div className="absolute -inset-1 rounded-2xl border border-pink-400/10" />
+                  <div className="absolute -inset-2 rounded-2xl border border-pink-400/5" />
+
+                  {/* Corner Decorations */}
+                  <div className="absolute -top-1 -left-1 w-4 h-4 border-t-2 border-l-2 border-pink-400/30" />
+                  <div className="absolute -top-1 -right-1 w-4 h-4 border-t-2 border-r-2 border-pink-400/30" />
+                  <div className="absolute -bottom-1 -left-1 w-4 h-4 border-b-2 border-l-2 border-pink-400/30" />
+                  <div className="absolute -bottom-1 -right-1 w-4 h-4 border-b-2 border-r-2 border-pink-400/30" />
+
+                  {/* Floating Particles — fixed positions via useMemo */}
+                  <div className="absolute inset-0 pointer-events-none overflow-hidden">
                     {particlePositions.map((p, i) => (
                       <motion.div
                         key={i}
-                        className="absolute w-1 h-1 bg-amber-200/40 rounded-full"
+                        className="absolute w-1.5 h-1.5 bg-pink-400/30 rounded-full"
                         initial={{
                           left: `${p.startX}%`,
                           top: `${p.startY}%`,
@@ -275,8 +348,8 @@ const WelcomeSection = () => {
                         animate={{
                           left: `${p.endX}%`,
                           top: `${p.endY}%`,
-                          opacity: [0, 0.7, 0],
-                          scale: [0, 2.5, 0],
+                          opacity: [0, 0.8, 0],
+                          scale: [0, 2, 0],
                         }}
                         transition={{
                           duration: p.duration,
@@ -287,7 +360,19 @@ const WelcomeSection = () => {
                     ))}
                   </div>
                 </div>
-              </Tilt>
+
+                {/* Floating Decorative Elements */}
+                <motion.div
+                  className="absolute -top-3 -right-3 w-10 h-10 bg-pink-400/20 rounded-full blur-xl"
+                  animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                />
+                <motion.div
+                  className="absolute -bottom-3 -left-3 w-14 h-14 bg-rose-400/20 rounded-full blur-xl"
+                  animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
+                  transition={{ duration: 3.5, repeat: Infinity, delay: 0.5 }}
+                />
+              </div>
             </div>
           </div>
         </div>
