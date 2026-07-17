@@ -2,116 +2,93 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import {
-  Award,
-  Globe,
-  MapPin,
-  Users,
-  Sparkles,
-  Heart,
-  Star,
-  Calendar,
-} from "lucide-react";
+import { Award, Globe, MapPin, Heart, Sparkles } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const statsData = [
   {
     number: 10,
-    label: "Years of Experience",
+    label: "YEARS OF EXPERIENCE",
     suffix: "+",
     icon: Award,
-    color: "from-pink-400 to-rose-400",
-    bgColor: "bg-pink-50",
-    iconColor: "text-pink-500",
   },
   {
     number: 500,
-    label: "Celebrations Worldwide",
+    label: "GLOBAL CELEBRATIONS",
     suffix: "+",
     icon: Globe,
-    color: "from-blue-400 to-blue-600",
-    bgColor: "bg-blue-50",
-    iconColor: "text-blue-500",
   },
   {
     number: 20,
-    label: "Iconic Destinations",
+    label: "ICONIC DESTINATIONS",
     suffix: "+",
     icon: MapPin,
-    color: "from-purple-400 to-purple-600",
-    bgColor: "bg-purple-50",
-    iconColor: "text-purple-500",
   },
   {
     number: 100,
-    label: "Client Satisfaction",
+    label: "CLIENT SATISFACTION",
     suffix: "%",
-    icon: Heart,
-    color: "from-red-400 to-red-600",
-    bgColor: "bg-red-50",
-    iconColor: "text-red-500",
   },
 ];
 
-const AnimatedCounter = ({ end, duration = 2000, suffix = "" }) => {
-  const [count, setCount] = useState(0);
-  const counterRef = useRef(null);
-
-  useEffect(() => {
-    const el = counterRef.current;
-    if (!el) return;
-
-    let startTime;
-
-    const animateCount = (timestamp) => {
-      if (!startTime) startTime = timestamp;
-      const progress = Math.min((timestamp - startTime) / duration, 1);
-      const currentValue = progress * end;
-      setCount(Math.floor(currentValue));
-
-      if (progress < 1) {
-        requestAnimationFrame(animateCount);
-      }
-    };
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          requestAnimationFrame(animateCount);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.3 },
-    );
-
-    observer.observe(el);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [end, duration]);
-
-  return (
-    <span ref={counterRef}>
-      {count}
-      {suffix}
-    </span>
-  );
-};
-
 const StatsSection = () => {
   const sectionRef = useRef(null);
+  const containerRef = useRef(null);
+  const cardsRef = useRef([]);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  // Array states to safely track updated counters independent of DOM string mutators
+  const [counts, setCounts] = useState(statsData.map(() => 0));
 
   useEffect(() => {
-    gsap.to(sectionRef.current, {
-      backgroundPosition: "50% 30%",
-      ease: "none",
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top bottom",
-        end: "bottom top",
-        scrub: 1,
+    // 1. Core structural reveal stagger animation
+    cardsRef.current.forEach((card, i) => {
+      if (!card) return;
+      gsap.fromTo(
+        card,
+        { opacity: 0, y: 50, scale: 0.96 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 1.4,
+          ease: "power4.out",
+          delay: i * 0.1,
+          scrollTrigger: {
+            trigger: card,
+            start: "top 90%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
+    });
+
+    // 2. High-performance GSAP synchronized numerical count increments
+    const targets = statsData.map((d) => d.number);
+    const contextObject = { val0: 0, val1: 0, val2: 0, val3: 0 };
+
+    ScrollTrigger.create({
+      trigger: containerRef.current,
+      start: "top 85%",
+      onEnter: () => {
+        gsap.to(contextObject, {
+          val0: targets[0],
+          val1: targets[1],
+          val2: targets[2],
+          val3: targets[3],
+          duration: 2.2,
+          ease: "power3.out",
+          onUpdate: () => {
+            setCounts([
+              Math.floor(contextObject.val0),
+              Math.floor(contextObject.val1),
+              Math.floor(contextObject.val2),
+              Math.floor(contextObject.val3),
+            ]);
+          },
+        });
       },
     });
 
@@ -120,96 +97,160 @@ const StatsSection = () => {
     };
   }, []);
 
+  const handleMouseMove = (e, index) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    setMousePos({ x, y });
+    setHoveredIndex(index);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredIndex(null);
+    setMousePos({ x: 0, y: 0 });
+  };
+
   return (
     <section
       ref={sectionRef}
-      className="py-20 bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100 relative overflow-hidden"
+      className="relative w-full overflow-hidden text-neutral-800"
+      style={{
+        backgroundColor: "#FAF9F5", // Dynamic warm light museum canvas tone
+        paddingTop: "7rem",
+        paddingBottom: "8rem",
+      }}
     >
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full"
-            style={{
-              width: 3 + Math.random() * 6,
-              height: 3 + Math.random() * 6,
-              left: Math.random() * 100 + "%",
-              top: Math.random() * 100 + "%",
-              background: `rgba(236, 72, 153, ${0.1 + Math.random() * 0.2})`,
-              filter: "blur(3px)",
-            }}
-          />
-        ))}
+      {/* ─── BACKGROUND DECORATIVE GRID MASKS ─── */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <div 
+          className="absolute rounded-full"
+          style={{
+            top: "20%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "700px",
+            height: "700px",
+            background: "radial-gradient(circle, rgba(245,238,220,0.45) 0%, rgba(245,238,220,0) 70%)",
+            filter: "blur(60px)",
+          }}
+        />
+        {/* Fine horizontal dividing rules */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-4/5 h-[1px] bg-gradient-to-r from-transparent via-amber-900/15 to-transparent" />
       </div>
 
-      <div className="container-custom relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <span className="text-pink-500 font-semibold text-sm uppercase tracking-widest inline-flex items-center gap-2">
-            <Sparkles className="w-4 h-4" />
-            WHY CHOOSE US
-            <Sparkles className="w-4 h-4" />
-          </span>
-          <h2 className="text-3xl md:text-5xl font-playfair font-bold text-dark-800 mt-2">
-            Redefining Luxury Weddings
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-500 block">
-              & Celebrations
-            </span>
-          </h2>
-          <p className="text-dark-600 text-lg mt-4 max-w-2xl mx-auto">
-            At Violin Events, we believe every celebration should be a
-            masterpiece.
-          </p>
-        </motion.div>
+      {/* ─────────────────────────────────────── */}
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        
+        {/* Section Header Title layout */}
+        <div className="text-center mb-24 max-w-2xl mx-auto">
+          <span className="text-amber-800 tracking-[0.35em] font-medium text-xs uppercase block mb-3 inline-flex items-center gap-2">
+            <Sparkles className="w-3 h-3 text-amber-700" /> INSTITUTIONAL MILESTONES
+          </span>
+          <h2 className="text-4xl md:text-5xl font-serif font-light tracking-tight text-neutral-900 leading-tight">
+            Redefining Luxury Weddings <br />
+            <span className="italic font-normal text-amber-700">& Celebrations</span>
+          </h2>
+          <div className="w-12 h-[1px] bg-amber-700/40 mx-auto mt-6" />
+        </div>
+
+        {/* 3D Cylinder Matrix Grid Panel */}
+        <div 
+          ref={containerRef}
+          className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8"
+          style={{ perspective: "1600px" }}
+        >
           {statsData.map((stat, index) => {
             const IconComponent = stat.icon;
+            const isHovered = hoveredIndex === index;
+
+            // Compute spatial 3D rotate strings safely using localized metrics
+            const transformRotate = isHovered 
+              ? `rotateY(${mousePos.x * 20}deg) rotateX(${-mousePos.y * 20}deg) scale(1.02)` 
+              : "rotateY(0deg) rotateX(0deg) scale(1)";
+
+            // Alternating layouts across grid structures
+            const shapeClass = index % 2 === 0 ? "h-[365px]" : "h-[335px] lg:translate-y-4";
+
             return (
-              <motion.div
+              <div
                 key={index}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -8, scale: 1.05 }}
-                className="group bg-white/80 backdrop-blur-sm rounded-2xl p-8 border border-pink-100/50 hover:border-pink-300 transition-all duration-500 shadow-lg hover:shadow-xl text-center"
+                ref={(el) => (cardsRef.current[index] = el)}
+                onMouseMove={(e) => handleMouseMove(e, index)}
+                onMouseLeave={handleMouseLeave}
+                className={`group relative rounded-full border border-neutral-200/60 bg-white/45 cursor-pointer shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col items-center justify-between p-8 text-center ${shapeClass}`}
+                style={{
+                  transform: transformRotate,
+                  transformStyle: "preserve-3d",
+                  backdropFilter: "blur(12px)",
+                  transition: isHovered ? "none" : "transform 0.5s ease-out, shadow 0.5s ease",
+                }}
               >
-                {/* Icon Container */}
-                <motion.div
-                  whileHover={{ rotate: 15, scale: 1.1 }}
-                  className={`w-16 h-16 mx-auto ${stat.bgColor} rounded-2xl flex items-center justify-center mb-4 transition-all duration-300 group-hover:shadow-lg`}
+                {/* 1. Glare Reflection mapping */}
+                <div 
+                  className="absolute inset-0 rounded-full pointer-events-none overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+                  style={{
+                    background: isHovered 
+                      ? `radial-gradient(circle at ${(mousePos.x + 0.5) * 100}% ${(mousePos.y + 0.5) * 100}%, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 65%)` 
+                      : "none",
+                  }}
+                />
+
+                {/* UPPER COMPONENT: Milestone Icon wrapper */}
+                <div 
+                  className="mt-4"
+                  style={{
+                    transform: isHovered ? "translateZ(40px)" : "translateZ(0px)",
+                    transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                  }}
                 >
-                  <IconComponent
-                    className={`w-8 h-8 ${stat.iconColor} transition-all duration-300 group-hover:scale-110`}
-                    strokeWidth={1.5}
-                  />
-                </motion.div>
-
-                {/* Number */}
-                <div className="text-3xl md:text-4xl font-bold text-dark-800 mb-1">
-                  <AnimatedCounter end={stat.number} suffix={stat.suffix} />
+                  {IconComponent ? (
+                    <div className="w-12 h-12 rounded-full bg-amber-950/5 text-amber-800 flex items-center justify-center shadow-inner transition-all duration-500 group-hover:bg-amber-800 group-hover:text-white">
+                      <IconComponent className="w-5 h-5 stroke-[1.25]" />
+                    </div>
+                  ) : (
+                    // Fallback visual token marker for rows with alternate schemas
+                    <div className="text-amber-800/40 text-xs tracking-widest font-serif italic">✨</div>
+                  )}
                 </div>
 
-                {/* Label */}
-                <div className="text-dark-600 text-sm font-medium">
-                  {stat.label}
+                {/* CENTRAL COMPONENT: Metric Value presentation block */}
+                <div 
+                  style={{
+                    transform: isHovered ? "translateZ(60px)" : "translateZ(0px)",
+                    transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.02s",
+                  }}
+                >
+                  <div className="text-4xl lg:text-5xl font-light tracking-tight text-neutral-900 font-sans font-semibold">
+                    {counts[index]}
+                    <span className="text-amber-700 ml-0.5 font-normal">{stat.suffix}</span>
+                  </div>
                 </div>
 
-                {/* Progress Bar */}
-                <div className="mt-3 h-1 bg-pink-100 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full bg-gradient-to-r ${stat.color} rounded-full transition-all duration-1000`}
-                    style={{ width: `${(stat.number / 550) * 100}%` }}
-                  />
+                {/* LOWER COMPONENT: Explanatory text labels */}
+                <div 
+                  className="mb-6 px-3"
+                  style={{
+                    transform: isHovered ? "translateZ(35px)" : "translateZ(0px)",
+                    transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.05s",
+                  }}
+                >
+                  <div className="text-[10px] tracking-[0.2em] font-medium text-neutral-500 uppercase leading-relaxed">
+                    {stat.label}
+                  </div>
                 </div>
-              </motion.div>
+
+                {/* Outer Golden Cap Framing Rim line */}
+                <div
+                  className={`absolute inset-0 rounded-full border-2 transition-all duration-700 pointer-events-none z-20 ${
+                    isHovered ? "border-amber-700/30" : "border-transparent"
+                  }`}
+                />
+              </div>
             );
           })}
         </div>
+
       </div>
     </section>
   );

@@ -9,9 +9,14 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import PlanYourCelebration from "./pages/PlanYourCelebration";
 import Journal from "./pages/Journal";
+import { useSmoothScroll } from "./hooks/useSmoothScroll";
+import LuxuryCursorEffect from "./components/ui/LuxuryCursorEffect";
 
 function App() {
+  useSmoothScroll();
   return (
+    <>
+      <LuxuryCursorEffect />
     <Routes>
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Home />} />
@@ -25,6 +30,7 @@ function App() {
         <Route path="contact" element={<Contact />} />
       </Route>
     </Routes>
+    </>
   );
 }
 

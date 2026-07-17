@@ -1,645 +1,357 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, Sparkles, Maximize2 } from "lucide-react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Stars, Float, Sphere, Ring } from "@react-three/drei";
 import * as THREE from "three";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Sky Background Component
-const SkyBackground = () => {
-  const groupRef = useRef();
-  const mouseRef = useRef({ x: 0, y: 0 });
+// ─── HIGH-VISIBILITY COLORFUL CONSTELLATION BACKGROUND ───
+const ConstellationBackground = () => {
+  const pointsRef = useRef();
+  const linesMeshRef = useRef();
+  const count = 45; 
 
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      mouseRef.current = {
-        x: (e.clientX / window.innerWidth) * 2 - 1,
-        y: -(e.clientY / window.innerHeight) * 2 + 1,
-      };
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+  const jewelColors = useMemo(() => [
+    new THREE.Color("#059669"), // Emerald
+    new THREE.Color("#2563EB"), // Sapphire
+    new THREE.Color("#D946EF"), // Magenta
+    new THREE.Color("#7C3AED"), // Amethyst
+    new THREE.Color("#EA580C")  // Tiger Eye Amber
+  ], []);
+
+  const [positions, colors] = useMemo(() => {
+    const pos = new Float32Array(count * 3);
+    const cols = new Float32Array(count * 3);
+    
+    for (let i = 0; i < count; i++) {
+      const i3 = i * 3;
+      pos[i3] = (Math.random() - 0.5) * 10;      
+      pos[i3 + 1] = (Math.random() - 0.5) * 6;  
+      pos[i3 + 2] = (Math.random() - 0.5) * 4;  
+
+      const randomColor = jewelColors[Math.floor(Math.random() * jewelColors.length)];
+      cols[i3] = randomColor.r;
+      cols[i3 + 1] = randomColor.g;
+      cols[i3 + 2] = randomColor.b;
+    }
+    return [pos, cols];
+  }, [jewelColors]);
 
   useFrame((state) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y += 0.001;
-      groupRef.current.rotation.x =
-        Math.sin(state.clock.getElapsedTime() * 0.05) * 0.02;
+    const time = state.clock.getElapsedTime();
+    const pos = pointsRef.current.geometry.attributes.position.array;
+    const cols = pointsRef.current.geometry.attributes.color.array;
+    
+    for (let i = 0; i < count; i++) {
+      const i3 = i * 3;
+      pos[i3 + 1] += Math.sin(time * 0.3 + pos[i3]) * 0.002; 
+      pos[i3] += Math.cos(time * 0.2 + pos[i3 + 1]) * 0.001;  
+    }
+    pointsRef.current.geometry.attributes.position.needsUpdate = true;
 
-      groupRef.current.position.x +=
-        (mouseRef.current.x * 0.2 - groupRef.current.position.x) * 0.05;
-      groupRef.current.position.y +=
-        (mouseRef.current.y * 0.2 - groupRef.current.position.y) * 0.05;
+    const lineCoords = [];
+    const lineColors = [];
+
+    for (let i = 0; i < count; i++) {
+      const i3 = i * 3;
+      const x1 = pos[i3];
+      const y1 = pos[i3 + 1];
+      const z1 = pos[i3 + 2];
+
+      for (let j = i + 1; j < count; j++) {
+        const j3 = j * 3;
+        const x2 = pos[j3];
+        const y2 = pos[j3 + 1];
+        const z2 = pos[j3 + 2];
+
+        const dist = Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2 + (z1 - z2) ** 2);
+        
+        if (dist < 2.6) {
+          lineCoords.push(x1, y1, z1, x2, y2, z2);
+          lineColors.push(cols[i3], cols[i3 + 1], cols[i3 + 2]);
+          lineColors.push(cols[j3], cols[j3 + 1], cols[j3 + 2]);
+        }
+      }
+    }
+
+    if (linesMeshRef.current && lineCoords.length > 0) {
+      linesMeshRef.current.geometry.setAttribute(
+        "position",
+        new THREE.Float32BufferAttribute(lineCoords, 3)
+      );
+      linesMeshRef.current.geometry.setAttribute(
+        "color",
+        new THREE.Float32BufferAttribute(lineColors, 3)
+      );
+      linesMeshRef.current.geometry.attributes.position.needsUpdate = true;
+      linesMeshRef.current.geometry.attributes.color.needsUpdate = true;
     }
   });
 
   return (
-    <group ref={groupRef}>
-      <ambientLight intensity={0.3} />
-      <directionalLight position={[5, 5, 5]} intensity={0.5} />
-      <pointLight position={[-5, -5, -5]} intensity={0.3} />
+    <group>
+      <points ref={pointsRef}>
+        <bufferGeometry>
+          <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+          <bufferAttribute attach="attributes-color" args={[colors, 3]} />
+        </bufferGeometry>
+        <pointsMaterial size={0.12} vertexColors transparent opacity={0.65} sizeAttenuation />
+      </points>
 
-      <Float speed={0.5} rotationIntensity={0.3} floatIntensity={0.3}>
-        <Sphere args={[2, 64, 64]} position={[-4, 3, -3]}>
-          <meshPhysicalMaterial
-            color="#FFD700"
-            metalness={0.1}
-            roughness={0.2}
-            transparent
-            opacity={0.15}
-            emissive="#FFD700"
-            emissiveIntensity={0.1}
-          />
-        </Sphere>
-      </Float>
-
-      <Float speed={0.8} rotationIntensity={0.2} floatIntensity={0.2}>
-        <Sphere args={[1.5, 48, 48]} position={[4, -2, -4]}>
-          <meshPhysicalMaterial
-            color="#FF1493"
-            metalness={0.3}
-            roughness={0.4}
-            transparent
-            opacity={0.08}
-          />
-        </Sphere>
-      </Float>
-
-      <Float speed={0.6} rotationIntensity={0.3} floatIntensity={0.3}>
-        <Sphere args={[1.8, 48, 48]} position={[-3, -1, -5]}>
-          <meshPhysicalMaterial
-            color="#8B5CF6"
-            metalness={0.2}
-            roughness={0.5}
-            transparent
-            opacity={0.06}
-          />
-        </Sphere>
-      </Float>
-
-      <Float speed={0.4} rotationIntensity={0.1} floatIntensity={0.1}>
-        <Ring
-          args={[3, 3.5, 64]}
-          position={[0, 2, -6]}
-          rotation={[Math.PI / 4, 0, 0]}
-        >
-          <meshPhysicalMaterial
-            color="#FF6B6B"
-            metalness={0.6}
-            roughness={0.2}
-            transparent
-            opacity={0.05}
-            side={THREE.DoubleSide}
-          />
-        </Ring>
-      </Float>
-
-      <Float speed={0.5} rotationIntensity={0.2} floatIntensity={0.2}>
-        <Ring
-          args={[2.5, 3, 64]}
-          position={[3, -1, -7]}
-          rotation={[Math.PI / 3, 0.5, 0]}
-        >
-          <meshPhysicalMaterial
-            color="#FFB6C1"
-            metalness={0.4}
-            roughness={0.3}
-            transparent
-            opacity={0.04}
-            side={THREE.DoubleSide}
-          />
-        </Ring>
-      </Float>
-
-      <Stars
-        radius={20}
-        depth={10}
-        count={500}
-        factor={4}
-        saturation={0.2}
-        fade
-        speed={0.5}
-      />
+      <lineSegments ref={linesMeshRef}>
+        <bufferGeometry />
+        <lineBasicMaterial vertexColors transparent opacity={0.28} linewidth={1.5} />
+      </lineSegments>
     </group>
   );
 };
 
-// Image data
-const celebrations = [
-  {
-    id: 1,
-    image:
-      "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&h=400&fit=crop",
-    position: 1,
-  },
-  {
-    id: 2,
-    image:
-      "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=600&h=400&fit=crop",
-    position: 2,
-  },
-  {
-    id: 3,
-    image:
-      "https://images.unsplash.com/photo-1592656094267-764a45160876?w=600&h=400&fit=crop",
-    position: 3,
-  },
-  {
-    id: 4,
-    image:
-      "https://images.unsplash.com/photo-1593693397690-362cb9666fc2?w=600&h=400&fit=crop",
-    position: 4,
-  },
-  {
-    id: 5,
-    image:
-      "https://images.unsplash.com/photo-1585409677983-0f6c41ca9c3b?w=600&h=400&fit=crop",
-    position: 5,
-  },
+// ─── GALLERY DATA ───
+const galleryItems = [
+  { id: 1, image: "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80", title: "Palace Banquet Architecture" },
+  { id: 2, image: "https://images.unsplash.com/photo-1545232979-8bf34eb9757b?w=800&q=80", title: "Royal Ceremonial Altar" },
+  { id: 3, image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=80", title: "Grand Reception Chandelier" },
+  { id: 4, image: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=800&q=80", title: "Sensory Floral Mandap" },
+  { id: 5, image: "https://images.unsplash.com/photo-1592656094267-764a45160876?w=800&q=80", title: "The Maharani Attire Detail" },
+  { id: 6, image: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=800&q=80", title: "Sensory Reception Dining" },
+  { id: 7, image: "https://images.unsplash.com/photo-1507504038482-7621c21ad22f?w=800&q=80", title: "Palatial Stage Decor Architecture" },
+  { id: 8, image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80", title: "Scenic Valleys Horizon Vows" },
+  { id: 9, image: "https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=800&q=80", title: "Ethereal Illumination Canopy" },
+  { id: 10, image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&q=80", title: "Oceanic Island Fortress Marina" },
+  { id: 11, image: "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=800&q=80", title: "Velvet Couture Nocturne" },
+  { id: 12, image: "https://images.unsplash.com/photo-1519225495810-7512c696505a?w=800&q=80", title: "Ethereal Glasshouse Banqueting" }
 ];
 
 const FeaturedCelebrations = () => {
   const sectionRef = useRef(null);
-  const cardsRef = useRef([]);
-  const [hoveredIndex, setHoveredIndex] = useState(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
+  const flexContainerRef = useRef(null);
+  const [activeLightbox, setActiveLightbox] = useState(null);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 640);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    cardsRef.current.forEach((card, i) => {
-      gsap.fromTo(
-        card,
-        { opacity: 0, y: 60, scale: 0.8, rotateY: 20 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          rotateY: 0,
-          duration: 1,
-          delay: i * 0.15,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: card,
-            start: "top 85%",
-            toggleActions: "play none none reverse",
-          },
+    const columns = flexContainerRef.current.querySelectorAll(".gallery-column");
+    gsap.fromTo(
+      columns,
+      { opacity: 0, y: 50 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 1.2,
+        ease: "power3.out",
+        stagger: 0.08,
+        scrollTrigger: {
+          trigger: flexContainerRef.current,
+          start: "top 85%",
         },
-      );
-    });
+      }
+    );
 
     return () => {
       ScrollTrigger.getAll().forEach((t) => t.kill());
     };
   }, []);
 
-  const getCardSize = (position) => {
-    if (position === 3) return "large";
-    if (position === 2 || position === 4) return "medium";
-    return "small";
-  };
-
-  const getWidthClass = (size) => {
-    if (size === "large") return "w-[32%] md:w-[30%]";
-    if (size === "medium") return "w-[28%] md:w-[22%]";
-    return "w-[24%] md:w-[16%]";
-  };
-
-  const getHeightClass = (position) => {
-    if (position === 3) return "h-[320px] sm:h-[380px] md:h-[420px]";
-    if (position === 2 || position === 4)
-      return "h-[280px] sm:h-[340px] md:h-[380px]";
-    return "h-[240px] sm:h-[300px] md:h-[340px]";
-  };
-
-  const handleMouseMove = (e, index) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    setMousePosition({ x, y });
-    setHoveredIndex(index);
-  };
-
-  const handleMouseLeave = () => {
-    setHoveredIndex(null);
-    setMousePosition({ x: 0, y: 0 });
-  };
-
-  const getTiltTransform = (index) => {
-    if (hoveredIndex === index) {
-      return `perspective(1000px) rotateY(${mousePosition.x * 25}deg) rotateX(${-mousePosition.y * 25}deg) scale(1.08) translateZ(30px)`;
-    }
-    return "perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1) translateZ(0px)";
-  };
-
-  // Mobile Slide Navigation
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % celebrations.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide(
-      (prev) => (prev - 1 + celebrations.length) % celebrations.length,
-    );
-  };
-
-  // Get visible cards for mobile (showing 2 at a time)
-  const getVisibleCards = () => {
-    if (!isMobile) return celebrations;
-
-    const visible = [];
-    for (let i = 0; i < celebrations.length; i++) {
-      const index = (currentSlide + i) % celebrations.length;
-      visible.push(celebrations[index]);
-      if (visible.length === 2) break;
-    }
-    return visible;
-  };
-
-  const visibleCards = getVisibleCards();
-
   return (
     <section
       ref={sectionRef}
-      className="w-full bg-gradient-to-b from-dark-900 via-dark-800 to-dark-900 relative overflow-hidden py-12 sm:py-16 md:py-20"
+      className="relative w-full overflow-hidden text-neutral-800"
+      style={{
+        backgroundColor: "#FAF9F5",
+        paddingTop: "6rem",
+        paddingBottom: "6rem",
+      }}
     >
-      {/* 3D Sky Background */}
-      <div className="absolute inset-0 pointer-events-none">
-        <Canvas
-          camera={{ position: [0, 0, 8], fov: 50 }}
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            pointerEvents: "none",
-          }}
-        >
-          <SkyBackground />
-          <OrbitControls
-            enableZoom={false}
-            enablePan={false}
-            autoRotate
-            autoRotateSpeed={0.2}
-            enableDamping
-            dampingFactor={0.05}
-          />
+      {/* Background WebGL Canvas Layer */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <Canvas camera={{ position: [0, 0, 5], fov: 50 }} style={{ position: "absolute", inset: 0 }}>
+          <ConstellationBackground />
         </Canvas>
       </div>
 
-      {/* Decorative Elements */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-pink-500/30 to-transparent" />
-      <div className="absolute -top-40 -right-40 w-96 h-96 bg-pink-500/5 rounded-full blur-3xl" />
-      <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-rose-500/5 rounded-full blur-3xl" />
+      <div className="max-w-[1440px] mx-auto px-4 relative z-10">
+        
+        {/* Section Header */}
+        <div className="text-center mb-14">
+          <h2 className="text-3xl md:text-4xl font-serif font-light tracking-wide text-neutral-900">
+            A Glimpse of Our Work
+          </h2>
+          <div className="flex items-center justify-center gap-3 mt-4 max-w-xs mx-auto">
+            <div className="h-[1px] w-full bg-gradient-to-r from-transparent to-amber-700/40" />
+            <div className="w-1.5 h-1.5 rounded-full bg-amber-700/60 flex-shrink-0" />
+            <div className="h-[1px] w-full bg-gradient-to-l from-transparent to-amber-700/40" />
+          </div>
+        </div>
 
-      {/* Floating Sparkles */}
-      {[...Array(6)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute text-pink-400/20"
-          style={{
-            left: 5 + Math.random() * 90 + "%",
-            top: 5 + Math.random() * 90 + "%",
-          }}
-          animate={{
-            scale: [0, 1.5, 0],
-            opacity: [0, 0.6, 0],
-            rotate: [0, 180, 360],
-          }}
-          transition={{
-            duration: 4 + Math.random() * 3,
-            repeat: Infinity,
-            delay: Math.random() * 4,
-          }}
+        {/* ─── ASYMMETRIC MAPPED COLUMNS SYSTEM ─── */}
+        <div 
+          ref={flexContainerRef}
+          className="flex flex-col md:flex-row gap-3.5 items-start justify-center w-full"
+          style={{ perspective: "1500px" }} // Globally scales perspective for the cards inside
         >
-          <Sparkles size={20 + Math.random() * 25} />
-        </motion.div>
-      ))}
-
-      <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12">
-        <div className="max-w-7xl mx-auto">
-          {/* Section Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-8 sm:mb-12"
-          >
-            <span className="text-pink-400 font-semibold text-xs sm:text-sm uppercase tracking-widest inline-flex items-center gap-2">
-              <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
-              FEATURED CELEBRATIONS
-              <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
-            </span>
-            <h2 className="text-2xl sm:text-3xl md:text-5xl font-playfair font-bold text-white mt-2">
-              Our Most Memorable
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-rose-400 block">
-                Wedding Stories
-              </span>
-            </h2>
-            <p className="text-gray-400 text-sm sm:text-base md:text-lg mt-3 sm:mt-4 max-w-2xl mx-auto px-4">
-              Each celebration is a unique masterpiece crafted with love and
-              perfection
-            </p>
-          </motion.div>
-
-          {/* Mobile Slide Controls - Only on Mobile */}
-          {isMobile && (
-            <div className="flex items-center justify-between gap-4 mb-4 sm:hidden">
-              <button
-                onClick={prevSlide}
-                className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300"
-                aria-label="Previous"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <div className="flex gap-1.5">
-                {celebrations.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setCurrentSlide(idx)}
-                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                      idx === currentSlide ? "bg-pink-500 w-6" : "bg-white/30"
-                    }`}
-                  />
-                ))}
-              </div>
-              <button
-                onClick={nextSlide}
-                className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300"
-                aria-label="Next"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
-          )}
-
-          {/* 3D Image Cards - Desktop: Single Row, Mobile: Slide */}
-          <div className="flex justify-center items-end gap-2 sm:gap-3 md:gap-4 mt-4 sm:mt-8">
-            {isMobile ? (
-              // Mobile: Slide Cards (2 at a time)
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentSlide}
-                  initial={{ opacity: 0, x: 50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -50 }}
-                  transition={{ duration: 0.4 }}
-                  className="flex justify-center items-end gap-3 w-full"
-                >
-                  {visibleCards.map((celebration, idx) => {
-                    const size = getCardSize(celebration.position);
-                    const isLarge = size === "large";
-                    const isMedium = size === "medium";
-                    const widthClass = "w-[48%]";
-                    const heightClass = "h-[280px]";
-
-                    return (
-                      <motion.div
-                        key={celebration.id}
-                        className={`relative rounded-2xl overflow-hidden shadow-2xl ${widthClass} ${heightClass} group cursor-pointer flex-shrink-0`}
-                        whileHover={{ scale: 1.05 }}
-                      >
-                        <img
-                          src={celebration.image}
-                          alt={`Celebration ${celebration.id}`}
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-dark-900/60 via-transparent to-transparent" />
-
-                        {/* Position Number */}
-                        <div className="absolute bottom-3 right-3 z-20 text-white/20 text-4xl font-bold">
-                          {String(celebration.position).padStart(2, "0")}
-                        </div>
-
-                        {/* Image Counter */}
-                        <div className="absolute bottom-3 left-3 z-20 text-white/60 text-xs font-light">
-                          <span className="bg-dark-900/50 backdrop-blur-sm px-2 py-0.5 rounded-full">
-                            {idx + 1} / {visibleCards.length}
-                          </span>
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-                </motion.div>
-              </AnimatePresence>
-            ) : (
-              // Desktop: All 5 cards in a row
-              celebrations.map((celebration, index) => {
-                const size = getCardSize(celebration.position);
-                const isLarge = size === "large";
-                const isMedium = size === "medium";
-                const widthClass = getWidthClass(size);
-                const heightClass = getHeightClass(celebration.position);
-
-                let visibilityClass = "";
-                if (celebration.position === 3) {
-                  visibilityClass = "flex";
-                } else if (
-                  celebration.position === 2 ||
-                  celebration.position === 4
-                ) {
-                  visibilityClass = "hidden sm:flex";
-                } else {
-                  visibilityClass = "hidden md:flex";
-                }
-
-                return (
-                  <motion.div
-                    key={celebration.id}
-                    ref={(el) => (cardsRef.current[index] = el)}
-                    className={`relative rounded-2xl overflow-hidden transition-all duration-500 shadow-2xl ${widthClass} ${heightClass} ${visibilityClass} group cursor-pointer flex-shrink-0`}
-                    style={{
-                      transform: getTiltTransform(index),
-                      transition: "transform 0.3s ease-out",
-                      transformStyle: "preserve-3d",
-                    }}
-                    onMouseMove={(e) => handleMouseMove(e, index)}
-                    onMouseLeave={handleMouseLeave}
-                    whileHover={{
-                      scale: isLarge ? 1.06 : isMedium ? 1.08 : 1.1,
-                      transition: { duration: 0.3 },
-                    }}
-                  >
-                    <div className="absolute inset-0">
-                      <img
-                        src={celebration.image}
-                        alt={`Celebration ${celebration.id}`}
-                        className="w-full h-full object-cover transition-transform duration-700"
-                        style={{
-                          transform:
-                            hoveredIndex === index ? "scale(1.15)" : "scale(1)",
-                        }}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-dark-900/60 via-transparent to-transparent" />
-                    </div>
-
-                    {/* Animated Border Glow */}
-                    <motion.div
-                      className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-pink-400 via-rose-400 to-pink-400 opacity-0"
-                      animate={{
-                        opacity: hoveredIndex === index ? 1 : 0,
-                      }}
-                      transition={{ duration: 0.4 }}
-                      style={{ zIndex: -1 }}
-                    />
-
-                    {/* Floating Particles on Hover */}
-                    {hoveredIndex === index && (
-                      <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
-                        {[...Array(10)].map((_, i) => (
-                          <motion.div
-                            key={i}
-                            className="absolute rounded-full"
-                            style={{
-                              width: 2 + Math.random() * 4,
-                              height: 2 + Math.random() * 4,
-                              background: i % 2 === 0 ? "#EC4899" : "#F43F5E",
-                            }}
-                            initial={{
-                              x: Math.random() * 100 + "%",
-                              y: Math.random() * 100 + "%",
-                              scale: 0,
-                            }}
-                            animate={{
-                              x: `${Math.random() * 100}%`,
-                              y: `${Math.random() * 100}%`,
-                              scale: [0, 3, 0],
-                              opacity: [0, 1, 0],
-                            }}
-                            transition={{
-                              duration: 1.5 + Math.random(),
-                              repeat: Infinity,
-                              delay: Math.random() * 0.5,
-                            }}
-                          />
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Featured Badge for Center Card */}
-                    {isLarge && (
-                      <motion.div
-                        className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-[8px] sm:text-[10px] font-bold px-2 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-lg shadow-pink-500/40"
-                        initial={{ opacity: 0, scale: 0, y: -20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        transition={{ delay: 0.7, type: "spring" }}
-                      >
-                        ✨ FEATURED
-                      </motion.div>
-                    )}
-
-                    {/* Position Number */}
-                    <motion.div
-                      className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-20 text-white/20 text-4xl sm:text-6xl font-bold"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 0.2 }}
-                      transition={{ delay: 0.5 }}
-                    >
-                      {String(celebration.position).padStart(2, "0")}
-                    </motion.div>
-
-                    {/* Hover Indicator Overlay */}
-                    <motion.div
-                      className="absolute inset-0 flex items-center justify-center pointer-events-none z-10 bg-dark-900/0"
-                      initial={{ opacity: 0 }}
-                      animate={{
-                        opacity: hoveredIndex === index ? 1 : 0,
-                      }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <motion.div
-                        className="bg-white/10 backdrop-blur-sm rounded-full p-3 sm:p-4 border-2 border-white/40 shadow-2xl"
-                        initial={{ scale: 0, rotate: -45 }}
-                        animate={{
-                          scale: hoveredIndex === index ? 1 : 0,
-                          rotate: hoveredIndex === index ? 0 : -45,
-                        }}
-                        transition={{ duration: 0.4, type: "spring" }}
-                      >
-                        <Sparkles className="w-5 h-5 sm:w-8 sm:h-8 text-white" />
-                      </motion.div>
-                    </motion.div>
-
-                    {/* Glow Ring on Hover */}
-                    <motion.div
-                      className="absolute inset-0 rounded-2xl border-2 border-pink-400/0 pointer-events-none"
-                      animate={{
-                        borderColor:
-                          hoveredIndex === index
-                            ? "rgba(236, 72, 153, 0.5)"
-                            : "rgba(236, 72, 153, 0)",
-                        boxShadow:
-                          hoveredIndex === index
-                            ? "inset 0 0 80px rgba(236, 72, 153, 0.15)"
-                            : "inset 0 0 0px rgba(236, 72, 153, 0)",
-                      }}
-                      transition={{ duration: 0.4 }}
-                    />
-
-                    {/* Image Counter on Hover */}
-                    <motion.div
-                      className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 z-20 text-white/60 text-[10px] sm:text-xs font-light"
-                      initial={{ opacity: 0 }}
-                      animate={{
-                        opacity: hoveredIndex === index ? 1 : 0,
-                      }}
-                      transition={{ duration: 0.3, delay: 0.1 }}
-                    >
-                      <span className="bg-dark-900/50 backdrop-blur-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-full">
-                        {index + 1} / {celebrations.length}
-                      </span>
-                    </motion.div>
-                  </motion.div>
-                );
-              })
-            )}
+          {/* COLUMN 1 */}
+          <div className="gallery-column w-full md:w-[13.5%] flex flex-col gap-3.5">
+            <GalleryTile item={galleryItems[0]} onClick={() => setActiveLightbox(galleryItems[0])} className="aspect-[4/3]" />
+            <GalleryTile item={galleryItems[1]} onClick={() => setActiveLightbox(galleryItems[1])} className="aspect-[3/4]" />
           </div>
 
-          {/* View All Button */}
+          {/* COLUMN 2 */}
+          <div className="gallery-column w-full md:w-[19.5%]">
+            <GalleryTile item={galleryItems[2]} onClick={() => setActiveLightbox(galleryItems[2])} className="h-[420px] lg:h-[460px]" />
+          </div>
+
+          {/* COLUMN 3 */}
+          <div className="gallery-column w-full md:w-[22.5%] flex flex-col gap-3.5">
+            <GalleryTile item={galleryItems[3]} onClick={() => setActiveLightbox(galleryItems[3])} className="aspect-[4/3]" />
+            <div className="flex gap-3.5 w-full">
+              <GalleryTile item={galleryItems[4]} onClick={() => setActiveLightbox(galleryItems[4])} className="aspect-square w-1/2" />
+              <GalleryTile item={galleryItems[5]} onClick={() => setActiveLightbox(galleryItems[5])} className="aspect-square w-1/2" />
+            </div>
+          </div>
+
+          {/* COLUMN 4 */}
+          <div className="gallery-column w-full md:w-[18%] flex flex-col gap-3.5">
+            <GalleryTile item={galleryItems[6]} onClick={() => setActiveLightbox(galleryItems[6])} className="aspect-[3/4]" />
+            <GalleryTile item={galleryItems[7]} onClick={() => setActiveLightbox(galleryItems[7])} className="aspect-[4/3]" />
+          </div>
+
+          {/* COLUMN 5 */}
+          <div className="gallery-column w-full md:w-[12.5%] flex flex-col gap-3.5">
+            <GalleryTile item={galleryItems[8]} onClick={() => setActiveLightbox(galleryItems[8])} className="aspect-square" />
+            <GalleryTile item={galleryItems[9]} onClick={() => setActiveLightbox(galleryItems[9])} className="aspect-[3/4]" />
+          </div>
+
+          {/* COLUMN 6 */}
+          <div className="gallery-column w-full md:w-[14%] flex flex-col gap-3.5">
+            <GalleryTile item={galleryItems[10]} onClick={() => setActiveLightbox(galleryItems[10])} className="aspect-[4/3]" />
+            <GalleryTile item={galleryItems[11]} onClick={() => setActiveLightbox(galleryItems[11])} className="aspect-[4/3]" />
+          </div>
+        </div>
+
+      </div>
+
+      {/* ─── LIGHTBOX MODAL WITH FULL SCREEN ZOOM ─── */}
+      <AnimatePresence>
+        {activeLightbox && (
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-center mt-8 sm:mt-12"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setActiveLightbox(null)}
+            className="fixed inset-0 w-full h-full z-[10000] bg-neutral-950/85 backdrop-blur-xl flex items-center justify-center p-4 md:p-8 cursor-zoom-out"
           >
-            <button className="relative px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold text-white border-2 border-pink-500/50 hover:border-pink-400 transition-all duration-300 group overflow-hidden text-sm sm:text-base">
-              <span className="relative z-10 flex items-center gap-2">
-                View All Celebrations
-                <svg
-                  className="w-4 h-4 group-hover:translate-x-1 transition-transform"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </span>
-              <span className="absolute inset-0 bg-gradient-to-r from-pink-500/20 to-rose-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <button 
+              className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors bg-white/5 border border-white/10 p-3 rounded-full backdrop-blur-md"
+              onClick={() => setActiveLightbox(null)}
+            >
+              <X className="w-4 h-4" />
             </button>
+
+            <motion.div
+              initial={{ scale: 0.94, y: 15 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.94, y: 15 }}
+              transition={{ type: "spring", damping: 28, stiffness: 280 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative max-w-5xl max-h-[85vh] bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col border border-neutral-200"
+            >
+              <img 
+                src={activeLightbox.image} 
+                alt={activeLightbox.title} 
+                className="w-full h-auto max-h-[72vh] object-contain bg-neutral-50"
+              />
+              <div className="p-5 bg-white border-t border-neutral-100 flex justify-between items-center">
+                <div>
+                  <span className="text-[9px] font-semibold tracking-widest text-amber-800 uppercase block mb-1">VIOLIN CURATED ARCHIVE</span>
+                  <h3 className="font-serif font-light text-lg text-neutral-900">{activeLightbox.title}</h3>
+                </div>
+                <div className="w-8 h-8 rounded-full bg-amber-950/5 flex items-center justify-center text-amber-800">
+                  <Sparkles className="w-3.5 h-3.5" />
+                </div>
+              </div>
+            </motion.div>
           </motion.div>
+        )}
+      </AnimatePresence>
+    </section>
+  );
+};
+
+// ─── HIGH-END INTERACTIVE 3D PERSPECTIVE TILE ───
+const GalleryTile = ({ item, className = "", onClick }) => {
+  const tileRef = useRef(null);
+  const [coords, setCoords] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = (e) => {
+    const rect = tileRef.current.getBoundingClientRect();
+    // Translate mouse positions to a relative matrix (-0.5 to 0.5)
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    setCoords({ x, y });
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    setCoords({ x: 0, y: 0 });
+  };
+
+  // Compute live 3D matrix properties based on normalized vector position
+  const tiltRotate = isHovered
+    ? `rotateY(${coords.x * 24}deg) rotateX(${-coords.y * 24}deg) scale(1.04)`
+    : "rotateY(0deg) rotateX(0deg) scale(1)";
+
+  return (
+    <div
+      ref={tileRef}
+      onClick={onClick}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className={`gallery-tile relative rounded-2xl overflow-hidden shadow-md hover:shadow-2xl border border-neutral-200/40 cursor-zoom-in w-full ${className}`}
+      style={{
+        transform: tiltRotate,
+        transformStyle: "preserve-3d",
+        transition: isHovered ? "none" : "transform 0.5s ease-out, shadow 0.5s ease",
+      }}
+    >
+      {/* Image layer inside 3D bounds */}
+      <img
+        src={item.image}
+        alt={item.title}
+        className="w-full h-full object-cover select-none pointer-events-none transition-transform duration-[1.2s]"
+        style={{
+          transform: isHovered ? "scale(1.05) translateZ(10px)" : "scale(1) translateZ(0px)",
+        }}
+      />
+
+      {/* Dynamic Specular Light Glare Reflection Map */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+        style={{
+          opacity: isHovered ? 1 : 0,
+          background: isHovered
+            ? `radial-gradient(circle at ${(coords.x + 0.5) * 100}% ${(coords.y + 0.5) * 100}%, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 60%)`
+            : "none",
+        }}
+      />
+
+      {/* Bottom Information Title Reveal Layer */}
+      <div 
+        className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-neutral-950/60 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500 flex items-end p-4 z-20"
+        style={{
+          opacity: isHovered ? 1 : 0,
+          transform: isHovered ? "translateZ(25px)" : "translateZ(0px)",
+          transition: "transform 0.4s ease-out",
+        }}
+      >
+        <div className="flex justify-between items-center w-full text-white">
+          <span className="font-serif italic text-xs tracking-wide">{item.title}</span>
+          <Maximize2 className="w-3.5 h-3.5 opacity-60" />
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

@@ -5,20 +5,20 @@ import Button from "../ui/Button";
 
 const ExtraordinarySection = () => {
   return (
-    <section className="w-full bg-gradient-to-b from-white to-pink-50/30 relative overflow-hidden  sm:py-12 md:py-16">
+    <section className="w-full bg-gradient-to-b from-white to-pink-50/30 relative overflow-hidden  ">
       {/* Decorative Elements */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-pink-200 to-transparent" />
       <div className="absolute -top-20 -right-20 w-48 h-48 md:w-64 md:h-64 bg-pink-500/5 rounded-full blur-3xl" />
       <div className="absolute -bottom-20 -left-20 w-48 h-48 md:w-64 md:h-64 bg-rose-500/5 rounded-full blur-3xl" />
 
       {/* Floating Sparkles */}
-      {[...Array(4)].map((_, i) => (
+      {[...Array(4)].map((_, i) => (  
         <motion.div
           key={i}
           className="absolute text-pink-300/20"
           style={{
             left: 5 + Math.random() * 90 + "%",
-            top: 5 + Math.random() * 90 + "%",
+            top: 5 + Math.random() * 90 + "%",  
           }}
           animate={{
             scale: [0, 1.5, 0],

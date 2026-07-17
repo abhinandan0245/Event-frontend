@@ -16,95 +16,91 @@ const Footer = () => {
   ];
 
   const socialLinks = [
-    {
-      icon: FaFacebookF,
-      href: "#",
-      label: "Facebook",
-      color: "hover:bg-blue-600",
-    },
-    {
-      icon: FaInstagram,
-      href: "#",
-      label: "Instagram",
-      color: "hover:bg-pink-600",
-    },
-    {
-      icon: FaTwitter,
-      href: "#",
-      label: "Twitter",
-      color: "hover:bg-blue-400",
-    },
-    { icon: FaYoutube, href: "#", label: "Youtube", color: "hover:bg-red-600" },
+    { icon: FaFacebookF, href: "#", label: "Facebook" },
+    { icon: FaInstagram, href: "#", label: "Instagram" },
+    { icon: FaTwitter, href: "#", label: "Twitter" },
+    { icon: FaYoutube, href: "#", label: "Youtube" },
   ];
 
   return (
-    <footer className="bg-dark-900 text-white relative overflow-hidden">
-      {/* Decorative Top Border */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold-500/50 to-transparent" />
+    <footer
+      className="relative w-full overflow-hidden text-neutral-800"
+      style={{
+        backgroundColor: "#FAF9F5", // Canvas luxury alabaster white
+        borderTop: "1px solid rgba(180, 140, 80, 0.2)", // Fine golden top accent split
+      }}
+    >
+      {/* Soft background ambient lighting map layer */}
+      <div
+        className="absolute top-0 left-1/4 w-[400px] h-[400px] pointer-events-none rounded-full blur-[100px] z-0 opacity-40"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(245,238,220,0.8) 0%, rgba(245,238,220,0) 70%)",
+        }}
+      />
 
-      {/* Decorative Elements */}
-      <div className="absolute -top-20 -right-20 w-64 h-64 bg-pink-500/5 rounded-full blur-3xl" />
-      <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-gold-500/5 rounded-full blur-3xl" />
-
-      {/* Main Footer */}
-      <div className="container-custom relative z-10 pt-16 pb-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-          {/* Brand Section */}
+      {/* Main Content Area */}
+      <div className="max-w-7xl mx-auto px-6 relative z-10 pt-20 pb-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
+          {/* Brand Presentation Deck */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="space-y-4"
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="flex flex-col gap-5"
           >
             <Link to="/" className="inline-block">
-              <h2 className="text-3xl font-playfair font-bold">
-                <span className="gradient-gold bg-clip-text text-transparent">
-                  VIOLIN
+              <h2 className="text-2xl font-serif font-light tracking-[0.25em] text-neutral-900 uppercase">
+                VIOLIN
+                <span className="text-[10px] tracking-widest text-amber-800 font-sans font-semibold ml-2 block sm:inline">
+                  EVENTS LLP
                 </span>
-                <span className="text-white/60 text-sm ml-1">EVENTS LLP</span>
               </h2>
             </Link>
-            <p className="text-dark-300 text-sm leading-relaxed max-w-xs">
-              Crafting extraordinary events across India's most magnificent
-              destinations. From royal palaces to pristine beaches, we create
-              memories that last forever.
+
+            <p className="text-xs text-neutral-500 font-light leading-relaxed tracking-wide max-w-xs">
+              Crafting extraordinary milestone experiences across India's most
+              magnificent heritages. From royal palaces to serene horizons, we
+              manifest architectural perfection.
             </p>
-            <div className="flex space-x-3 pt-2">
+
+            {/* Premium Social Media Icons Grid */}
+            <div className="flex gap-3 pt-2">
               {socialLinks.map((social, index) => (
                 <motion.a
                   key={index}
                   href={social.href}
-                  whileHover={{ scale: 1.15, y: -3 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`w-10 h-10 bg-dark-700/50 backdrop-blur-sm rounded-full flex items-center justify-center ${social.color} transition-all duration-300 border border-white/5 hover:border-white/20`}
+                  whileHover={{ scale: 1.08, y: -2 }}
+                  whileTap={{ scale: 0.96 }}
+                  className="w-9 h-9 rounded-full bg-white border border-neutral-200/80 hover:border-amber-700/50 hover:bg-neutral-900 hover:text-white flex items-center justify-center text-neutral-600 transition-colors duration-300 shadow-sm"
                   aria-label={social.label}
                 >
-                  <social.icon size={16} />
+                  <social.icon size={13} />
                 </motion.a>
               ))}
             </div>
           </motion.div>
 
-          {/* Quick Links */}
+          {/* Quick Links Column */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
+            transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
           >
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <span className="w-1 h-6 bg-gradient-to-b from-gold-500 to-gold-600 rounded-full" />
-              Quick Links
+            <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-neutral-900 mb-6 flex items-center gap-2">
+              <span className="w-1 h-3 bg-amber-700/40 rounded-full" />
+              Navigation
             </h3>
-            <ul className="space-y-3">
+            <ul className="space-y-3.5">
               {quickLinks.map((link) => (
                 <li key={link.path}>
                   <Link
                     to={link.path}
-                    className="text-dark-300 hover:text-gold-500 transition-colors flex items-center group text-sm"
+                    className="text-xs text-neutral-500 hover:text-amber-800 transition-colors flex items-center group font-light tracking-wide"
                   >
                     <ChevronRight
-                      size={14}
-                      className="mr-2 transition-all duration-300 group-hover:translate-x-1 group-hover:text-gold-500"
+                      size={12}
+                      className="mr-1.5 opacity-40 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-amber-700 group-hover:opacity-100"
                     />
                     {link.label}
                   </Link>
@@ -113,93 +109,99 @@ const Footer = () => {
             </ul>
           </motion.div>
 
-          {/* Contact Info */}
+          {/* Contact Details Column */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
           >
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <span className="w-1 h-6 bg-gradient-to-b from-gold-500 to-gold-600 rounded-full" />
-              Contact Us
+            <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-neutral-900 mb-6 flex items-center gap-2">
+              <span className="w-1 h-3 bg-amber-700/40 rounded-full" />
+              Inquiries
             </h3>
             <ul className="space-y-4">
-              <li className="flex items-start space-x-3 text-dark-300 text-sm group">
-                <div className="w-9 h-9 rounded-lg bg-gold-500/10 flex items-center justify-center flex-shrink-0 group-hover:bg-gold-500/20 transition-colors">
-                  <MapPin size={16} className="text-gold-500" />
+              <li className="flex items-start space-x-3.5 text-xs text-neutral-500 font-light tracking-wide group">
+                <div className="w-8 h-8 rounded-full bg-amber-950/5 flex items-center justify-center flex-shrink-0 group-hover:bg-amber-800 group-hover:text-white transition-colors duration-300">
+                  <MapPin
+                    size={14}
+                    className="text-amber-800 group-hover:text-white transition-colors"
+                  />
                 </div>
-                <span className="mt-1.5">Jaipur, Rajasthan, India</span>
+                <span className="mt-2">Jaipur, Rajasthan, India</span>
               </li>
-              <li className="flex items-center space-x-3 text-dark-300 text-sm group">
-                <div className="w-9 h-9 rounded-lg bg-gold-500/10 flex items-center justify-center flex-shrink-0 group-hover:bg-gold-500/20 transition-colors">
-                  <Phone size={16} className="text-gold-500" />
+              <li className="flex items-start space-x-3.5 text-xs text-neutral-500 font-light tracking-wide group">
+                <div className="w-8 h-8 rounded-full bg-amber-950/5 flex items-center justify-center flex-shrink-0 group-hover:bg-amber-800 group-hover:text-white transition-colors duration-300">
+                  <Phone
+                    size={14}
+                    className="text-amber-800 group-hover:text-white transition-colors"
+                  />
                 </div>
-                <span className="mt-0.5">+91 98765 43210</span>
+                <span className="mt-2">+91 98765 43210</span>
               </li>
-              <li className="flex items-center space-x-3 text-dark-300 text-sm group">
-                <div className="w-9 h-9 rounded-lg bg-gold-500/10 flex items-center justify-center flex-shrink-0 group-hover:bg-gold-500/20 transition-colors">
-                  <Mail size={16} className="text-gold-500" />
+              <li className="flex items-start space-x-3.5 text-xs text-neutral-500 font-light tracking-wide group">
+                <div className="w-8 h-8 rounded-full bg-amber-950/5 flex items-center justify-center flex-shrink-0 group-hover:bg-amber-800 group-hover:text-white transition-colors duration-300">
+                  <Mail
+                    size={14}
+                    className="text-amber-800 group-hover:text-white transition-colors"
+                  />
                 </div>
-                <span className="mt-0.5">info@violinevents.com</span>
+                <span className="mt-2">info@violinevents.com</span>
               </li>
             </ul>
           </motion.div>
 
-          {/* Opening Hours / Quick Info */}
+          {/* Time Framework Column */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
+            transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
           >
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <span className="w-1 h-6 bg-gradient-to-b from-gold-500 to-gold-600 rounded-full" />
-              Working Hours
+            <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-neutral-900 mb-6 flex items-center gap-2">
+              <span className="w-1 h-3 bg-amber-700/40 rounded-full" />
+              Availability
             </h3>
-            <div className="space-y-3">
-              <div className="flex justify-between text-sm text-dark-300">
-                <span>Monday - Saturday</span>
-                <span className="text-white/80">9:00 AM - 8:00 PM</span>
+            <div className="space-y-3.5 text-xs font-light tracking-wide text-neutral-500">
+              <div className="flex justify-between border-b border-neutral-200/40 pb-2">
+                <span>Mon — Sat</span>
+                <span className="text-neutral-800 font-medium">
+                  9:00 AM — 8:00 PM
+                </span>
               </div>
-              <div className="flex justify-between text-sm text-dark-300">
+              <div className="flex justify-between pb-2">
                 <span>Sunday</span>
-                <span className="text-gold-400">By Appointment</span>
+                <span className="text-amber-700 font-medium">
+                  By Appointment Only
+                </span>
               </div>
-              <div className="pt-4 mt-2 border-t border-white/5">
-                <div className="flex items-center gap-2 text-sm text-gold-400">
-                  <Sparkles size={14} />
-                  <span>Available 24/7 for inquiries</span>
+              <div className="pt-2">
+                <div className="flex items-center gap-2 text-[11px] font-medium text-amber-800 tracking-wider uppercase">
+                  <Sparkles className="w-3 h-3 text-amber-700" />
+                  <span>Concerted Concierge 24/7</span>
                 </div>
               </div>
             </div>
           </motion.div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="border-t border-white/5 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-dark-400 text-sm">
+        {/* Bottom Metadata bar */}
+        <div className="border-t border-neutral-200/60 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-[11px] text-neutral-400 font-light tracking-wider uppercase">
             © {currentYear}{" "}
-            <span className="text-gold-500">VIOLIN EVENTS LLP</span>. All rights
-            reserved.
+            <span className="text-amber-800 font-medium tracking-widest">
+              VIOLIN EVENTS LLP
+            </span>
+            . All rights reserved.
           </p>
-          <div className="flex items-center space-x-6">
-            <Link
-              to="#"
-              className="text-dark-400 hover:text-gold-500 text-xs transition-colors duration-300"
-            >
+          <div className="flex items-center space-x-6 text-[10px] tracking-widest uppercase font-medium text-neutral-400">
+            <Link to="#" className="hover:text-amber-800 transition-colors">
               Privacy Policy
             </Link>
-            <span className="text-dark-600 text-xs">|</span>
-            <Link
-              to="#"
-              className="text-dark-400 hover:text-gold-500 text-xs transition-colors duration-300"
-            >
+            <span className="opacity-30">|</span>
+            <Link to="#" className="hover:text-amber-800 transition-colors">
               Terms of Service
             </Link>
-            <span className="text-dark-600 text-xs">|</span>
-            <Link
-              to="#"
-              className="text-dark-400 hover:text-gold-500 text-xs transition-colors duration-300"
-            >
+            <span className="opacity-30">|</span>
+            <Link to="#" className="hover:text-amber-800 transition-colors">
               Sitemap
             </Link>
           </div>
