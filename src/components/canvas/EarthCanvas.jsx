@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 // 1. We import 'Html' from drei. This is the secret weapon!
 import { OrbitControls, Preload, useGLTF, Html } from "@react-three/drei";
-import CanvasLoader from "../Loader/Loader";
+import CanvasLoader from "../../components/loader/Loader";
 
 // ─── INTERNAL GLTF EARTH RENDERER ───
 const Earth = () => {
