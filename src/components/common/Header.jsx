@@ -331,7 +331,6 @@ const Header = () => {
     >
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between">
-          
           {/* ─── CAPSULE 1: THE LOGO ISLAND ─── */}
           <motion.div
             initial={{ opacity: 0, x: -15 }}
@@ -340,19 +339,17 @@ const Header = () => {
             className="flex items-center shrink-0 bg-[#FAF9F5]/75 backdrop-blur-xl border border-amber-900/10 px-5 py-2.5 rounded-full shadow-sm shadow-neutral-900/5 hover:border-amber-700/30 transition-colors duration-300"
           >
             <Link to="/" className="flex items-baseline gap-1.5 group">
-              <h1 className="text-lg md:text-xl font-serif font-light tracking-[0.25em] text-neutral-900 transition-colors group-hover:text-amber-800">
+              <h1 className="text-lg md:text-xl font-cormorant font-medium tracking-[0.25em] text-neutral-900 transition-colors group-hover:text-amber-800">
                 VIOLIN
               </h1>
-              <span className="text-neutral-400 font-sans tracking-widest font-semibold text-[9px] md:text-[10px]">
+              <span className="text-neutral-400 font-manrope tracking-widest font-semibold text-[9px] md:text-[10px]">
                 EVENTS LLP
               </span>
             </Link>
           </motion.div>
 
           {/* ─── CAPSULE 2: THE NAVIGATION ISLAND (DESKTOP) ─── */}
-          <nav 
-            className="hidden md:flex items-center space-x-6 lg:space-x-8 bg-[#FAF9F5]/75 backdrop-blur-xl border border-amber-900/10 px-6 py-2 rounded-full shadow-sm shadow-neutral-900/5 relative"
-          >
+          <nav className="hidden md:flex items-center space-x-6 lg:space-x-8 bg-[#FAF9F5]/75 backdrop-blur-xl border border-amber-900/10 px-6 py-2 rounded-full shadow-sm shadow-neutral-900/5 relative">
             {mainLinks.map((link, index) => (
               <motion.div
                 key={link.path}
@@ -368,14 +365,16 @@ const Header = () => {
                     <NavLink
                       to={link.path}
                       className={({ isActive }) =>
-                        `text-[11px] font-semibold tracking-[0.18em] transition-colors duration-300 flex items-center gap-1 ${
-                          isActive ? "text-amber-800" : "text-neutral-700 hover:text-amber-700"
+                        `font-manrope text-[11px] font-semibold tracking-[0.18em] transition-colors duration-300 flex items-center gap-1 ${
+                          isActive
+                            ? "text-amber-800"
+                            : "text-neutral-700 hover:text-amber-700"
                         }`
                       }
                     >
                       {link.label}
-                      <motion.span 
-                        animate={{ rotate: isDropdownOpen ? 180 : 0 }} 
+                      <motion.span
+                        animate={{ rotate: isDropdownOpen ? 180 : 0 }}
                         transition={{ duration: 0.25 }}
                         className="opacity-60"
                       >
@@ -383,7 +382,10 @@ const Header = () => {
                       </motion.span>
                     </NavLink>
                     <span className="absolute -bottom-0.5 left-0 right-0 h-[1.5px] bg-amber-700 origin-center scale-x-0 group-hover:scale-x-75 transition-transform duration-300 ease-out" />
-                    <DropdownMenu isOpen={isDropdownOpen} onClose={() => setIsDropdownOpen(false)} />
+                    <DropdownMenu
+                      isOpen={isDropdownOpen}
+                      onClose={() => setIsDropdownOpen(false)}
+                    />
                   </>
                 ) : (
                   <>
@@ -391,7 +393,9 @@ const Header = () => {
                       to={link.path}
                       className={({ isActive }) =>
                         `text-[11px] font-semibold tracking-[0.18em] transition-colors duration-300 ${
-                          isActive ? "text-amber-800" : "text-neutral-700 hover:text-amber-700"
+                          isActive
+                            ? "text-amber-800"
+                            : "text-neutral-700 hover:text-amber-700"
                         }`
                       }
                     >
@@ -413,13 +417,15 @@ const Header = () => {
               onMouseLeave={handleMoreLeave}
             >
               <button
-                className={`text-[11px] font-semibold tracking-[0.18em] transition-colors duration-300 flex items-center gap-1 ${
-                  isMoreOpen ? "text-amber-800" : "text-neutral-700 hover:text-amber-700"
+                className={`text-[11px] font-semibold font-montserrat tracking-[0.18em] transition-colors duration-300 flex items-center gap-1 ${
+                  isMoreOpen
+                    ? "text-amber-800"
+                    : "text-neutral-700 hover:text-amber-700"
                 }`}
               >
                 MORE
-                <motion.span 
-                  animate={{ rotate: isMoreOpen ? 180 : 0 }} 
+                <motion.span
+                  animate={{ rotate: isMoreOpen ? 180 : 0 }}
                   transition={{ duration: 0.25 }}
                   className="opacity-60"
                 >
@@ -427,28 +433,35 @@ const Header = () => {
                 </motion.span>
               </button>
               <span className="absolute -bottom-0.5 left-0 right-0 h-[1.5px] bg-amber-700 origin-center scale-x-0 group-hover:scale-x-75 transition-transform duration-300 ease-out" />
-              <Dropdown isOpen={isMoreOpen} onClose={() => setIsMoreOpen(false)} items={moreLinks} />
+              <Dropdown
+                isOpen={isMoreOpen}
+                onClose={() => setIsMoreOpen(false)}
+                items={moreLinks}
+              />
             </motion.div>
 
             {/* Contact Us Embedded Pill */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: (mainLinks.length + 1) * 0.04 }}
+              transition={{
+                duration: 0.5,
+                delay: (mainLinks.length + 1) * 0.04,
+              }}
               className="pl-2"
             >
               <NavLink
                 to={specialLink.path}
                 className={({ isActive }) =>
-                  `relative px-4 py-1.5 rounded-full font-sans font-semibold tracking-[0.18em] text-[10px] uppercase transition-all duration-500 inline-flex items-center overflow-hidden border ${
+                  `relative px-4 py-1.5 rounded-full font-manrope font-semibold tracking-[0.18em] text-[10px] uppercase transition-all duration-500 inline-flex items-center overflow-hidden border ${
                     isActive
                       ? "text-white bg-neutral-900 border-neutral-900 shadow-sm"
                       : "text-amber-800 border-neutral-300 hover:border-amber-700 hover:bg-neutral-900 hover:text-white"
                   }`
                 }
               >
-                <span className="relative z-10 flex items-center gap-1.5">
-                  <Sparkles className="w-3 h-3 stroke-[1.5]" />
+                <span className="relative z-10 flex items-center gap-1.5 font-montserrat">
+                  <Sparkles className="w-3 h-3 stroke-[1.5] " />
                   {specialLink.label}
                   <ArrowRight className="w-3 h-3 stroke-[2]" />
                 </span>
@@ -463,7 +476,11 @@ const Header = () => {
               className="text-neutral-800 hover:text-amber-700 transition-colors p-2"
               aria-label="Toggle menu"
             >
-              {isOpen ? <X size={18} className="stroke-[2]" /> : <Menu size={18} className="stroke-[2]" />}
+              {isOpen ? (
+                <X size={18} className="stroke-[2]" />
+              ) : (
+                <Menu size={18} className="stroke-[2]" />
+              )}
             </button>
           </div>
         </div>
@@ -471,7 +488,9 @@ const Header = () => {
         {/* Mobile Navigation Drawer System */}
         <motion.div
           initial={false}
-          animate={isOpen ? { height: "auto", opacity: 1 } : { height: 0, opacity: 0 }}
+          animate={
+            isOpen ? { height: "auto", opacity: 1 } : { height: 0, opacity: 0 }
+          }
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           className="md:hidden overflow-hidden bg-[#FAF9F5]/95 backdrop-blur-2xl rounded-2xl mt-3 border border-neutral-200/40"
         >
@@ -484,13 +503,20 @@ const Header = () => {
                     className="w-full flex items-center justify-between px-4 py-3 text-[11px] font-semibold tracking-[0.15em] uppercase text-neutral-800"
                   >
                     {link.label}
-                    <motion.span animate={{ rotate: mobileDestOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                    <motion.span
+                      animate={{ rotate: mobileDestOpen ? 180 : 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
                       <ChevronDown className="w-4 h-4 text-neutral-400" />
                     </motion.span>
                   </button>
                   <motion.div
                     initial={false}
-                    animate={mobileDestOpen ? { height: "auto", opacity: 1 } : { height: 0, opacity: 0 }}
+                    animate={
+                      mobileDestOpen
+                        ? { height: "auto", opacity: 1 }
+                        : { height: 0, opacity: 0 }
+                    }
                     transition={{ duration: 0.25 }}
                     className="overflow-hidden bg-neutral-50/50"
                   >
@@ -529,7 +555,7 @@ const Header = () => {
                     link.label
                   )}
                 </NavLink>
-              )
+              ),
             )}
           </nav>
         </motion.div>
