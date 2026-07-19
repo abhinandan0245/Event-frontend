@@ -169,7 +169,6 @@
 // };
 
 // export default Button;
-
 import { motion } from "framer-motion";
 
 const Button = ({
@@ -185,7 +184,6 @@ const Button = ({
     items-center
     justify-center
     gap-2.5
-    rounded-full
     font-sans
     font-semibold
     tracking-[0.18em]
@@ -230,9 +228,9 @@ const Button = ({
   };
 
   const hoverOverlay = {
-    primary: `bg-[#B48C50]`, // Luxury liquid gold fill
-    secondary: `bg-[#26221C]`, // Smooth dark charcoal fill
-    outline: `bg-white`, // Clean bright ivory white fill
+    primary: "bg-[#B48C50]",
+    secondary: "bg-[#26221C]",
+    outline: "bg-white",
   };
 
   const textColors = {
@@ -258,13 +256,13 @@ const Button = ({
       className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
       {...props}
     >
-      {/* Dynamic Slide-In Liquid Luxury Base Background */}
+      {/* Hover Fill */}
       <span
         className={`
           absolute
           inset-0
-          w-full
           h-full
+          w-full
           origin-bottom
           scale-y-0
           group-hover:scale-y-100
@@ -275,46 +273,48 @@ const Button = ({
         `}
       />
 
-      {/* Cinematic Glare Shimmer Beam Line */}
+      {/* Shimmer */}
       <span
         className="
           absolute
           inset-0
+          z-10
           -translate-x-full
-          group-hover:translate-x-[200%]
-          transition-transform
-          duration-[1400ms]
-          ease-[0.16,1,0.3,1]
+          skew-x-20
           bg-gradient-to-r
           from-transparent
           via-white/20
           to-transparent
-          skew-x-20
-          z-10
+          transition-transform
+          duration-[1400ms]
+          ease-[0.16,1,0.3,1]
+          group-hover:translate-x-[200%]
         "
       />
 
-      {/* High-End Ambient Specular Glow map */}
+      {/* Glow */}
       <span
         className="
+          pointer-events-none
           absolute
           inset-0
+          bg-amber-500/10
           opacity-0
           blur-xl
-          bg-amber-500/10
-          group-hover:opacity-100
           transition-opacity
           duration-700
-          pointer-events-none
+          group-hover:opacity-100
         "
       />
 
-      {/* Structured Text Content Wrapper Layer */}
+      {/* Content */}
       <span
         className={`
-          relative 
+          relative
           z-20
-          inline-flex items-center gap-2
+          inline-flex
+          items-center
+          gap-2
           whitespace-nowrap
           transition-colors
           duration-500
