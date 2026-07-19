@@ -6,6 +6,7 @@ import FeaturedCelebrations from "../components/home/FeaturedCelebrations";
 import WelcomeSection from "../components/home/WelcomeSection";
 import ProcessSection from "../components/home/ProcessSection";
 import ExtraordinarySection from "../components/home/ExtraordinarySection";
+import SignatureExperiences from "../components/home/SignatureExperiences";
 
 /**
  * Home Component
@@ -23,7 +24,10 @@ const Home = () => {
 
       {/* 3. Global Asymmetric Grid Flanked by Real 3D Rotational Earth */}
       <DestinationsSection />
+      
+       {/* signature experiences  */}
 
+       <SignatureExperiences/>
       {/* 4. Fine-Art Workflow Stepper Timelines */}
       <ProcessSection />
 

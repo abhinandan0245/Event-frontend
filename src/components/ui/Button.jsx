@@ -176,7 +176,7 @@ const Button = ({
   children,
   variant = "primary",
   size = "md",
-  shape = "rectangle", // NEW PROPS: tag, shield, skew, blob
+  shape = "rectangle", 
   className = "",
   ...props
 }) => {
