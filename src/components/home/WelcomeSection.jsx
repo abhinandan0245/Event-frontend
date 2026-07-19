@@ -122,12 +122,18 @@ const WelcomeSection = () => {
 
             {/* CTA Buttons */}
             <div className="fade-up-text flex flex-col gap-4 sm:flex-row sm:items-center">
-              <Button className="flex  items-center rounded-[3px] justify-center gap-2 bg-[#171717] px-8 font-manrope text-[13px] font-semibold uppercase tracking-[0.1em] text-white transition-colors hover:bg-[#333]">
+              <Button
+                shape="cut"
+                className="flex  items-center rounded-[3px] justify-center gap-2 bg-[#171717] px-8 font-manrope text-[13px] font-semibold uppercase tracking-[0.1em] text-white transition-colors hover:bg-[#333]"
+              >
                 Explore Our World
                 <ArrowRight size={16} />
               </Button>
 
-              <Button className="flex  items-center rounded-[3px] justify-center  border border-[#B5793F] px-8 font-manrope text-[13px] font-medium uppercase tracking-[0.1em] text-[#171717] transition-colors hover:bg-[#B5793F] hover:text-white">
+              <Button
+                shape="cut"
+                className="flex  items-center rounded-[3px] justify-center  border border-[#B5793F] px-8 font-manrope text-[13px] font-medium uppercase tracking-[0.1em] text-[#171717] transition-colors hover:bg-[#B5793F] hover:text-white"
+              >
                 Schedule a Consultation
               </Button>
             </div>

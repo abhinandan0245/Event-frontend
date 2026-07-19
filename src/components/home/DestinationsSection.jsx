@@ -1,297 +1,298 @@
 import React, { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ChevronRight, ChevronLeft } from "lucide-react";
-import SectionTitle from "../ui/SectionTitle";
+import { ArrowRight, Globe, Briefcase, Crown, Compass } from "lucide-react";
 import Button from "../ui/Button";
-
-// ─── MODULAR IMPORT: IMPORT YOUR INDEPENDENT COMPONENT ───
-// Adjust this relative file path strings matrix based on where your component file is saved
-import EarthCanvas from "../../components/canvas/EarthCanvas";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// ─── DATA ARRAY: THE 3 SEQUENTIAL CURIATIONS ───
+// ─── DATA ARRAYS ───
 const destinations = [
   {
     name: "BALI",
-    type: "Island Bliss",
-    image:
-      "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&q=80",
-    description: "Island Paradise with stunning beaches and lush greenery",
-    height: "h-[410px]",
+    subtitle: "Sacred Escapes",
+    description: "Private villas, oceanfront ceremonies, and timeless island elegance.",
+    image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&q=80",
   },
   {
     name: "THAILAND",
-    type: "Tropical Paradise",
-    image:
-      "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=800&q=80",
-    description: "Exotic beaches, temples, and vibrant culture",
-    height: "h-[460px]",
+    subtitle: "Tropical Sophistication",
+    description: "Luxury resorts, hidden beaches, and unforgettable celebrations.",
+    image: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=800&q=80",
   },
   {
     name: "UAE",
-    type: "Majestic Luxury",
-    image:
-      "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80",
-    description: "Modern luxury, desert landscapes, and iconic architecture",
-    height: "h-[510px]",
+    subtitle: "Modern Grandeur",
+    description: "Skyline weddings, iconic architecture, and world-class hospitality.",
+    image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80",
+  },
+  {
+    name: "ITALY",
+    subtitle: "Romantic Heritage",
+    description: "Historic villas, rolling vineyards, and Mediterranean charm.",
+    image: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=800&q=80",
+  },
+  {
+    name: "MALDIVES",
+    subtitle: "Oceanic Opulence",
+    description: "Overwater bungalows, crystal waters, and intimate seclusion.",
+    image: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&q=80",
+  },
+  {
+    name: "FRANCE",
+    subtitle: "Classic Elegance",
+    description: "Grand châteaux, Parisian romance, and exquisite culinary arts.",
+    image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&q=80",
+  },
+];
+
+const features = [
+  {
+    icon: Globe,
+    title: "WORLDWIDE DESTINATION NETWORK",
+    desc: "Luxury venues across six continents.",
+  },
+  {
+    icon: Briefcase,
+    title: "COMPLETE TRAVEL COORDINATION",
+    desc: "Guests, logistics, and hospitality managed seamlessly.",
+  },
+  {
+    icon: Crown,
+    title: "EXCLUSIVE VENUE ACCESS",
+    desc: "Private estates, heritage palaces, luxury resorts, and iconic landmarks.",
+  },
+  {
+    icon: Compass,
+    title: "TAILORED DESTINATION EXPERIENCES",
+    desc: "Every journey designed exclusively around your celebration.",
   },
 ];
 
 const DestinationsSection = () => {
   const sectionRef = useRef(null);
-  const cardsRef = useRef([]);
-  const gridLinesRef = useRef(null);
+  const textRef = useRef(null);
+  const featuresRef = useRef(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
-  const [hoveredIndex, setHoveredIndex] = useState(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
-
+  // Auto-Carousel Logic
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    const timer = setInterval(() => {
+      setActiveIndex((current) => (current + 1) % destinations.length);
+    }, 4000); 
+    return () => clearInterval(timer);
   }, []);
 
+  // GSAP Scroll Animations
   useEffect(() => {
-    // Progressive staggered reveals for the 3 image cards
-    cardsRef.current.forEach((card, i) => {
-      if (!card) return;
-      gsap.fromTo(
-        card,
-        { opacity: 0, y: 60, scale: 0.97 },
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 80%",
+          toggleActions: "play none none reverse",
+        },
+      });
+
+      tl.from(".fade-text", {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: "power3.out",
+      });
+
+      tl.from(
+        ".feature-item",
         {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 1.2,
+          y: 15,
+          opacity: 0,
+          duration: 0.6,
+          stagger: 0.1,
           ease: "power3.out",
-          delay: i * 0.12,
-          scrollTrigger: {
-            trigger: card,
-            start: "top 90%",
-            toggleActions: "play none none reverse",
-          },
         },
+        "-=0.4"
       );
-    });
+    }, sectionRef);
 
-    if (gridLinesRef.current) {
-      const lines = gridLinesRef.current.querySelectorAll(
-        ".architectural-line",
-      );
-      gsap.fromTo(
-        lines,
-        { scaleX: 0 },
-        {
-          scaleX: 1,
-          duration: 1.8,
-          ease: "power3.inOut",
-          scrollTrigger: { trigger: sectionRef.current, start: "top 85%" },
-        },
-      );
-    }
-
-    return () => {
-      ScrollTrigger.getAll().forEach((t) => t.kill());
-    };
+    return () => ctx.revert();
   }, []);
 
-  const handleMouseMove = (e, index) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    setMousePosition({
-      x: (e.clientX - rect.left) / rect.width - 0.5,
-      y: (e.clientY - rect.top) / rect.height - 0.5,
-    });
-    setHoveredIndex(index);
+  // Helper to calculate tighter 3D position for each card
+  const getCardStyle = (index) => {
+    const total = destinations.length;
+    const prevIndex = (activeIndex - 1 + total) % total;
+    const nextIndex = (activeIndex + 1) % total;
+
+    if (index === activeIndex) {
+      // Center Card
+      return {
+        transform: "translateX(-50%) perspective(1000px) rotateY(0deg) scale(1)",
+        left: "50%",
+        zIndex: 30,
+        opacity: 1,
+        filter: "brightness(1)",
+      };
+    } else if (index === prevIndex) {
+      // Left Card - Pulled in tighter (15%) and scaled down slightly more (0.8)
+      return {
+        transform: "translateX(-50%) perspective(1000px) rotateY(20deg) scale(0.8)",
+        left: "15%",
+        zIndex: 20,
+        opacity: 1,
+        filter: "brightness(0.6)", 
+      };
+    } else if (index === nextIndex) {
+      // Right Card - Pulled in tighter (85%) and scaled down slightly more (0.8)
+      return {
+        transform: "translateX(-50%) perspective(1000px) rotateY(-20deg) scale(0.8)",
+        left: "85%",
+        zIndex: 20,
+        opacity: 1,
+        filter: "brightness(0.6)",
+      };
+    } else {
+      // Hidden Cards
+      return {
+        transform: "translateX(-50%) perspective(1000px) rotateY(0deg) scale(0.5)",
+        left: "50%",
+        zIndex: 0,
+        opacity: 0,
+        pointerEvents: "none",
+      };
+    }
   };
-
-  const handleMouseLeave = () => {
-    setHoveredIndex(null);
-    setMousePosition({ x: 0, y: 0 });
-  };
-
-  const nextSlide = () =>
-    setCurrentSlide((prev) => (prev + 1) % destinations.length);
-  const prevSlide = () =>
-    setCurrentSlide(
-      (prev) => (prev - 1 + destinations.length) % destinations.length,
-    );
-
-  const visibleCards = isMobile
-    ? [
-        destinations[currentSlide],
-        destinations[(currentSlide + 1) % destinations.length],
-      ]
-    : destinations;
 
   return (
     <section
       ref={sectionRef}
-      className="relative w-full overflow-hidden text-neutral-800"
-      style={{
-        backgroundColor: "#FAF9F5",
-        paddingTop: "7rem",
-        paddingBottom: "7rem",
-      }}
+      // Reduced top and bottom padding so it fits on one screen
+      className="relative w-full overflow-hidden bg-[#FAF9F5] px-6 py-10 md:py-12 lg:px-12 lg:py-16"
     >
-      {/* Background Framing Accent Lines */}
-      <div
-        ref={gridLinesRef}
-        className="absolute inset-0 pointer-events-none z-0 px-[8%]"
-      >
-        <div className="architectural-line absolute left-[8%] right-[8%] top-[15%] h-[1px] bg-amber-900/10 origin-left" />
-        <div className="architectural-line absolute left-[8%] right-[8%] bottom-[15%] h-[1px] bg-amber-900/10 origin-right" />
-      </div>
+      <div className="mx-auto max-w-[1500px]">
+        {/* ================= TOP AREA: TEXT & CARDS ================= */}
+        <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-4">
+          {/* LEFT: TEXT CONTENT */}
+          <div ref={textRef} className="lg:col-span-5">
+            {/* Eyebrow */}
+            <h4 className="fade-text mb-3 font-manrope text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-[#B4874A]">
+              Global Destinations. Limitless Possibilities.
+            </h4>
 
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <SectionTitle
-          subtitle="GLOBAL HUB"
-          title="World's Finest Locations"
-          description="A curation of magnificent destinations mapped cleanly to your journey parameters."
-          subtitleColor="text-amber-800 tracking-[0.35em] font-medium text-xs uppercase"
-          className="text-center mb-20"
-        />
+            {/* Main Heading - Reduced sizes */}
+            <h2 className="fade-text mb-4 flex flex-col">
+              <span className="font-serif text-3xl md:text-4xl lg:text-[48px] xl:text-[56px] font-medium leading-[0.95] tracking-[-1px] text-[#171717] lg:font-canela">
+                Where Every
+                <br className="hidden lg:block" /> Destination
+              </span>
+              <span className="font-cormorant text-3xl md:text-4xl lg:text-[48px] xl:text-[56px] font-medium italic leading-[1] tracking-[-1px] text-[#B5793F]">
+                Becomes Your Signature.
+              </span>
+            </h2>
 
-        {isMobile && (
-          <div className="flex items-center justify-between gap-4 mb-8 md:hidden px-2">
-            <button
-              onClick={prevSlide}
-              className="p-3.5 rounded-full bg-white border border-neutral-200 text-amber-800 shadow-sm"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <div className="flex gap-2">
-              {destinations.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setCurrentSlide(idx)}
-                  className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentSlide ? "bg-amber-600 w-6" : "bg-neutral-200 w-2"}`}
-                />
-              ))}
-            </div>
-            <button
-              onClick={nextSlide}
-              className="p-3.5 rounded-full bg-white border border-neutral-200 text-amber-800 shadow-sm"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
-        )}
+            {/* Body Copy - Reduced sizes */}
+            <p className="fade-text mb-6 max-w-[540px] font-manrope text-xs md:text-sm lg:text-base font-normal leading-[1.6] text-[#5E5E5E]">
+              Whether exchanged beneath the domes of Rajasthan, along the shores
+              of the Mediterranean, or within the skyline of Dubai, every
+              destination is carefully chosen to reflect your story. We curate
+              extraordinary venues and seamless experiences across the world's
+              most celebrated locations.
+            </p>
 
-        {/* ─── DESKTOP STEPISED LAYOUT MATRICES ─── */}
-        <div
-          className="flex justify-between items-center gap-8 lg:gap-12"
-          style={{ perspective: "1500px" }}
-        >
-          {isMobile ? (
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentSlide}
-                initial={{ opacity: 0, x: 25 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -25 }}
-                transition={{ duration: 0.5 }}
-                className="flex justify-center items-end gap-4 w-full"
+            {/* CTA Buttons - Reduced height and padding */}
+            <div className="fade-text flex flex-col gap-3 sm:flex-row sm:items-center">
+              {/* Primary Button */}
+              <Button
+                variant="primary"
+                shape="shield"
+                className="h-[44px] px-5 text-[10px] md:h-[48px] md:px-7 md:text-xs"
               >
-                {visibleCards.map((dest) => (
-                  <div
-                    key={dest.name}
-                    className="relative rounded-3xl overflow-hidden shadow-2xl w-1/2 h-[380px] border border-white/40"
-                  >
+                Explore Destinations
+                <ArrowRight size={14} />
+              </Button>
+
+              {/* Secondary Button */}
+              <Button
+                variant="secondary"
+                shape="shield"
+                className="h-[44px] px-5 text-[10px] border-[#D6C2AA] md:h-[48px] md:px-7 md:text-xs"
+              >
+                Discuss Your Vision
+                <ArrowRight size={14} className="text-[#B5793F]" />
+              </Button>
+            </div>
+          </div>
+
+          {/* RIGHT: 3D DESTINATION CAROUSEL */}
+          <div className="relative flex h-[380px] sm:h-[420px] lg:h-[480px] justify-center lg:col-span-7 overflow-visible mt-6 lg:mt-0">
+            <div className="relative w-full h-full">
+              {destinations.map((dest, index) => (
+                <div
+                  key={dest.name}
+                  // Reduced card dimensions drastically so they fit without clipping
+                  className="absolute top-1/2 flex w-[220px] sm:w-[240px] lg:w-[280px] xl:w-[320px] h-[320px] sm:h-[360px] lg:h-[420px] -translate-y-1/2 flex-col overflow-hidden rounded-2xl md:rounded-[2rem] border-[3px] border-[#D9B17C]/60 bg-[#171717] shadow-xl transition-all duration-[1000ms] ease-in-out"
+                  style={getCardStyle(index)}
+                >
+                  {/* Background Image */}
+                  <div className="absolute inset-0">
                     <img
                       src={dest.image}
                       alt={dest.name}
-                      className="w-full h-full object-cover"
+                      className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/90 via-transparent to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-4">
-                      <div className="backdrop-blur-md bg-white/90 rounded-2xl p-3.5 shadow-md">
-                        <span className="text-[9px] tracking-widest text-amber-800 uppercase font-semibold">
-                          {dest.type}
-                        </span>
-                        <h3 className="font-serif text-neutral-800 text-base mt-0.5">
-                          {dest.name}
-                        </h3>
-                      </div>
-                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/30 to-black/95" />
                   </div>
-                ))}
-              </motion.div>
-            </AnimatePresence>
-          ) : (
-            <>
-              {/* LEFT COLUMN COMPOSITION BLOCK: The 3 Curations */}
-              <div className="w-[62%] flex items-end gap-6">
-                {destinations.map((dest, index) => {
-                  const isHovered = hoveredIndex === index;
-                  return (
-                    <div
-                      key={dest.name}
-                      ref={(el) => (cardsRef.current[index] = el)}
-                      onMouseMove={(e) => handleMouseMove(e, index)}
-                      onMouseLeave={handleMouseLeave}
-                      className={`relative rounded-[2.5rem] overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 cursor-pointer w-1/3 ${dest.height}`}
-                      style={{
-                        transform: isHovered
-                          ? `rotateY(${mousePosition.x * 12}deg) rotateX(${-mousePosition.y * 12}deg) scale(1.03)`
-                          : "rotateY(0deg) rotateX(0deg) scale(1)",
-                        transformStyle: "preserve-3d",
-                      }}
-                    >
-                      <img
-                        src={dest.image}
-                        alt={dest.name}
-                        className="w-full h-full object-cover transition-transform duration-[1.4s]"
-                        style={{
-                          transform: isHovered ? "scale(1.1)" : "scale(1)",
-                        }}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/80 via-transparent to-transparent" />
-                      <div
-                        className="absolute bottom-0 left-0 right-0 p-4 lg:p-5 z-20 transition-transform duration-300"
-                        style={{
-                          transform: isHovered
-                            ? "translateY(-6px) translateZ(25px)"
-                            : "translateY(0px) translateZ(0px)",
-                        }}
-                      >
-                        <div className="backdrop-blur-xl bg-white/80 border border-white/40 rounded-3xl p-4 shadow-xl">
-                          <span className="text-[9px] tracking-widest font-semibold text-amber-800 uppercase block mb-0.5">
-                            {dest.type}
-                          </span>
-                          <h3 className="font-serif text-neutral-800 text-lg">
-                            {dest.name}
-                          </h3>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
 
-              {/* RIGHT COLUMN COMPOSITION BLOCK: MOUNTS YOUR DEDICATED INDEPENDENT EARTHCANVAS */}
-              <div className="w-[38%] h-[510px] flex items-center justify-center relative z-10 overflow-visible">
-                <div className="absolute inset-0 w-[120%] h-[120%] -left-[10%] -top-[10%]">
-                  {/* Pulls directly from your separate EarthCanvas component */}
-                  <EarthCanvas />
+                  {/* Card Content - Scaled down font sizes */}
+                  <div className="relative z-10 mt-auto flex flex-col items-center p-4 text-center text-white pb-6">
+                    <div className="mb-2 flex h-8 w-8 md:h-10 md:w-10 items-center justify-center rounded-full border border-[#D9B17C] bg-black/40 backdrop-blur-sm">
+                      <Crown className="h-4 w-4 text-[#D9B17C]" />
+                    </div>
+
+                    <h3 className="mb-1 font-serif text-xl md:text-2xl lg:text-3xl font-medium tracking-wide lg:font-canela">
+                      {dest.name}
+                    </h3>
+                    <h4 className="mb-2 font-cormorant text-sm md:text-base lg:text-lg font-medium italic text-[#D9B17C]">
+                      {dest.subtitle}
+                    </h4>
+                    <p className="font-manrope text-[10px] md:text-xs font-normal leading-[1.5] text-[#E8E8E8] max-w-[95%]">
+                      {dest.description}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </>
-          )}
+              ))}
+            </div>
+          </div>
         </div>
 
-        <div className="text-center mt-20">
-          <Button
-            variant="secondary"
-            className="border-neutral-300 text-amber-800 hover:bg-neutral-100 hover:border-amber-700 px-9 py-4 rounded-full text-xs font-semibold tracking-[0.2em] uppercase shadow-sm transition-all"
-          >
-            Explore All Horizons
-          </Button>
+        {/* ================= BOTTOM AREA: FEATURES GRID ================= */}
+        {/* Reduced top margin and padding */}
+        <div
+          ref={featuresRef}
+          className="mt-12 border-t border-[#D6C2AA]/50 pt-8 lg:mt-16"
+        >
+          <div className="grid grid-cols-2 gap-y-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-4 lg:divide-x lg:divide-[#D6C2AA]/50">
+            {features.map((feature, idx) => (
+              <div
+                key={idx}
+                className="feature-item flex flex-col items-center px-2 text-center"
+              >
+                <div className="mb-2 text-[#B4874A]">
+                  <feature.icon
+                    strokeWidth={1.2}
+                    size={28}
+                    className="md:w-8 md:h-8 lg:w-10 lg:h-10"
+                  />
+                </div>
+                <h5 className="mb-1 font-manrope text-[10px] md:text-xs font-semibold uppercase tracking-wide text-[#171717]">
+                  {feature.title}
+                </h5>
+                <p className="max-w-[220px] font-manrope text-[10px] md:text-xs font-normal leading-[1.5] text-[#5E5E5E]">
+                  {feature.desc}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

@@ -169,15 +169,18 @@
 // };
 
 // export default Button;
+
 import { motion } from "framer-motion";
 
 const Button = ({
   children,
   variant = "primary",
   size = "md",
+  shape = "rectangle", // NEW PROPS: tag, shield, skew, blob
   className = "",
   ...props
 }) => {
+  // 1. Base Styles with Premium Depth
   const baseStyles = `
     relative overflow-hidden
     inline-flex
@@ -194,8 +197,10 @@ const Button = ({
     group
     transition-all
     duration-500
+    ring-1 ring-inset ring-white/10
   `;
 
+  // 2. Size Variations
   const sizes = {
     xs: "px-5 py-2 text-[9px]",
     sm: "px-6 py-2.5 text-[10px]",
@@ -204,29 +209,74 @@ const Button = ({
     xl: "px-12 py-5 text-sm",
   };
 
+  // 3. Color Variants
   const variants = {
     primary: `
       bg-[#26221C]
       text-[#FAF9F5]
       border border-[#26221C]
-      shadow-sm
+      shadow-md shadow-black/10
     `,
-
     secondary: `
       bg-transparent
       border border-neutral-300
       text-neutral-800
       hover:border-amber-700
     `,
-
     outline: `
       bg-transparent
       border border-white/40
       text-white
       hover:border-white
+      backdrop-blur-sm
     `,
   };
 
+  // 4. Standard Tailwind Shapes
+  const shapes = {
+    rectangle: "rounded-[3px]",
+    rounded: "rounded-xl",
+    pill: "rounded-full",
+    leaf: "rounded-tl-2xl rounded-br-2xl rounded-tr-[3px] rounded-bl-[3px]",
+    arch: "rounded-t-full rounded-b-[4px]",
+    // Custom clipped shapes mapped to empty strings here
+    cut: "",
+    tag: "",
+    shield: "",
+    skew: "",
+    blob: "",
+  };
+
+  // 5. Custom Inline Styles for Unique/Funny/Premium Shapes
+  let customShapeStyles = {};
+
+  if (shape === "cut") {
+    // Chamfered edges
+    customShapeStyles = {
+      clipPath:
+        "polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)",
+    };
+  } else if (shape === "tag") {
+    // Pointed left edge like a premium brand tag (Quirky)
+    customShapeStyles = {
+      clipPath: "polygon(15px 0, 100% 0, 100% 100%, 15px 100%, 0 50%)",
+    };
+  } else if (shape === "shield") {
+    // Royal crest / badge look (Ultra Premium)
+    customShapeStyles = {
+      clipPath: "polygon(0 0, 100% 0, 100% 75%, 50% 100%, 0 75%)",
+    };
+  } else if (shape === "skew") {
+    // Slanted parallelogram (Fun & Energetic)
+    customShapeStyles = {
+      clipPath: "polygon(15px 0, 100% 0, calc(100% - 15px) 100%, 0 100%)",
+    };
+  } else if (shape === "blob") {
+    // Organic jelly-like shape (Funny & Trendy High-End)
+    customShapeStyles = { borderRadius: "70% 30% 40% 60% / 50% 60% 40% 50%" };
+  }
+
+  // 6. Hover Effects
   const hoverOverlay = {
     primary: "bg-[#B48C50]",
     secondary: "bg-[#26221C]",
@@ -241,85 +291,46 @@ const Button = ({
 
   return (
     <motion.button
-      whileHover={{
-        y: -2,
-        scale: 1.01,
-      }}
-      whileTap={{
-        scale: 0.98,
-      }}
-      transition={{
-        type: "spring",
-        stiffness: 400,
-        damping: 25,
-      }}
-      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
+      whileHover={{ y: -3, scale: 1.015 }}
+      whileTap={{ scale: 0.97 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${shapes[shape] || ""} ${className}`}
+      style={customShapeStyles}
       {...props}
     >
-      {/* Hover Fill */}
+      {/* Premium Hover Fill */}
       <span
         className={`
-          absolute
-          inset-0
-          h-full
-          w-full
-          origin-bottom
-          scale-y-0
-          group-hover:scale-y-100
-          transition-transform
-          duration-500
-          ease-[0.16,1,0.3,1]
-          ${hoverOverlay[variant]}
+          absolute inset-0 h-full w-full origin-bottom scale-y-0
+          group-hover:scale-y-100 transition-transform duration-500
+          ease-[0.22,1,0.36,1] ${hoverOverlay[variant]}
         `}
       />
 
-      {/* Shimmer */}
+      {/* Elegant Shimmer Effect */}
       <span
         className="
-          absolute
-          inset-0
-          z-10
-          -translate-x-full
-          skew-x-20
-          bg-gradient-to-r
-          from-transparent
-          via-white/20
-          to-transparent
-          transition-transform
-          duration-[1400ms]
-          ease-[0.16,1,0.3,1]
+          absolute inset-0 z-10 -translate-x-full skew-x-12
+          bg-gradient-to-r from-transparent via-white/20 to-transparent
+          transition-transform duration-[1200ms] ease-[0.22,1,0.36,1]
           group-hover:translate-x-[200%]
         "
       />
 
-      {/* Glow */}
+      {/* Background Glow */}
       <span
         className="
-          pointer-events-none
-          absolute
-          inset-0
-          bg-amber-500/10
-          opacity-0
-          blur-xl
-          transition-opacity
-          duration-700
+          pointer-events-none absolute inset-0 bg-amber-500/15
+          opacity-0 blur-xl transition-opacity duration-700
           group-hover:opacity-100
         "
       />
 
-      {/* Content */}
+      {/* Button Content (Text & Icons) */}
       <span
         className={`
-          relative
-          z-20
-          inline-flex
-          items-center
-          gap-2
-          whitespace-nowrap
-          transition-colors
-          duration-500
-          ease-out
-          ${textColors[variant]}
+          relative z-20 inline-flex items-center gap-2 whitespace-nowrap
+          transition-colors duration-500 ease-out ${textColors[variant]}
         `}
       >
         {children}
