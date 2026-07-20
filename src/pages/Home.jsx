@@ -7,6 +7,8 @@ import WelcomeSection from "../components/home/WelcomeSection";
 import ProcessSection from "../components/home/ProcessSection";
 import ExtraordinarySection from "../components/home/ExtraordinarySection";
 import SignatureExperiences from "../components/home/SignatureExperiences";
+import VenueCollection from "../components/home/VenueCollection";
+import PortfolioGallery from "../components/home/PortfolioGallery";
 
 /**
  * Home Component
@@ -30,6 +32,10 @@ const Home = () => {
        <SignatureExperiences/>
       {/* 4. Fine-Art Workflow Stepper Timelines */}
       <ProcessSection />
+
+      <VenueCollection/>
+
+      <PortfolioGallery />
 
       {/* 5. Interactive Service Category Presentation Decks */}
       <ServicesSection />
