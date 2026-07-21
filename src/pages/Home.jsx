@@ -9,6 +9,7 @@ import ExtraordinarySection from "../components/home/ExtraordinarySection";
 import SignatureExperiences from "../components/home/SignatureExperiences";
 import VenueCollection from "../components/home/VenueCollection";
 import PortfolioGallery from "../components/home/PortfolioGallery";
+import TrustedClients from "../components/home/TrustedClients";
 
 /**
  * Home Component
@@ -36,6 +37,8 @@ const Home = () => {
       <VenueCollection/>
 
       <PortfolioGallery />
+      
+      <TrustedClients/>
 
       {/* 5. Interactive Service Category Presentation Decks */}
       <ServicesSection />
