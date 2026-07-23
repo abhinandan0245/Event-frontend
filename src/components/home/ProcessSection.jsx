@@ -45,7 +45,7 @@ const steps = [
     sub: "Memories that last forever.",
     desc: "You enjoy every moment. We create memories that you and your guests will cherish for a lifetime and beyond.",
     image:
-      "https://images.unsplash.com/photo-1530103862676-de3c9de59a9e?w=800&q=80",
+      "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=80",
   },
 ];
 
@@ -206,16 +206,6 @@ const ProcessSection = () => {
                 Every extraordinary celebration unfolds through a carefully
                 orchestrated journey. Scroll to experience each chapter.
               </p>
-
-              {/* Watch Our Story Button (Hidden on very small screens to save space) */}
-              <button className="hidden sm:flex items-center gap-4 text-[#C49A5A] hover:text-white transition-colors w-max group cursor-pointer pointer-events-auto">
-                <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-full border border-[#C49A5A] flex items-center justify-center group-hover:bg-[#C49A5A] group-hover:border-transparent transition-all">
-                  <Play className="w-3 h-3 lg:w-3.5 lg:h-3.5 fill-current ml-0.5" />
-                </div>
-                <span className="font-manrope text-[9px] lg:text-[10px] font-semibold tracking-widest uppercase">
-                  Watch Our Story
-                </span>
-              </button>
             </div>
           </div>
         </div>
@@ -229,8 +219,8 @@ const ProcessSection = () => {
             <div
               key={index}
               ref={(el) => (cardsRef.current[index] = el)}
-              // Mobile specific sizing to ensure it fits perfectly in the bottom half
-              className="absolute top-1/2 left-1/2 w-[220px] h-[340px] md:w-[260px] md:h-[420px] lg:w-[320px] lg:h-[580px] xl:w-[360px] xl:h-[660px] rounded-[16px] xl:rounded-[24px] flex flex-col items-center justify-center cursor-default transition-transform duration-300 ease-out"
+              // --- SIZING FIX APPLIED HERE: Reduced height and width to keep it inside the screen ---
+              className="absolute top-1/2 left-1/2 w-[200px] h-[280px] md:w-[240px] md:h-[340px] lg:w-[280px] lg:h-[440px] xl:w-[320px] xl:h-[500px] rounded-[16px] xl:rounded-[24px] flex flex-col items-center justify-center cursor-default transition-transform duration-300 ease-out"
               style={{
                 transformStyle: "preserve-3d",
                 background:
@@ -242,32 +232,28 @@ const ProcessSection = () => {
                 <img
                   src={step.image}
                   alt={step.title}
-                  className="absolute inset-0 w-full h-full object-cover opacity-[0.15] mix-blend-screen"
+                  className="absolute inset-0 w-full h-full object-cover opacity-[0.75] mix-blend-screen"
                 />
 
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/60 to-transparent" />
                 <div className="absolute inset-0 bg-gradient-to-b from-[#0A0A0A]/80 via-transparent to-transparent" />
 
-                <div className="relative z-10 w-full h-full flex flex-col items-center text-center p-5 lg:p-8">
-                  <span className="font-serif text-[48px] lg:text-[80px] font-medium leading-none text-transparent bg-clip-text bg-gradient-to-b from-[#E9C38A] to-[#855F37] mt-6 lg:mt-10 mb-auto lg:font-canela drop-shadow-md">
+                <div className="relative z-10 w-full h-full flex flex-col items-center text-center p-4 lg:p-6">
+                  <span className="font-serif text-[40px] lg:text-[64px] font-medium leading-none text-transparent bg-clip-text bg-gradient-to-b from-[#E9C38A] to-[#855F37] mt-4 lg:mt-6 mb-auto lg:font-canela drop-shadow-md">
                     {step.num}
                   </span>
 
-                  <div className="mt-auto pb-2 lg:pb-6 w-full flex flex-col items-center">
-                    <h3 className="font-serif text-xl lg:text-[28px] font-medium tracking-tight text-white mb-1 lg:mb-2 lg:font-canela">
+                  <div className="mt-auto pb-2 lg:pb-4 w-full flex flex-col items-center">
+                    <h3 className="font-serif text-lg lg:text-[24px] font-medium tracking-tight text-white mb-1 lg:mb-2 lg:font-canela">
                       {step.title}
                     </h3>
-                    <h4 className="font-cormorant text-sm lg:text-[18px] font-medium italic text-[#C99754] mb-2 lg:mb-4">
+                    <h4 className="font-cormorant text-xs lg:text-[16px] font-medium italic text-[#C99754] mb-2 lg:mb-3">
                       {step.sub}
                     </h4>
 
-                    <p className="font-manrope text-[9px] lg:text-[12px] font-normal leading-[1.6] text-white/60 max-w-[95%] lg:max-w-[85%] mx-auto hidden sm:block">
+                    <p className="font-manrope text-[9px] lg:text-[11px] font-normal leading-[1.6] text-white/60 max-w-[95%] lg:max-w-[85%] mx-auto hidden sm:block">
                       {step.desc}
                     </p>
-
-                    <div className="mt-4 lg:mt-8 w-6 h-6 lg:w-8 lg:h-8 rounded-full border border-white/20 flex items-center justify-center">
-                      <ArrowRight className="w-2.5 h-2.5 lg:w-3 lg:h-3 text-white/50" />
-                    </div>
                   </div>
                 </div>
               </div>

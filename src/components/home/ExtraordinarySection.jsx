@@ -41,7 +41,7 @@ const ExtraordinarySection = () => {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="relative overflow-hidden rounded-none sm:rounded-2xl shadow-2xl"
+          className="relative overflow-hidden rounded-none sm:rounded-none shadow-2xl"
         >
           {/* Banner Image - Full Width */}
           <div className="relative w-full">

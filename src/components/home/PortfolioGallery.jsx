@@ -102,28 +102,31 @@ const row3Items = [
 ];
 
 // ==========================================
-// 1. INDIVIDUAL PORTFOLIO CARD
+// 1. INDIVIDUAL PORTFOLIO CARD (RESIZED)
 // ==========================================
 const PortfolioCard = ({ item, isWider }) => {
   return (
     <div
       className={`
         relative cursor-pointer bg-[#1A1A1A] 
-        /* Determine width based on the row to give visual variety */
-        ${isWider ? "w-[400px] md:w-[500px] lg:w-[600px]" : "w-[300px] md:w-[350px] lg:w-[450px]"} 
-        h-[260px] md:h-[300px] lg:h-[360px]
+        /* UPDATED: Smaller widths to show 4-5 images per screen */
+        ${isWider ? "w-[260px] md:w-[320px] lg:w-[380px]" : "w-[200px] md:w-[240px] lg:w-[280px]"} 
+        
+        /* UPDATED: Smaller heights so all 3 rows fit on screen */
+        h-[180px] md:h-[200px] lg:h-[240px]
+        
         transition-all duration-500 ease-out flex-shrink-0
         
-        /* ZERO GAPS: No rounding, seamless touching. -ml-[1px] prevents double thick borders */
+        /* ZERO GAPS: No rounding, seamless touching. */
         rounded-none border-[1px] border-[#C58B48]/60 -ml-[1px]
         shadow-[0_0_15px_rgba(197,139,72,0.15)]
         
-        /* HOVER STATE: Elevate Z-Index, Glow Golden Shadow, Solid Golden Border */
-        z-10 hover:z-50 hover:scale-[1.03] hover:border-[#C58B48] 
-        hover:shadow-[0_0_40px_rgba(197,139,72,0.7)]
+        /* HOVER STATE */
+        z-10 hover:z-50 hover:scale-[1.05] hover:border-[#C58B48] 
+        hover:shadow-[0_0_40px_rgba(197,139,72,0.8)]
         
-        /* DIMMING EFFECT: Works with the 'group' class on the master wrapper */
-        group-hover:opacity-50 hover:!opacity-100
+        /* DIMMING EFFECT */
+        group-hover:opacity-40 hover:!opacity-100
       `}
     >
       <img
@@ -136,25 +139,19 @@ const PortfolioCard = ({ item, isWider }) => {
       <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent opacity-80 pointer-events-none" />
 
       {/* Floating Link Icon */}
-      <div
-        className="absolute top-6 right-6 w-10 h-10 rounded-full border border-[#C58B48]/50 bg-black/60 backdrop-blur-md flex items-center justify-center text-[#E9C38A] opacity-0 transform translate-y-2 transition-all duration-300 hover:bg-[#C58B48] hover:text-white hover:opacity-100 hover:translate-y-0"
-        style={{
-          opacity:
-            "" /* Handled by standard CSS hover via a wrapper class if needed, or we rely on the parent hover. Let's use peer/group if needed, but direct inline hover works for React */,
-        }}
-      >
-        <ArrowUpRight size={18} strokeWidth={1.5} />
+      <div className="absolute top-4 right-4 w-8 h-8 rounded-full border border-[#C58B48]/50 bg-black/60 backdrop-blur-md flex items-center justify-center text-[#E9C38A] opacity-0 transform translate-y-2 transition-all duration-300 hover:bg-[#C58B48] hover:text-white hover:opacity-100 hover:translate-y-0 group-hover/card:opacity-100">
+        <ArrowUpRight size={16} strokeWidth={1.5} />
       </div>
 
       {/* Text Content */}
-      <div className="absolute bottom-0 left-0 w-full p-6 lg:p-8 flex flex-col justify-end pointer-events-none">
-        <h3 className="font-serif text-xl lg:text-3xl font-medium text-white mb-2 drop-shadow-lg">
+      <div className="absolute bottom-0 left-0 w-full p-4 lg:p-6 flex flex-col justify-end pointer-events-none">
+        <h3 className="font-serif text-lg lg:text-2xl font-medium text-white mb-1 drop-shadow-lg leading-tight">
           {item.title}
         </h3>
 
         <div className="flex items-center gap-1.5 text-[#E9C38A] drop-shadow-md">
-          <MapPin size={14} strokeWidth={2} />
-          <span className="font-sans text-[10px] lg:text-xs font-semibold tracking-widest uppercase">
+          <MapPin size={12} strokeWidth={2} />
+          <span className="font-sans text-[9px] lg:text-[10px] font-semibold tracking-widest uppercase">
             {item.location}
           </span>
         </div>
@@ -179,13 +176,11 @@ const MarqueeRow = ({
     const row = rowRef.current;
     if (!row) return;
 
-    // Set initial position based on direction
     const distance = direction === "left" ? -50 : 0;
     const startPos = direction === "left" ? 0 : -50;
 
     gsap.set(row, { xPercent: startPos });
 
-    // Infinite continuous scroll
     tweenRef.current = gsap.to(row, {
       xPercent: distance,
       repeat: -1,
@@ -201,13 +196,10 @@ const MarqueeRow = ({
   return (
     <div
       className="flex w-max"
-      // Pauses ONLY this specific row on hover so the user can look/click
       onMouseEnter={() => tweenRef.current?.pause()}
       onMouseLeave={() => tweenRef.current?.play()}
     >
-      {/* Container with NO GAP to ensure cards touch perfectly */}
       <div ref={rowRef} className="flex gap-0">
-        {/* Render items twice to create the seamless infinite loop */}
         {[...items, ...items].map((item, idx) => (
           <PortfolioCard key={idx} item={item} isWider={isWider} />
         ))}
@@ -249,14 +241,14 @@ const PortfolioGallery = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full bg-[#FAF8F0] pt-24 pb-32 font-sans overflow-hidden"
+      className="relative w-full bg-[#FAF8F0] pt-20 pb-28 font-sans overflow-hidden"
     >
       {/* ==========================================
           TOP HEADER SECTION (Centered)
           ========================================== */}
       <div
         ref={headerRef}
-        className="max-w-4xl mx-auto flex flex-col items-center text-center mb-20 px-6 relative z-20"
+        className="max-w-4xl mx-auto flex flex-col items-center text-center mb-16 px-6 relative z-20"
       >
         <div className="flex items-center gap-3 mb-4">
           <div className="w-6 h-[1px] bg-[#C58B48]" />
@@ -266,14 +258,14 @@ const PortfolioGallery = () => {
           <div className="w-6 h-[1px] bg-[#C58B48]" />
         </div>
 
-        <h2 className="text-4xl md:text-6xl lg:text-[72px] font-serif text-[#1F2937] leading-[1.1] mb-6">
+        <h2 className="text-4xl md:text-5xl lg:text-[64px] font-serif text-[#1F2937] leading-[1.1] mb-6">
           Signature <br className="md:hidden" />
           <span className="italic text-[#C58B48] font-cormorant">
             Celebrations
           </span>
         </h2>
 
-        <p className="font-sans text-sm lg:text-base font-medium leading-[1.7] text-gray-600 max-w-[500px] mb-8">
+        <p className="font-sans text-xs lg:text-sm font-medium leading-[1.7] text-gray-600 max-w-[500px] mb-8">
           A curated showcase of extraordinary celebrations we have designed &
           delivered across the world.
         </p>
@@ -284,30 +276,38 @@ const PortfolioGallery = () => {
       </div>
 
       {/* ==========================================
-          STRAIGHT, ZERO-GAP MARQUEE GALLERY
+          PREMIUM 3D TAPERED MARQUEE GALLERY
           ========================================== */}
-      {/* 
-        The "group" class here allows the 'group-hover:opacity-50' in the PortfolioCard 
-        to dim all cards EXCEPT the one you are currently hovering over.
-      */}
-      <div className="w-full overflow-hidden flex flex-col group border-y border-[#C58B48]/60">
-        {/* Row 1: 5 Items moving Left */}
-        <MarqueeRow items={row1Items} direction="left" speed={55} />
+      {/* We make the container slightly wider than the screen (110vw) so the 3D edges don't show blank space */}
+      <div className="w-[110vw] -ml-[5vw] overflow-visible flex flex-col items-center justify-center group pb-10">
+        {/* ROW 1: Left side height is smaller, Right side is larger */}
+        <div
+          className="w-full relative z-10 border-y border-[#C58B48]/40 shadow-[0_15px_30px_rgba(0,0,0,0.3)]"
+          style={{ transform: "perspective(1200px) rotateY(-3.5deg)" }}
+        >
+          <MarqueeRow items={row1Items} direction="left" speed={60} />
+        </div>
 
-        {/* Row 2: 4 Wider Items moving Right */}
-        {/* We use negative margin top to merge the top and bottom borders cleanly */}
-        <div className="-mt-[1px]">
+        {/* ROW 2: Left side height is larger, Right side is smaller */}
+        {/* Negative top margin (-mt-4) makes it overlap row 1 slightly for a seamless premium look */}
+        <div
+          className="w-full relative z-20 -mt-4 border-b border-[#C58B48]/40 shadow-[0_15px_30px_rgba(0,0,0,0.4)]"
+          style={{ transform: "perspective(1200px) rotateY(3.5deg)" }}
+        >
           <MarqueeRow
             items={row2Items}
             direction="right"
-            speed={50}
+            speed={55}
             isWider={true}
           />
         </div>
 
-        {/* Row 3: 5 Items moving Left */}
-        <div className="-mt-[1px]">
-          <MarqueeRow items={row3Items} direction="left" speed={60} />
+        {/* ROW 3: Left side height is smaller, Right side is larger */}
+        <div
+          className="w-full relative z-30 -mt-4 border-b border-[#C58B48]/40 shadow-[0_25px_40px_rgba(0,0,0,0.5)]"
+          style={{ transform: "perspective(1200px) rotateY(-3.5deg)" }}
+        >
+          <MarqueeRow items={row3Items} direction="left" speed={65} />
         </div>
       </div>
     </section>

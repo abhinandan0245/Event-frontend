@@ -227,7 +227,7 @@ const DestinationsSection = () => {
               </Button>
 
               <Button
-                variant="secondary"
+                variant="wine"
                 shape="shield"
                 className="h-[44px] px-5 text-[10px] border-[#D6C2AA] md:h-[48px] md:px-7 md:text-xs"
               >

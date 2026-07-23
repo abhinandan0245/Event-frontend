@@ -168,7 +168,7 @@ const WelcomeSection = () => {
               </div>
 
               {/* Right Image */}
-              <div className="collage-img absolute right-0 top-[10%] z-0 w-[40%] border-[6px] border-[#FAF9F5] bg-white shadow-lg lg:w-[32%]">
+              <div className="collage-img absolute right-4 top-[10%] z-0 w-[40%] border-[6px] border-[#FAF9F5] bg-white shadow-lg lg:w-[32%]">
                 <div className="border border-[#A77942]/30 p-1">
                   <img
                     src="/assets/heromobile.png"

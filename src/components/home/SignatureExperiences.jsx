@@ -1,83 +1,169 @@
 import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowRight } from "lucide-react";
+import {
+  ArrowRight,
+  CalendarDays,
+  Flower2,
+  ConciergeBell,
+  Music,
+  Car,
+  Star,
+} from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
+// === CUSTOM 4-POINT STAR ===
+const ElegantSparkle = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path d="M12 0C12 6.627 17.373 12 24 12C17.373 12 12 17.373 12 24C12 17.373 6.627 12 0 12C6.627 12 12 6.627 12 0Z" />
+  </svg>
+);
+
+// === DATA ARRAY (Y COORDINATES SHIFTED UP) ===
 const experiences = [
   {
     num: "01",
-    title: "ROYAL WEDDINGS",
-    desc: "Where timeless traditions meet modern luxury and elegance.",
-    image:
-      "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&q=80",
+    title: "DESTINATION WEDDING PLANNING",
+    desc: "End-to-end destination wedding planning across India's most exclusive venues. From concept, timelines and budgeting to vendor management and flawless execution — we handle it all.",
+    icon: CalendarDays,
     x: 8,
-    y: 30,
+    y: 12, // Moved up from 25
   },
   {
     num: "02",
-    title: "DESTINATION WEDDINGS",
-    desc: "Beautiful places. Beautiful beginnings. Celebrate love in breathtaking locations.",
-    image:
-      "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&q=80",
+    title: "WEDDING DESIGN & LUXURY DECOR",
+    desc: "Bespoke themes, exquisite décor, floral artistry and immersive design that transform your vision into a breathtaking celebration crafted with creativity and perfection.",
+    icon: Flower2,
     x: 39,
-    y: 32,
+    y: 16, // Moved up from 28
   },
   {
     num: "03",
-    title: "LUXURY SOCIAL CELEBRATIONS",
-    desc: "Milestones designed with elegance, sophistication, and soul.",
-    image:
-      "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80",
+    title: "GUEST HOSPITALITY & EXPERIENCE",
+    desc: "VIP guest handling, accommodation, concierge services, travel coordination and personalized hospitality that make every guest feel truly special.",
+    icon: ConciergeBell,
     x: 71,
-    y: 30,
+    y: 12, // Moved up from 25
   },
   {
     num: "04",
-    title: "CORPORATE EXPERIENCES",
-    desc: "Impactful events that inspire, connect, and elevate your brand.",
-    image:
-      "https://images.unsplash.com/photo-1511578314322-379afb476865?w=600&q=80",
+    title: "ENTERTAINMENT & PRODUCTION",
+    desc: "Celebrity artists, live performances, sound engineering, lighting design and stage production that create electrifying memories and unforgettable moments.",
+    icon: Music,
     x: 71,
-    y: 70,
+    y: 48, // Moved up from 65
   },
   {
     num: "05",
-    title: "PRIVATE GATHERINGS",
-    desc: "Intimate moments. Perfectly orchestrated for you and your special people.",
-    image:
-      "https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=600&q=80",
+    title: "LOGISTICS & TRANSPORTATION",
+    desc: "Seamless transportation, airport transfers, vendor logistics and guest movement management ensuring a smooth and stress-free celebration.",
+    icon: Car,
     x: 39,
-    y: 67,
+    y: 52, // Moved up from 68
   },
   {
     num: "06",
-    title: "BRAND LAUNCHES",
-    desc: "Launches that leave a lasting legacy and impressions that last forever.",
-    image:
-      "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=600&q=80",
+    title: "BEYOND SERVICES & SPECIAL EXPERIENCES",
+    desc: "Curated experiences, surprise moments, premium gifting and bespoke services that go beyond expectations and create lifelong memories.",
+    icon: Star,
     x: 8,
-    y: 70,
+    y: 48, // Moved up from 65
   },
 ];
 
+// === EXACT MATCH CARD COMPONENT ===
+const ExperienceCard = ({ exp }) => {
+  return (
+    <div className="relative w-full h-full flex flex-col pt-8 group">
+      {/* 1. SVG Background for the exact Arch Shape & Golden Glow */}
+      <div className="absolute inset-0 top-8 drop-shadow-[0_12px_24px_rgba(200,165,110,0.15)] transition-all duration-500 group-hover:drop-shadow-[0_15px_30px_rgba(200,165,110,0.3)]">
+        <svg
+          className="w-full h-full"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+        >
+          <defs>
+            <linearGradient id="goldBorder" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#F8E5B9" />
+              <stop offset="40%" stopColor="#D4AF37" />
+              <stop offset="100%" stopColor="#9C7722" />
+            </linearGradient>
+            <linearGradient id="cardBg" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#FFFFFF" />
+              <stop offset="100%" stopColor="#FCF9F2" />
+            </linearGradient>
+          </defs>
+          <path
+            d="M 0.5 15 C 20 15, 32 0.5, 50 0.5 C 68 0.5, 80 15, 99.5 15 L 99.5 99.5 L 0.5 99.5 Z"
+            fill="url(#cardBg)"
+            stroke="url(#goldBorder)"
+            strokeWidth="1.5"
+            vectorEffect="non-scaling-stroke"
+          />
+        </svg>
+      </div>
+
+      {/* 2. Floating Circular Icon */}
+      <div className="absolute top-8 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+        <div className="w-[52px] h-[52px] lg:w-[60px] lg:h-[60px] bg-white rounded-full flex items-center justify-center border border-[#D4AF37] shadow-[0_4px_10px_rgba(212,175,55,0.2)]">
+          <exp.icon
+            className="w-5 h-5 lg:w-6 lg:h-6 text-[#A67C27]"
+            strokeWidth={1.5}
+          />
+        </div>
+      </div>
+
+      {/* 3. Card Content (Padding tightened to ensure button visibility) */}
+      <div className="relative z-10 flex flex-col h-full w-full px-5 lg:px-8 pt-8 lg:pt-10 pb-5 lg:pb-6">
+        {/* Large Faint Number on the Right */}
+        <div className="absolute top-4 right-6 text-6xl lg:text-7xl font-serif italic text-[#C5A880]/15 select-none pointer-events-none">
+          {exp.num}
+        </div>
+
+        {/* Left-Aligned Title with Sparkle */}
+        <div className="flex items-start gap-2 lg:gap-3 mt-2 lg:mt-4 relative z-20 pr-12">
+          <ElegantSparkle className="w-3 h-3 lg:w-4 lg:h-4 text-[#C5A880] mt-1 shrink-0" />
+          <h3 className="font-serif text-[11px] lg:text-[13px] font-semibold tracking-[0.1em] text-[#332D27] uppercase text-left leading-snug">
+            {exp.title}
+          </h3>
+        </div>
+
+        {/* Left-Aligned Description */}
+        <p className="text-left text-[10px] lg:text-[11px] text-gray-500 font-sans leading-[1.7] mt-3 mb-6 relative z-20 pr-2">
+          {exp.desc}
+        </p>
+
+        {/* Centered Button at Bottom */}
+        <div className="mt-auto flex justify-center items-center gap-2 text-[9px] lg:text-[10px] font-bold tracking-widest uppercase text-[#B8860B] cursor-pointer hover:text-amber-900 transition-colors relative z-20 w-full">
+          EXPLORE SERVICE{" "}
+          <ArrowRight
+            size={14}
+            className="transition-transform group-hover:translate-x-1"
+            strokeWidth={1.5}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// === MAIN SECTION COMPONENT ===
 const SignatureExperiences = () => {
   const sectionRef = useRef(null);
   const containerRef = useRef(null);
   const cardsRef = useRef([]);
   const mobileCardsRef = useRef([]);
 
+  // Y-Coordinates of the ribbon path shifted UP by ~150px to perfectly match the new card positions
   const pathData =
-    "M 150 350 C 350 480, 450 250, 700 370 C 950 490, 1050 250, 1250 350 C 1450 450, 1300 780, 1150 680 C 1000 580, 900 780, 700 680 C 500 580, 350 780, 150 680";
+    "M 150 200 C 350 330, 450 100, 700 220 C 950 340, 1050 100, 1250 200 C 1450 300, 1300 630, 1150 530 C 1000 430, 900 630, 700 530 C 500 430, 350 630, 150 530";
 
   useEffect(() => {
     let ctx = gsap.context(() => {
       let mm = gsap.matchMedia();
 
-      // ==========================================
-      // DESKTOP ANIMATION (lg screens and up)
-      // ==========================================
+      // DESKTOP ANIMATION
       mm.add("(min-width: 1024px)", () => {
         const ribbons = gsap.utils.toArray(".ribbon-layer");
         const pathLength = ribbons[0].getTotalLength();
@@ -123,9 +209,7 @@ const SignatureExperiences = () => {
         });
       });
 
-      // ==========================================
-      // MOBILE ANIMATION (below lg screens)
-      // ==========================================
+      // MOBILE ANIMATION
       mm.add("(max-width: 1023px)", () => {
         gsap.fromTo(
           ".mobile-line-draw",
@@ -169,13 +253,11 @@ const SignatureExperiences = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full min-h-screen overflow-hidden bg-[#FAF8F0] flex flex-col lg:flex-row items-center justify-center font-sans pt-12 lg:pt-20 perspective-[1000px]"
+      className="relative w-full min-h-screen overflow-hidden bg-[#FDFBF7] flex flex-col lg:flex-row items-center justify-center font-sans pt-12 lg:pt-16 perspective-[1000px]"
     >
-      {/* === PREMIUM BACKGROUND GRAPHICS === */}
-      <div className="absolute top-[-10%] left-[-5%] w-[400px] lg:w-[600px] h-[400px] lg:h-[600px] bg-amber-200/30 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-5%] w-[500px] lg:w-[700px] h-[500px] lg:h-[700px] bg-[#C5A880]/20 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute inset-0 opacity-[0.04] pointer-events-none bg-[radial-gradient(#855F37_1.5px,transparent_1.5px)] [background-size:24px_24px]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.03)_100%)] pointer-events-none" />
+      {/* PREMIUM BACKGROUND GRAPHICS */}
+      <div className="absolute top-[-10%] left-[-5%] w-[400px] lg:w-[600px] h-[400px] lg:h-[600px] bg-amber-200/20 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.02)_100%)] pointer-events-none" />
 
       {/* ============================================================== */}
       {/* 1. DESKTOP VIEW */}
@@ -184,8 +266,9 @@ const SignatureExperiences = () => {
         ref={containerRef}
         className="hidden lg:block relative w-full max-w-[1400px] aspect-[14/9] max-h-[85vh] mx-auto origin-center flex-shrink-0 z-10"
       >
-        <div className="absolute top-0 left-[6%] z-20 pointer-events-none drop-shadow-sm">
-          <h2 className="text-2xl md:text-3xl lg:text-3xl font-serif text-[#1F2937] leading-[1.1] mt-5 mb-2 lg:mb-3">
+        {/* Header shifted up slightly to accommodate the raised cards */}
+        <div className="absolute top-0 left-[6%] -mt-4 lg:-mt-2 z-20 pointer-events-none drop-shadow-sm">
+          <h2 className="text-2xl md:text-3xl lg:text-3xl font-serif text-[#1F2937] leading-[1.1] mb-2 lg:mb-3">
             Signature <br />
             Experiences
           </h2>
@@ -194,7 +277,6 @@ const SignatureExperiences = () => {
           </p>
         </div>
 
-        {/* CHANGED: z-index set to z-0 so it stays securely behind the cards */}
         <svg
           className="absolute top-0 left-0 w-full h-full z-0 pointer-events-none overflow-visible"
           viewBox="0 0 1400 900"
@@ -265,41 +347,14 @@ const SignatureExperiences = () => {
           <div
             key={idx}
             ref={(el) => (cardsRef.current[idx] = el)}
-            className="absolute z-10 flex rounded-[18px] lg:rounded-[26px] shadow-[0_30px_60px_rgba(0,0,0,0.18),0_0_30px_rgba(197,139,72,0.15)] w-[24%] h-[18%]"
+            className="absolute z-10 flex w-[26%] h-auto min-h-[220px]"
             style={{
               left: `${exp.x}%`,
               top: `${exp.y}%`,
-              minWidth: "280px",
-              minHeight: "140px",
-              background:
-                "linear-gradient(145deg, #FFF1D0 0%, #C5A880 40%, #855F37 100%)",
-              padding: "2px",
+              minWidth: "300px",
             }}
           >
-            <div className="relative w-full h-full flex bg-white rounded-[16px] lg:rounded-[24px] overflow-hidden shadow-[inset_0_0_15px_rgba(0,0,0,0.05)]">
-              <div className="w-[45%] h-full relative">
-                <img
-                  src={exp.image}
-                  alt={exp.title}
-                  className="w-full h-full object-cover shadow-[inset_-10px_0_20px_rgba(0,0,0,0.1)]"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent" />
-              </div>
-              <div className="w-[55%] p-3 lg:p-5 flex flex-col justify-center relative bg-gradient-to-br from-white to-[#FDFBF7]">
-                <span className="text-[#C58B48] font-serif text-xl lg:text-2xl mb-0.5 lg:mb-1 drop-shadow-sm">
-                  {exp.num}
-                </span>
-                <h3 className="font-serif text-[10px] lg:text-sm font-semibold text-gray-900 mb-1 lg:mb-2 leading-tight uppercase relative z-20">
-                  {exp.title}
-                </h3>
-                <p className="text-[8px] lg:text-[10px] text-gray-600 leading-relaxed font-sans mb-3 lg:mb-4 relative z-20">
-                  {exp.desc}
-                </p>
-                <button className="absolute bottom-3 left-4 w-5 h-5 lg:w-6 lg:h-6 rounded-full border border-[#C58B48] shadow-sm flex items-center justify-center text-[#C58B48] hover:bg-[#C58B48] hover:text-white transition-all hover:scale-110 relative z-20">
-                  <ArrowRight size={10} className="lg:w-3 lg:h-3" />
-                </button>
-              </div>
-            </div>
+            <ExperienceCard exp={exp} />
           </div>
         ))}
 
@@ -327,44 +382,15 @@ const SignatureExperiences = () => {
           <div className="absolute top-4 bottom-4 left-3 w-1 bg-amber-900/10 rounded-full" />
           <div className="mobile-line-draw absolute top-4 bottom-4 left-3 w-1 bg-gradient-to-b from-[#C5A880] to-[#855F37] rounded-full origin-top" />
 
-          <div className="flex flex-col gap-10">
+          <div className="flex flex-col gap-8">
             {experiences.map((exp, idx) => (
               <div
                 key={idx}
                 ref={(el) => (mobileCardsRef.current[idx] = el)}
-                className="relative flex flex-col rounded-[20px] shadow-[0_20px_40px_rgba(0,0,0,0.1)] w-full"
-                style={{
-                  background:
-                    "linear-gradient(145deg, #FFF1D0 0%, #C5A880 40%, #855F37 100%)",
-                  padding: "2px",
-                }}
+                className="relative w-full"
               >
-                <div className="absolute top-1/2 -left-8 -translate-y-1/2 w-3 h-3 bg-[#C58B48] rounded-full border-2 border-[#FAF8F0] shadow-md z-20" />
-
-                <div className="relative w-full h-full flex flex-col sm:flex-row bg-white rounded-[18px] overflow-hidden">
-                  <div className="w-full sm:w-[40%] h-[160px] sm:h-auto relative">
-                    <img
-                      src={exp.image}
-                      alt={exp.title}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                  </div>
-                  <div className="w-full sm:w-[60%] p-5 flex flex-col justify-center relative bg-[#FDFBF7]">
-                    <span className="text-[#C58B48] font-serif text-2xl mb-1">
-                      {exp.num}
-                    </span>
-                    <h3 className="font-serif text-sm font-semibold text-gray-900 mb-2 leading-tight uppercase">
-                      {exp.title}
-                    </h3>
-                    <p className="text-xs text-gray-600 leading-relaxed font-sans mb-4">
-                      {exp.desc}
-                    </p>
-                    <button className="w-8 h-8 rounded-full border border-[#C58B48] flex items-center justify-center text-[#C58B48] hover:bg-[#C58B48] hover:text-white transition-all">
-                      <ArrowRight size={14} />
-                    </button>
-                  </div>
-                </div>
+                <div className="absolute top-1/2 -left-[2.1rem] -translate-y-1/2 w-[14px] h-[14px] bg-[#C58B48] rounded-full border-[3px] border-[#FDFBF7] shadow-sm z-30" />
+                <ExperienceCard exp={exp} />
               </div>
             ))}
           </div>

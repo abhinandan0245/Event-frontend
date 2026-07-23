@@ -10,6 +10,7 @@ import SignatureExperiences from "../components/home/SignatureExperiences";
 import VenueCollection from "../components/home/VenueCollection";
 import PortfolioGallery from "../components/home/PortfolioGallery";
 import TrustedClients from "../components/home/TrustedClients";
+import TestimonialSection from "../components/home/TestimonialSection";
 
 /**
  * Home Component
@@ -37,17 +38,19 @@ const Home = () => {
       <VenueCollection/>
 
       <PortfolioGallery />
-      
+
       <TrustedClients/>
 
+      <TestimonialSection/>
+
       {/* 5. Interactive Service Category Presentation Decks */}
-      <ServicesSection />
+      {/* <ServicesSection />
 
       {/* 6. Asymmetric Mosaic Portfolio Puzzle Layout with Generative WebGL Sparks */}
-      <FeaturedCelebrations />
+      {/* <FeaturedCelebrations /> */}
 
       {/* 7. High-End Numerical Metrics Analytics Block */}
-      <StatsSection />
+      {/* <StatsSection />  */}
 
       {/* 8. Final Call-to-Action Closing Layout Container */}
       <ExtraordinarySection />

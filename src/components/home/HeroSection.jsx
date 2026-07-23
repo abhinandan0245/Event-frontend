@@ -253,16 +253,18 @@ const HeroSection = () => {
           {/* Heading */}
           <h1 className="space-y-1" style={{ perspective: "1000px" }}>
             <span className="block overflow-hidden">
-              <span className="hero-word inline-block font-playfair text-4xl font-light leading-none tracking-tight text-[#171717] sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
+              {/* Added mr-3 md:mr-4 lg:mr-6 here for responsive spacing */}
+              <span className="hero-word inline-block font-playfair text-4xl font-light leading-none tracking-tight text-[#171717] sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl mr-3 md:mr-4 lg:mr-6">
                 Moments
               </span>
-              <span className="text-[#171717] font-cormorant italic  text-4xl sm:text-5xl md:text-5xl lg:text-7xl xl:text-8xl leading-none tracking-tight ">
+
+              <span className="text-[#171717] font-cormorant italic text-4xl sm:text-5xl md:text-5xl lg:text-7xl xl:text-8xl leading-none tracking-tight">
                 Of
               </span>
             </span>
 
             <span className="block overflow-hidden">
-              <span className="hero-word inline-block font-cormorant italic text-4xl font-normal   leading-none tracking-tight text-[#B5793F] sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
+              <span className="hero-word inline-block font-cormorant italic text-4xl font-normal leading-none tracking-tight text-[#B5793F] sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
                 Distinction
               </span>
             </span>
