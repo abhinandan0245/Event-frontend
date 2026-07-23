@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TextPlugin } from "gsap/TextPlugin";
@@ -21,20 +21,63 @@ gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
 // --- DATA ARRAY ---
 const venues = [
-  { title: "Heritage Palaces", subtitle: "Royal Grandeur", icon: Castle, image: "https://images.unsplash.com/photo-1583089892943-e02e5be026b9?w=800&q=80" },
-  { title: "Luxury Hotels", subtitle: "Refined Hospitality", icon: Building2, image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80" },
-  { title: "Private Estates", subtitle: "Exclusive Privacy", icon: Landmark, image: "https://images.unsplash.com/photo-1613490908592-5b927361a913?w=800&q=80" },
-  { title: "Beachfront Venues", subtitle: "Coastal Elegance", icon: Waves, image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80" },
-  { title: "Vineyards & Wineries", subtitle: "Countryside Charm", icon: Grape, image: "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=800&q=80" },
-  { title: "Mountain Retreats", subtitle: "Elevated Escapes", icon: Mountain, image: "https://images.unsplash.com/photo-1512100356356-de1b84283e18?w=800&q=80" },
-  { title: "Desert Camps", subtitle: "Golden Serenity", icon: Tent, image: "https://images.unsplash.com/photo-1526761122248-b31c93f8b2f9?w=800&q=80" },
-  { title: "Yachts & Cruises", subtitle: "Celebrations at Sea", icon: Ship, image: "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=800&q=80" },
+  {
+    title: "Heritage Palaces",
+    subtitle: "Royal Grandeur",
+    icon: Castle,
+    image:
+      "https://images.unsplash.com/photo-1583089892943-e02e5be026b9?w=800&q=80",
+  },
+  {
+    title: "Luxury Hotels",
+    subtitle: "Refined Hospitality",
+    icon: Building2,
+    image:
+      "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80",
+  },
+  {
+    title: "Private Estates",
+    subtitle: "Exclusive Privacy",
+    icon: Landmark,
+    image:
+      "https://images.unsplash.com/photo-1613490908592-5b927361a913?w=800&q=80",
+  },
+  {
+    title: "Beachfront Venues",
+    subtitle: "Coastal Elegance",
+    icon: Waves,
+    image:
+      "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80",
+  },
+  {
+    title: "Vineyards & Wineries",
+    subtitle: "Countryside Charm",
+    icon: Grape,
+    image:
+      "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=800&q=80",
+  },
+  {
+    title: "Mountain Retreats",
+    subtitle: "Elevated Escapes",
+    icon: Mountain,
+    image:
+      "https://images.unsplash.com/photo-1512100356356-de1b84283e18?w=800&q=80",
+  },
+  {
+    title: "Desert Camps",
+    subtitle: "Golden Serenity",
+    icon: Tent,
+    image:
+      "https://images.unsplash.com/photo-1526761122248-b31c93f8b2f9?w=800&q=80",
+  },
+  {
+    title: "Yachts & Cruises",
+    subtitle: "Celebrations at Sea",
+    icon: Ship,
+    image:
+      "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=800&q=80",
+  },
 ];
-
-// Split data for the 3 rows to look organic
-const row1Data = [...venues.slice(0, 4), ...venues.slice(4, 8)];
-const row2Data = [...venues.slice(4, 8), ...venues.slice(0, 4)];
-const row3Data = [...venues.slice(2, 8), ...venues.slice(0, 2)];
 
 // ==========================================
 // 1. INDIVIDUAL CARD (3D Parallax Logic)
@@ -44,9 +87,10 @@ const VenueCard = ({ venue }) => {
 
   const handleMouseMove = (e) => {
     if (!cardRef.current) return;
-    const { left, top, width, height } = cardRef.current.getBoundingClientRect();
+    const { left, top, width, height } =
+      cardRef.current.getBoundingClientRect();
     // Calculate cursor position relative to card center
-    const x = (e.clientX - left - width / 2) / 15; 
+    const x = (e.clientX - left - width / 2) / 15;
     const y = (e.clientY - top - height / 2) / 15;
 
     // Apply smooth 3D tilt and 1.1x zoom
@@ -91,11 +135,11 @@ const VenueCard = ({ venue }) => {
         className="absolute inset-0 w-full h-full object-cover"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A]/90 via-[#1A1A1A]/20 to-transparent pointer-events-none" />
-      
+
       <div className="absolute top-4 left-4 w-9 h-9 bg-white/95 rounded-full flex items-center justify-center border border-[#C58B48]/30 shadow-sm pointer-events-none translate-z-10">
         <venue.icon size={16} strokeWidth={1.5} className="text-[#C58B48]" />
       </div>
-      
+
       <div className="absolute bottom-0 left-0 w-full p-5 flex flex-col justify-end pointer-events-none translate-z-10">
         <h3 className="font-serif text-lg lg:text-xl font-medium text-white mb-1 drop-shadow-md">
           {venue.title}
@@ -122,7 +166,7 @@ const MarqueeRow = ({ items, direction = "left", speed = 40 }) => {
     // Set initial position based on direction
     const distance = direction === "left" ? -50 : 0;
     const startPos = direction === "left" ? 0 : -50;
-    
+
     gsap.set(row, { xPercent: startPos });
 
     // Infinite continuous scroll
@@ -139,7 +183,7 @@ const MarqueeRow = ({ items, direction = "left", speed = 40 }) => {
   }, [direction, speed]);
 
   return (
-    <div 
+    <div
       className="flex w-max py-4"
       // Pauses ONLY this specific row on hover
       onMouseEnter={() => tweenRef.current?.pause()}
@@ -175,20 +219,27 @@ const VenueCollection = () => {
         },
       });
 
-      textTimeline.to(typingTextRef.current, {
-        duration: 1.5,
-        text: "CURATED VENUE COLLECTION",
-        ease: "none",
-      })
-      .fromTo(
-        [mainTitleRef.current, descRef.current, buttonsRef.current],
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.8, stagger: 0.15, ease: "power3.out" },
-        "-=0.5" 
-      );
+      textTimeline
+        .to(typingTextRef.current, {
+          duration: 1.5,
+          text: "CURATED VENUE COLLECTION",
+          ease: "none",
+        })
+        .fromTo(
+          [mainTitleRef.current, descRef.current, buttonsRef.current],
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            stagger: 0.15,
+            ease: "power3.out",
+          },
+          "-=0.5",
+        );
     }, sectionRef);
 
-    return () => ctx.revert(); 
+    return () => ctx.revert();
   }, []);
 
   return (
@@ -214,9 +265,21 @@ const VenueCollection = () => {
           <div className="absolute inset-x-0 top-0 h-[15%] bg-gradient-to-b from-[#FAF8F0] to-transparent z-20" />
 
           <div className="absolute bottom-[10%] right-[10%] z-30 flex items-center justify-center w-28 h-28 lg:w-32 lg:h-32 cursor-pointer group">
-            <svg viewBox="0 0 100 100" className="absolute w-full h-full animate-[spin_12s_linear_infinite]">
-              <path id="textPath" d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" fill="none" />
-              <text fontSize="9.5" fill="#C58B48" letterSpacing="1.5" className="font-sans font-bold">
+            <svg
+              viewBox="0 0 100 100"
+              className="absolute w-full h-full animate-[spin_12s_linear_infinite]"
+            >
+              <path
+                id="textPath"
+                d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0"
+                fill="none"
+              />
+              <text
+                fontSize="9.5"
+                fill="#C58B48"
+                letterSpacing="1.5"
+                className="font-sans font-bold"
+              >
                 <textPath href="#textPath" startOffset="0%">
                   CURATED FOR YOU • CURATED FOR YOU •
                 </textPath>
@@ -248,7 +311,10 @@ const VenueCollection = () => {
             </span>
           </h2>
 
-          <p ref={descRef} className="font-sans text-xs lg:text-sm font-medium leading-[1.7] text-gray-600 max-w-[440px] mb-10 opacity-0">
+          <p
+            ref={descRef}
+            className="font-sans text-xs lg:text-sm font-medium leading-[1.7] text-gray-600 max-w-[440px] mb-10 opacity-0"
+          >
             Every celebration deserves a setting as remarkable as the occasion
             itself. Violin Events LLP curates an exclusive collection of
             heritage palaces, luxury resorts, private estates, vineyards,
@@ -256,11 +322,24 @@ const VenueCollection = () => {
             its character, elegance, and unforgettable atmosphere.
           </p>
 
-          <div ref={buttonsRef} className="flex flex-col sm:flex-row items-center gap-4 opacity-0">
-            <Button variant="primary" shape="pill" size="md" className="w-full sm:w-auto">
+          <div
+            ref={buttonsRef}
+            className="flex flex-col sm:flex-row items-center gap-4 opacity-0"
+          >
+            <Button
+              variant="primary"
+              shape="pill"
+              size="md"
+              className="w-full sm:w-auto"
+            >
               EXPLORE VENUES <ArrowRight size={14} />
             </Button>
-            <Button variant="secondary" shape="pill" size="md" className="w-full sm:w-auto">
+            <Button
+              variant="secondary"
+              shape="pill"
+              size="md"
+              className="w-full sm:w-auto"
+            >
               DISCUSS YOUR VISION
             </Button>
           </div>
@@ -272,20 +351,12 @@ const VenueCollection = () => {
       </div>
 
       {/* ==========================================
-          BOTTOM SECTION: 3-ROW INFINITE MARQUEE
+          BOTTOM SECTION: SINGLE INFINITE MARQUEE
           ========================================== */}
-      {/* 
-        The "gallery-wrapper" class uses the CSS group-hover technique. 
-        When hovered, all cards fade/blur slightly. 
-        The specific card being hovered stays fully opaque and pops out.
-      */}
       <div className="gallery-wrapper relative z-20 w-full overflow-hidden flex flex-col gap-2">
-        <MarqueeRow items={row1Data} direction="left" speed={45} />
-        <MarqueeRow items={row2Data} direction="right" speed={40} />
-        <MarqueeRow items={row3Data} direction="left" speed={50} />
+        {/* We now pass the entire 'venues' array to a single MarqueeRow */}
+        <MarqueeRow items={venues} direction="left" speed={60} />
       </div>
-
-      
     </section>
   );
 };
