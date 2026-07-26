@@ -11,6 +11,8 @@ import VenueCollection from "../components/home/VenueCollection";
 import PortfolioGallery from "../components/home/PortfolioGallery";
 import TrustedClients from "../components/home/TrustedClients";
 import TestimonialSection from "../components/home/TestimonialSection";
+import BlogSection from "../components/home/BlogSection";
+import FAQSection from "../components/home/FAQSection";
 
 /**
  * Home Component
@@ -42,6 +44,9 @@ const Home = () => {
       <TrustedClients/>
 
       <TestimonialSection/>
+      <BlogSection/>
+
+      <FAQSection />
 
       {/* 5. Interactive Service Category Presentation Decks */}
       {/* <ServicesSection />

@@ -5,20 +5,15 @@ import {
   Phone,
   Mail,
   Clock,
-  Sparkles,
-  ChevronRight,
-  Send,
-  User,
   MessageCircle,
   Heart,
   Star,
-  Users,
-  Award,
   ArrowRight,
   CheckCircle,
+  PenTool,
 } from "lucide-react";
+import { FaInstagram, FaFacebookF, FaPinterestP } from "react-icons/fa";
 import Button from "../components/ui/Button";
-import { FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -62,93 +57,90 @@ const Contact = () => {
   const contactInfo = [
     {
       icon: Phone,
-      title: "Call Us",
-      details: ["+91 98765 43210", "Mon – Sat | 10 AM – 7 PM"],
-      highlight: "+91 98765 43210",
+      title: "CALL US",
+      details: ["+91 98765 43210"],
     },
     {
       icon: Mail,
-      title: "Email Us",
+      title: "EMAIL US",
       details: ["hello@violinevents.com", "We reply within 24 hours"],
-      highlight: "hello@violinevents.com",
     },
     {
       icon: MapPin,
-      title: "Visit Us",
-      details: [
-        "Violin Events LLP",
-        "Ward, Mumbai – 400008",
-        "Maharashtra, India",
-      ],
-      highlight: "Get Directions",
+      title: "VISIT US",
+      details: ["Violin Events LLP", "Worli, Mumbai - 400018", "Maharashtra, India"],
     },
     {
       icon: MessageCircle,
-      title: "WhatsApp",
+      title: "WHATSAPP",
       details: ["+91 98765 43210", "Chat with our team"],
-      highlight: "+91 98765 43210",
+    },
+    {
+      icon: Clock,
+      title: "OFFICE HOURS",
+      details: ["Mon - Sat | 10 AM - 7 PM", "Sunday by appointment"],
     },
   ];
 
   const whyChooseUs = [
     {
       icon: Heart,
-      title: "Personalised Approach",
-      description: "Every celebration is unique and we treat it that way.",
+      title: "Personalized Approach",
     },
     {
-      icon: Sparkles,
+      icon: PenTool,
       title: "Creative & Detail-Oriented",
-      description: "We obsess over every detail to make your day perfect.",
     },
     {
-      icon: Users,
+      icon: Star,
       title: "Trusted by 100+ Families",
-      description: "Our track record speaks for itself with happy clients.",
     },
   ];
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0">
+    <div className="min-h-screen bg-[#FDFBF7] font-sans selection:bg-[#C58B48] selection:text-white">
+      {/* Font Definitions */}
+      <style>
+        {`
+          .font-cormorant { font-family: 'Cormorant Garamond', serif; }
+          .font-inter { font-family: 'Inter', sans-serif; }
+          .font-montserrat { font-family: 'Montserrat', sans-serif; }
+        `}
+      </style>
+
+      {/* ================= HERO SECTION ================= */}
+      <section className="relative w-full min-h-[60vh] flex items-center overflow-hidden pt-24 lg:pt-32 pb-16">
+        {/* Background Floral Overlay */}
+        <div className="absolute top-0 right-0 w-[60%] h-full z-0 opacity-90 pointer-events-none">
           <img
-            src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1600&h=900&fit=crop&q=80"
-            alt="Contact Us"
+            src="https://images.unsplash.com/photo-1780303864944-737d88c789f4?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            alt="Wedding Setup"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/40" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+          {/* <div className="absolute inset-0 bg-gradient-to-r from-[#FDFBF7] via-[#FDFBF7]/70 to-transparent" /> */}
+          {/* <div className="absolute inset-0 bg-gradient-to-b from-[#FDFBF7]/30 via-transparent to-[#FDFBF7]" /> */}
         </div>
 
-        {/* Decorative Elements */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-20 right-20 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-20 left-20 w-80 h-80 bg-rose-500/10 rounded-full blur-3xl" />
-        </div>
-
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
+        <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 lg:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="max-w-4xl text-center mx-auto"
+            className="max-w-xl"
           >
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 mb-6">
-              <Sparkles className="w-4 h-4 text-pink-300" />
-              <span className="text-pink-200 text-xs sm:text-sm font-semibold tracking-wider">
-                VIOLIN EVENTS LLP • CREATING TIMELESS CELEBRATIONS
+            <div className="flex items-center gap-3 mb-6">
+              <span className="font-montserrat text-[#C58B48] text-[10px] md:text-xs font-bold tracking-[0.25em] uppercase">
+                CONTACT US
               </span>
+              <div className="w-12 h-[1px] bg-[#C58B48]/50" />
             </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
-              Let's Create
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-rose-400 to-pink-400 mt-2">
-                Something Extraordinary
-              </span>
+            <h1 className="font-cormorant text-5xl md:text-6xl lg:text-[72px] text-[#1F2937] leading-[1.1] mb-6">
+              Let's Create Something <br />
+              <span className="italic text-[#C58B48]">Extraordinary</span>
             </h1>
-            <p className="text-gray-300 text-base sm:text-lg max-w-2xl mx-auto mt-6 leading-relaxed">
+
+            <p className="font-inter text-gray-600 text-sm md:text-[15px] leading-[1.8] max-w-md">
               We would love to hear about your dream celebration. Reach out to
               us and let's start planning your unforgettable moments together.
             </p>
@@ -156,175 +148,172 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* Contact Info Cards */}
-      <section className="py-16 -mt-12 relative z-10">
-        <div className="w-full max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <span className="text-pink-500 font-semibold text-sm uppercase tracking-widest">
-              We're Here For You
+      {/* ================= CONTACT INFO CARDS ================= */}
+      <section className="relative z-20 py-12">
+        <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16">
+          <div className="text-center mb-10">
+            <span className="font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-2 block">
+              WE'RE HERE FOR YOU
             </span>
-            <h2 className="text-3xl font-bold text-black mt-2">Get in Touch</h2>
-          </motion.div>
+            <h2 className="font-cormorant text-4xl text-[#1F2937] mb-2">
+              Get in Touch
+            </h2>
+          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {contactInfo.map((info, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -5 }}
-                className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 group"
+                viewport={{ once: true }}
+                className="bg-white border border-[#EBE3D5] rounded-sm p-8 flex flex-col items-center text-center shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgba(197,139,72,0.1)] transition-shadow duration-300"
               >
-                <div className="w-12 h-12 bg-pink-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-pink-500 transition-colors duration-300">
-                  <info.icon className="w-6 h-6 text-pink-500 group-hover:text-white transition-colors duration-300" />
+                <div className="w-12 h-12 rounded-full border border-[#C58B48]/30 flex items-center justify-center mb-5 bg-[#FDFBF7]">
+                  <info.icon
+                    className="w-5 h-5 text-[#C58B48]"
+                    strokeWidth={1.5}
+                  />
                 </div>
-                <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                <h3 className="font-montserrat text-[#1F2937] text-[10px] font-bold tracking-widest uppercase mb-4">
                   {info.title}
                 </h3>
                 {info.details.map((detail, idx) => (
                   <p
                     key={idx}
-                    className={`text-black text-sm ${
-                      idx === 0 ? "font-semibold" : "text-gray-500"
-                    }`}
+                    className="font-inter text-gray-500 text-[11px] leading-relaxed"
                   >
                     {detail}
                   </p>
                 ))}
-                {info.highlight && (
-                  <button className="text-pink-500 text-xs font-semibold mt-2 flex items-center hover:gap-2 transition-all group-hover:gap-2">
-                    {info.highlight}
-                    <ChevronRight className="w-3 h-3 ml-1 transition-transform group-hover:translate-x-1" />
-                  </button>
-                )}
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Contact Form Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="w-full max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <span className="text-pink-500 font-semibold text-sm uppercase tracking-widest">
-              Let's Plan Your Celebration
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-black mt-2">
-              Schedule a Consultation
-            </h2>
-          </motion.div>
+      {/* ================= FORM & IMAGE SPLIT SECTION ================= */}
+      <section className="py-16 lg:py-24">
+        <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 shadow-[0_10px_40px_rgba(0,0,0,0.04)] rounded-sm overflow-hidden border border-[#EBE3D5]">
+            {/* Left Image & Quote */}
+            <div className="relative h-[400px] lg:h-auto bg-gray-100">
+              <img
+                src="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=800&q=80"
+                alt="Journal and Flowers"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-black/10" />
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Form */}
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="bg-white p-8 rounded-2xl shadow-lg"
-            >
+              {/* Overlapping Quote Box */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] max-w-[320px] bg-white/95 backdrop-blur-sm p-8 lg:p-10 text-center shadow-xl border border-white/50">
+                <span className="font-cormorant text-5xl text-[#C58B48] leading-none block mb-2">
+                  “
+                </span>
+                <p className="font-cormorant text-xl lg:text-2xl text-[#1F2937] italic leading-relaxed">
+                  Every celebration begins with a conversation. Let's bring your
+                  vision to life.
+                </p>
+              </div>
+            </div>
+
+            {/* Right Form */}
+            <div className="bg-white p-8 lg:p-14">
+              <div className="mb-10 text-center lg:text-left">
+                <span className="font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-2 block">
+                  LET'S PLAN YOUR CELEBRATION
+                </span>
+                <h2 className="font-cormorant text-4xl lg:text-[42px] text-[#1F2937]">
+                  Schedule a Consultation
+                </h2>
+              </div>
+
               {isSubmitted ? (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="text-center py-12"
+                  className="text-center py-16"
                 >
-                  <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <CheckCircle className="w-10 h-10 text-green-500" />
+                  <div className="w-16 h-16 rounded-full border border-[#C58B48] flex items-center justify-center mx-auto mb-6 bg-[#FDFBF7]">
+                    <CheckCircle
+                      className="w-8 h-8 text-[#C58B48]"
+                      strokeWidth={1.5}
+                    />
                   </div>
-                  <h3 className="text-2xl font-bold text-black mb-2">
-                    Thank You! 🎉
+                  <h3 className="font-cormorant text-3xl text-[#1F2937] mb-3">
+                    Thank You!
                   </h3>
-                  <p className="text-gray-600">
+                  <p className="font-inter text-gray-600 text-sm mb-8">
                     Our team will get in touch with you within 24 hours.
                   </p>
                   <button
                     onClick={() => setIsSubmitted(false)}
-                    className="mt-6 text-pink-500 font-semibold hover:underline"
+                    className="font-montserrat text-[#C58B48] text-[10px] font-bold tracking-widest uppercase hover:text-amber-900 transition-colors"
                   >
-                    Send Another Enquiry
+                    SEND ANOTHER ENQUIRY →
                   </button>
                 </motion.div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-black mb-1">
-                      Your Name *
-                    </label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
                       <input
                         type="text"
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        placeholder="Enter your full name"
+                        placeholder="Your Name *"
                         required
-                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
+                        className="w-full bg-[#FDFBF7] px-5 py-4 border border-[#EBE3D5] focus:outline-none focus:border-[#C58B48] font-inter text-xs text-[#1F2937] placeholder:text-gray-400 transition-colors rounded-sm"
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="Your Email *"
+                        required
+                        className="w-full bg-[#FDFBF7] px-5 py-4 border border-[#EBE3D5] focus:outline-none focus:border-[#C58B48] font-inter text-xs text-[#1F2937] placeholder:text-gray-400 transition-colors rounded-sm"
                       />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-semibold text-black mb-1">
-                        Your Email *
-                      </label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                        <input
-                          type="email"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleChange}
-                          placeholder="Enter your email"
-                          required
-                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
-                        />
-                      </div>
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        placeholder="Phone Number *"
+                        required
+                        className="w-full bg-[#FDFBF7] px-5 py-4 border border-[#EBE3D5] focus:outline-none focus:border-[#C58B48] font-inter text-xs text-[#1F2937] placeholder:text-gray-400 transition-colors rounded-sm"
+                      />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-black mb-1">
-                        Phone Number *
-                      </label>
-                      <div className="relative">
-                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                        <input
-                          type="tel"
-                          name="phone"
-                          value={formData.phone}
-                          onChange={handleChange}
-                          placeholder="+91 98765 43210"
-                          required
-                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
-                        />
-                      </div>
+                      <input
+                        type="text"
+                        name="destination"
+                        value={formData.destination}
+                        onChange={handleChange}
+                        placeholder="Preferred Destination"
+                        className="w-full bg-[#FDFBF7] px-5 py-4 border border-[#EBE3D5] focus:outline-none focus:border-[#C58B48] font-inter text-xs text-[#1F2937] placeholder:text-gray-400 transition-colors rounded-sm"
+                      />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-semibold text-black mb-1">
-                        Number of Guests
-                      </label>
                       <select
                         name="guests"
                         value={formData.guests}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
+                        className="w-full bg-[#FDFBF7] px-5 py-4 border border-[#EBE3D5] focus:outline-none focus:border-[#C58B48] font-inter text-xs text-gray-500 transition-colors rounded-sm appearance-none"
                       >
-                        <option value="">Select range</option>
+                        <option value="">Number of Guests</option>
                         <option value="10-50">10-50</option>
                         <option value="50-100">50-100</option>
                         <option value="100-250">100-250</option>
@@ -333,273 +322,130 @@ const Contact = () => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-black mb-1">
-                        Preferred Destination
-                      </label>
-                      <input
-                        type="text"
-                        name="destination"
-                        value={formData.destination}
+                      <select
+                        name="celebrationType"
+                        value={formData.celebrationType}
                         onChange={handleChange}
-                        placeholder="e.g., Udaipur, Goa"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
-                      />
+                        className="w-full bg-[#FDFBF7] px-5 py-4 border border-[#EBE3D5] focus:outline-none focus:border-[#C58B48] font-inter text-xs text-gray-500 transition-colors rounded-sm appearance-none"
+                      >
+                        <option value="">Celebration Type</option>
+                        <option value="Wedding">Wedding</option>
+                        <option value="Engagement">Engagement</option>
+                        <option value="Corporate">Corporate Event</option>
+                        <option value="Private">Private Gathering</option>
+                      </select>
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-black mb-1">
-                      Celebration Type
-                    </label>
-                    <select
-                      name="celebrationType"
-                      value={formData.celebrationType}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
-                    >
-                      <option value="">Select type</option>
-                      <option value="Wedding">Wedding</option>
-                      <option value="Engagement">Engagement</option>
-                      <option value="Reception">Reception</option>
-                      <option value="Sangeet">Sangeet</option>
-                      <option value="Corporate">Corporate</option>
-                      <option value="Birthday">Birthday</option>
-                      <option value="Anniversary">Anniversary</option>
-                      <option value="Other">Other</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-black mb-1">
-                      Tell us about your dream celebration...
-                    </label>
                     <textarea
                       name="message"
                       value={formData.message}
                       onChange={handleChange}
                       rows="4"
-                      placeholder="Share your vision, special requests, or any questions..."
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all resize-none"
+                      placeholder="Tell us about your dream celebration..."
+                      className="w-full bg-[#FDFBF7] px-5 py-4 border border-[#EBE3D5] focus:outline-none focus:border-[#C58B48] font-inter text-xs text-[#1F2937] placeholder:text-gray-400 transition-colors rounded-sm resize-none"
                     />
                   </div>
 
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white py-3.5 shadow-lg shadow-pink-500/30 group"
+                    variant="champagne"
+                    size="lg"
+                    shape="shield"
+                    className="w-full font-montserrat tracking-[0.2em]"
                   >
                     {isSubmitting ? (
-                      <span className="flex items-center justify-center">
-                        <svg
-                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                        >
-                          <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                          />
-                          <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                          />
-                        </svg>
-                        SENDING...
-                      </span>
+                      "SENDING..."
                     ) : (
-                      <span className="flex items-center justify-center">
-                        SEND ENQUIRY
-                        <Send className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                      </span>
+                      <>
+                        SEND ENQUIRY{" "}
+                        <ArrowRight
+                          size={14}
+                          className="group-hover:translate-x-1 transition-transform"
+                        />
+                      </>
                     )}
                   </Button>
+                  <p className="font-inter text-center text-[10px] text-gray-400 mt-4">
+                    Our team will get in touch with you within 24 hours.
+                  </p>
                 </form>
               )}
-            </motion.div>
-
-            {/* Right Side - Map & Info */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="space-y-6"
-            >
-              {/* Map */}
-              <div className="bg-white p-4 rounded-2xl shadow-lg">
-                <div className="aspect-video rounded-xl overflow-hidden bg-gray-200">
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3771.681550258294!2d72.831111!3d19.0760!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c9a4a4c4c4c1%3A0x1c1c1c1c1c1c1c1c!2sMumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    className="w-full h-full"
-                  />
-                </div>
-              </div>
-
-              {/* Office Address */}
-              <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
-                <h3 className="text-lg font-bold text-black mb-2">
-                  Find Our Office
-                </h3>
-                <p className="text-gray-600 text-sm">
-                  Violin Events LLP
-                  <br />
-                  Office No. 12, 1st Floor,
-                  <br />
-                  Siddhivinayak Vision One,
-                  <br />
-                  Dr. Arvind Beant Road,
-                  <br />
-                  Ward, Mumbai – 400008
-                </p>
-                <button className="text-pink-500 font-semibold text-sm mt-3 flex items-center hover:gap-2 transition-all group">
-                  GET DIRECTIONS
-                  <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                </button>
-              </div>
-
-              {/* Why Choose Us */}
-              <div className="bg-gradient-to-r from-pink-50 to-rose-50 p-6 rounded-2xl border border-pink-100">
-                <h3 className="text-lg font-bold text-black mb-4">
-                  Why Client Love Working With Us
-                </h3>
-                <div className="space-y-4">
-                  {whyChooseUs.map((item, index) => (
-                    <div key={index} className="flex items-start gap-3">
-                      <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center flex-shrink-0">
-                        <item.icon className="w-4 h-4 text-pink-500" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-black text-sm">
-                          {item.title}
-                        </h4>
-                        <p className="text-gray-600 text-xs">
-                          {item.description}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Quick Links Section */}
-      <section className="py-16 bg-white">
-        <div className="w-full max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div>
-              <h4 className="font-bold text-black mb-3">
-                PLAN YOUR CELEBRATION
-              </h4>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li>
-                  <button className="hover:text-pink-500 transition-colors">
-                    Schedule a Consultation
-                  </button>
-                </li>
-                <li>
-                  <button className="hover:text-pink-500 transition-colors">
-                    Download Brochure
-                  </button>
-                </li>
-                <li>
-                  <button className="hover:text-pink-500 transition-colors">
-                    Wedding Checklist
-                  </button>
-                </li>
-                <li>
-                  <button className="hover:text-pink-500 transition-colors">
-                    FAQ
-                  </button>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold text-black mb-3">JOURNAL</h4>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li>
-                  <button className="hover:text-pink-500 transition-colors">
-                    Wedding Trends
-                  </button>
-                </li>
-                <li>
-                  <button className="hover:text-pink-500 transition-colors">
-                    Planning Tips
-                  </button>
-                </li>
-                <li>
-                  <button className="hover:text-pink-500 transition-colors">
-                    Real Weddings
-                  </button>
-                </li>
-                <li>
-                  <button className="hover:text-pink-500 transition-colors">
-                    Inspiration
-                  </button>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold text-black mb-3">CONTACT</h4>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li className="flex items-center gap-2">
-                  <Phone className="w-3 h-3 text-pink-500" />
-                  +91 98765 43210
-                </li>
-                <li className="flex items-center gap-2">
-                  <Mail className="w-3 h-3 text-pink-500" />
-                  hello@violinevents.com
-                </li>
-                <li className="flex items-center gap-2">
-                  <MapPin className="w-3 h-3 text-pink-500" />
-                  Mumbai, India
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold text-black mb-3">FOLLOW US</h4>
-              <div className="flex gap-3">
-                <button className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-pink-500 hover:text-white transition-colors">
-                  <FaInstagram className="w-4 h-4" />
-                </button>
-                <button className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-pink-500 hover:text-white transition-colors">
-                  <FaTwitter className="w-4 h-4" />
-                </button>
-                <button className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-pink-500 hover:text-white transition-colors">
-                  <FaYoutube className="w-4 h-4" />
-                </button>
+      {/* ================= MAP & ADDRESS SECTION ================= */}
+      <section className="py-12">
+        <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-[#FDFBF7]">
+            {/* Address Card */}
+            <div className="lg:col-span-4 bg-[#F5EFE6] p-10 lg:p-12 border border-[#EBE3D5] rounded-sm">
+              <div className="flex items-center gap-3 mb-6">
+                <MapPin className="w-5 h-5 text-[#C58B48]" strokeWidth={1.5} />
+                <h3 className="font-cormorant text-3xl text-[#1F2937]">
+                  Find Our Office
+                </h3>
               </div>
-              <p className="text-xs text-gray-500 mt-3">
-                We design and execute extraordinary weddings and celebrations
-                across the world with creativity, elegance and perfection.
-              </p>
+              <div className="font-inter text-gray-600 text-sm leading-relaxed space-y-1 mb-8">
+                <p className="font-semibold text-[#1F2937]">
+                  Violin Events LLP
+                </p>
+                <p>Office No. 12, 1st Floor,</p>
+                <p>Siddhivinayak Vision One,</p>
+                <p>Dr. Annie Besant Road,</p>
+                <p>Worli, Mumbai - 400018</p>
+              </div>
+              <button className="font-montserrat text-[#C58B48] text-[10px] font-bold tracking-widest uppercase hover:text-amber-900 transition-colors flex items-center gap-2 group">
+                GET DIRECTIONS{" "}
+                <ArrowRight
+                  size={14}
+                  className="group-hover:translate-x-1 transition-transform"
+                  strokeWidth={1.5}
+                />
+              </button>
+            </div>
+
+            {/* Map iframe */}
+            <div className="lg:col-span-8 h-[400px] rounded-sm overflow-hidden border border-[#EBE3D5] grayscale-[30%] opacity-90 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3772.669434199986!2d72.818469!3d19.006846!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7ce7697424601%3A0x6b49e3cfcb2af893!2sWorli%2C%20Mumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
             </div>
           </div>
+        </div>
+      </section>
 
-          <div className="mt-12 pt-8 border-t border-gray-200 text-center text-sm text-gray-500">
-            <p>© 2024 Violin Events LLP. All Rights Reserved.</p>
-            <div className="flex justify-center gap-4 mt-2">
-              <button className="hover:text-pink-500 transition-colors">
-                Privacy Policy
-              </button>
-              <span className="text-gray-300">|</span>
-              <button className="hover:text-pink-500 transition-colors">
-                Terms & Conditions
-              </button>
-            </div>
+      {/* ================= WHY CHOOSE US ================= */}
+      <section className="py-16 border-t border-[#EBE3D5]">
+        <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16 text-center">
+          <span className="font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-10 block">
+            WHY CLIENTS LOVE WORKING WITH US
+          </span>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 divide-y md:divide-y-0 md:divide-x divide-[#EBE3D5]">
+            {whyChooseUs.map((item, index) => (
+              <div
+                key={index}
+                className="flex flex-col items-center pt-6 md:pt-0"
+              >
+                <item.icon
+                  className="w-6 h-6 text-[#C58B48] mb-4"
+                  strokeWidth={1.5}
+                />
+                <h4 className="font-inter font-medium text-[#1F2937] text-sm tracking-wide">
+                  {item.title}
+                </h4>
+              </div>
+            ))}
           </div>
         </div>
       </section>

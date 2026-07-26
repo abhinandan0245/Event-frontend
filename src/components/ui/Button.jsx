@@ -255,7 +255,6 @@ const Button = ({
       shadow-[0_5px_18px_rgba(38,34,28,0.14)]
       hover:shadow-[0_10px_28px_rgba(38,34,28,0.20)]
     `,
-
     champagne: `
       bg-[#C9A96E]
       text-[#211D17]
@@ -264,7 +263,6 @@ const Button = ({
       shadow-[0_5px_18px_rgba(201,169,110,0.18)]
       hover:shadow-[0_10px_28px_rgba(201,169,110,0.28)]
     `,
-
     bronze: `
       bg-[#8D6742]
       text-[#FAF9F5]
@@ -273,7 +271,6 @@ const Button = ({
       shadow-[0_5px_18px_rgba(141,103,66,0.16)]
       hover:shadow-[0_10px_28px_rgba(141,103,66,0.24)]
     `,
-
     emerald: `
       bg-[#193B35]
       text-[#F8F7F1]
@@ -282,7 +279,6 @@ const Button = ({
       shadow-[0_5px_18px_rgba(25,59,53,0.16)]
       hover:shadow-[0_10px_28px_rgba(25,59,53,0.25)]
     `,
-
     wine: `
       bg-[#4A202A]
       text-[#FAF9F5]
@@ -291,7 +287,6 @@ const Button = ({
       shadow-[0_5px_18px_rgba(74,32,42,0.16)]
       hover:shadow-[0_10px_28px_rgba(74,32,42,0.25)]
     `,
-
     navy: `
       bg-[#182638]
       text-[#F8F7F1]
@@ -300,7 +295,6 @@ const Button = ({
       shadow-[0_5px_18px_rgba(24,38,56,0.16)]
       hover:shadow-[0_10px_28px_rgba(24,38,56,0.25)]
     `,
-
     secondary: `
       bg-[#F7F5EF]
       border
@@ -310,54 +304,50 @@ const Button = ({
       hover:shadow-[0_8px_22px_rgba(38,34,28,0.12)]
     `,
 
+    // FIXED: Dark outline for light/white backgrounds
     outline: `
       bg-transparent
       border
+      border-[#26221C]/40
+      shadow-[0_4px_16px_rgba(0,0,0,0.02)]
+      hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]
+      hover:border-[#26221C]
+    `,
+
+    // NEW: White outline for dark backgrounds/images
+    outlineLight: `
+      bg-transparent
+      border
       border-white/40
-      text-white
       backdrop-blur-sm
       shadow-[0_4px_16px_rgba(255,255,255,0.04)]
       hover:shadow-[0_8px_24px_rgba(255,255,255,0.10)]
+      hover:border-white
     `,
   };
 
   // Shapes
   const shapes = {
     rectangle: "rounded-[3px]",
-
     rounded: "rounded-xl",
-
     pill: "rounded-full",
-
     leaf: `
       rounded-tl-2xl
       rounded-br-2xl
       rounded-tr-[3px]
       rounded-bl-[3px]
     `,
-
     arch: "rounded-t-full rounded-b-[4px]",
-
     roundedCut: "rounded-tl-2xl rounded-br-2xl",
-
     soft: "rounded-[18px_4px_18px_4px]",
-
     organic: "rounded-[45%_10%_45%_10%]",
-
     cut: "",
-
     tag: "",
-
     shield: "",
-
     skew: "",
-
     blob: "",
-
     diamond: "",
-
     ticket: "",
-
     hex: "",
   };
 
@@ -370,48 +360,36 @@ const Button = ({
         "polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)",
     };
   }
-
   if (shape === "tag") {
     customShapeStyles = {
-      clipPath:
-        "polygon(15px 0, 100% 0, 100% 100%, 15px 100%, 0 50%)",
+      clipPath: "polygon(15px 0, 100% 0, 100% 100%, 15px 100%, 0 50%)",
     };
   }
-
   if (shape === "shield") {
     customShapeStyles = {
-      clipPath:
-        "polygon(0 0, 100% 0, 100% 75%, 50% 100%, 0 75%)",
+      clipPath: "polygon(0 0, 100% 0, 100% 75%, 50% 100%, 0 75%)",
     };
   }
-
   if (shape === "skew") {
     customShapeStyles = {
-      clipPath:
-        "polygon(15px 0, 100% 0, calc(100% - 15px) 100%, 0 100%)",
+      clipPath: "polygon(15px 0, 100% 0, calc(100% - 15px) 100%, 0 100%)",
     };
   }
-
   if (shape === "blob") {
-    customShapeStyles = {
-      borderRadius: "70% 30% 40% 60% / 50% 60% 40% 50%",
-    };
+    customShapeStyles = { borderRadius: "70% 30% 40% 60% / 50% 60% 40% 50%" };
   }
-
   if (shape === "diamond") {
     customShapeStyles = {
       clipPath:
         "polygon(12px 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 12px 100%, 0 50%)",
     };
   }
-
   if (shape === "ticket") {
     customShapeStyles = {
       clipPath:
         "polygon(0 0, 100% 0, 100% 35%, 96% 40%, 96% 60%, 100% 65%, 100% 100%, 0 100%, 0 65%, 4% 60%, 4% 40%, 0 35%)",
     };
   }
-
   if (shape === "hex") {
     customShapeStyles = {
       clipPath:
@@ -419,7 +397,7 @@ const Button = ({
     };
   }
 
-  // Hover Fill
+  // Hover Fill Overlay Color
   const hoverOverlay = {
     primary: "bg-[#B48C50]",
     champagne: "bg-[#E1C58D]",
@@ -428,10 +406,11 @@ const Button = ({
     wine: "bg-[#713541]",
     navy: "bg-[#2C405A]",
     secondary: "bg-[#26221C]",
-    outline: "bg-white",
+    outline: "bg-[#26221C]", // Fills with dark charcoal on hover
+    outlineLight: "bg-white", // Fills with white on hover
   };
 
-  // Text Color
+  // Text Color Definitions
   const textColors = {
     primary: "text-[#FAF9F5] group-hover:text-white",
     champagne: "text-[#211D17] group-hover:text-[#211D17]",
@@ -440,7 +419,8 @@ const Button = ({
     wine: "text-[#FAF9F5] group-hover:text-white",
     navy: "text-[#F8F7F1] group-hover:text-white",
     secondary: "text-[#26221C] group-hover:text-[#FAF9F5]",
-    outline: "text-white group-hover:text-[#26221C]",
+    outline: "text-[#26221C] group-hover:text-[#FAF9F5]", // Dark text -> Light text on hover
+    outlineLight: "text-white group-hover:text-[#26221C]", // White text -> Dark text on hover
   };
 
   return (
@@ -453,17 +433,9 @@ const Button = ({
       }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      whileHover={{
-        scale: 1.015,
-      }}
-      whileTap={{
-        scale: 0.97,
-      }}
-      transition={{
-        type: "spring",
-        stiffness: 300,
-        damping: 20,
-      }}
+      whileHover={{ scale: 1.015 }}
+      whileTap={{ scale: 0.97 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
       className={`
         ${baseStyles}
         ${variants[variant]}
@@ -522,7 +494,7 @@ const Button = ({
         "
       />
 
-      {/* Soft Gold Glow */}
+      {/* Soft Glow */}
       <span
         className="
           pointer-events-none
