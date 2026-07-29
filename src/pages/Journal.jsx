@@ -159,16 +159,7 @@ const Journal = () => {
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] font-sans selection:bg-[#C58B48] selection:text-white overflow-x-hidden">
-      {/* Global Fonts */}
-      <style>
-        {`
-          .font-cormorant { font-family: 'Cormorant Garamond', serif; }
-          .font-inter { font-family: 'Inter', sans-serif; }
-          .font-montserrat { font-family: 'Montserrat', sans-serif; }
-          .no-scrollbar::-webkit-scrollbar { display: none; }
-          .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        `}
-      </style>
+     
 
       {/* ================= HERO SECTION ================= */}
       <section className="relative w-full min-h-[85vh] flex items-center pt-24 lg:pt-32 pb-16">

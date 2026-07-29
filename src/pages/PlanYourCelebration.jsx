@@ -102,23 +102,7 @@ const PlanYourCelebration = () => {
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] font-sans selection:bg-[#C58B48] selection:text-white pb-20 overflow-x-hidden">
-      <style>
-        {`
-          .font-cormorant { font-family: 'Cormorant Garamond', serif; }
-          .font-inter { font-family: 'Inter', sans-serif; }
-          .font-montserrat { font-family: 'Montserrat', sans-serif; }
-          
-          /* Responsive Slider Magic */
-          .testi-track {
-            transform: translateX(calc(-100% * var(--slide-idx)));
-          }
-          @media (min-width: 768px) {
-            .testi-track {
-              transform: translateX(calc(-33.333333% * var(--slide-idx)));
-            }
-          }
-        `}
-      </style>
+      
 
       {/* ================= HERO SECTION WITH FORM ================= */}
       <section className="relative w-full min-h-[90vh] flex items-center pt-24 lg:pt-32 pb-16 overflow-hidden">

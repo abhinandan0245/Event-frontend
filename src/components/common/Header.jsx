@@ -290,6 +290,13 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (dropdownTimeout.current) clearTimeout(dropdownTimeout.current);
+      if (moreTimeout.current) clearTimeout(moreTimeout.current);
+    };
+  }, []);
+
   const handleMouseEnter = () => {
     if (dropdownTimeout.current) clearTimeout(dropdownTimeout.current);
     setIsDropdownOpen(true);

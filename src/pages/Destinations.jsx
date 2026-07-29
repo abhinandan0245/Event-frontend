@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -15,78 +15,7 @@ import Button from "../components/ui/Button";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// ================= CUSTOM CONTEXTUAL CURSOR =================
-const CustomCursor = ({ cursorVariant, cursorText }) => {
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
 
-  const springX = useSpring(mouseX, { stiffness: 500, damping: 28, mass: 0.5 });
-  const springY = useSpring(mouseY, { stiffness: 500, damping: 28, mass: 0.5 });
-
-  useEffect(() => {
-    const moveCursor = (e) => {
-      mouseX.set(e.clientX);
-      mouseY.set(e.clientY);
-    };
-    window.addEventListener("mousemove", moveCursor);
-    return () => window.removeEventListener("mousemove", moveCursor);
-  }, [mouseX, mouseY]);
-
-  const variants = {
-    default: {
-      width: 12,
-      height: 12,
-      backgroundColor: "#C58B48",
-      x: "-50%",
-      y: "-50%",
-      mixBlendMode: "normal",
-    },
-    explore: {
-      width: 80,
-      height: 80,
-      backgroundColor: "#FDFBF7",
-      color: "#1F2937",
-      x: "-50%",
-      y: "-50%",
-      mixBlendMode: "normal",
-    },
-    view: {
-      width: 60,
-      height: 60,
-      backgroundColor: "rgba(197, 139, 72, 0.9)",
-      color: "#FDFBF7",
-      x: "-50%",
-      y: "-50%",
-      mixBlendMode: "normal",
-    }
-  };
-
-  return (
-    <motion.div
-      className="fixed top-0 left-0 rounded-full pointer-events-none z-[9999] flex items-center justify-center overflow-hidden hidden md:flex shadow-lg"
-      variants={variants}
-      animate={cursorVariant}
-      style={{
-        x: springX,
-        y: springY,
-      }}
-    >
-      <AnimatePresence mode="wait">
-        {cursorText && (
-          <motion.span
-            key={cursorText}
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.5 }}
-            className="font-montserrat text-[8px] font-bold tracking-widest uppercase"
-          >
-            {cursorText}
-          </motion.span>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
-};
 
 // ================= ENHANCED PREMIUM 3D CARD WITH GLARE =================
 const Premium3DCard = ({ children, className, onMouseEnter, onMouseLeave }) => {
@@ -109,11 +38,8 @@ const Premium3DCard = ({ children, className, onMouseEnter, onMouseLeave }) => {
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
     
-    // Tilt calculations
     x.set(mouseX / width - 0.5);
     y.set(mouseY / height - 0.5);
-
-    // Glare calculations
     glareX.set((mouseX / width) * 100);
     glareY.set((mouseY / height) * 100);
   };
@@ -136,8 +62,6 @@ const Premium3DCard = ({ children, className, onMouseEnter, onMouseLeave }) => {
     >
       <div style={{ transform: "translateZ(30px)" }} className="w-full h-full relative rounded-xl overflow-hidden group">
         {children}
-        
-        {/* Dynamic Glare Overlay */}
         <motion.div
           className="absolute inset-0 z-50 pointer-events-none rounded-xl transition-opacity duration-300"
           style={{
@@ -164,7 +88,6 @@ const Destinations = () => {
     setCursorText(text);
   };
 
-  // Global Mouse Position for Hero Parallax
   const globalX = useMotionValue(0);
   const globalY = useMotionValue(0);
   const heroX = useTransform(globalX, [0, window.innerWidth], [15, -15]);
@@ -181,8 +104,11 @@ const Destinations = () => {
     return () => window.removeEventListener("mousemove", handleGlobalMouse);
   }, [globalX, globalY]);
 
-  // GSAP Scroll Animations
-  useLayoutEffect(() => {
+  // FIX: Changed useLayoutEffect to useEffect to prevent Lazy Loading crashes
+  useEffect(() => {
+    // FIX: Safety check to ensure DOM is ready
+    if (!compRef.current) return;
+
     let ctx = gsap.context(() => {
       gsap.from(".hero-element", {
         y: 60,
@@ -238,7 +164,7 @@ const Destinations = () => {
     }, compRef);
 
     return () => ctx.revert();
-  }, []);
+  }, []); // Re-run if compRef somehow changes, though it shouldn't
 
   const popularDestinations = [
     { name: "PHUKET", tag: "Vibrant & Exotic", img: "https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=600&q=80" },
@@ -258,20 +184,13 @@ const Destinations = () => {
 
   return (
     <div ref={compRef} className="min-h-screen bg-[#FDFBF7] font-sans selection:bg-[#C58B48] selection:text-white pb-20 overflow-hidden md:cursor-none">
-      <CustomCursor cursorVariant={cursorVariant} cursorText={cursorText} />
 
-      <style>
-        {`
-          .font-cormorant { font-family: 'Cormorant Garamond', serif; }
-          .font-inter { font-family: 'Inter', sans-serif; }
-          .font-montserrat { font-family: 'Montserrat', sans-serif; }
-        `}
-      </style>
+      {/* FIX: Removed the inline <style> tag. 
+          Please move .font-cormorant, .font-inter, and .font-montserrat 
+          to your main index.css file! */}
 
       {/* ================= HERO SECTION ================= */}
       <section className="relative w-full min-h-[90vh] flex items-center pt-24 lg:pt-32 pb-32" style={{ perspective: 1200 }}>
-        
-        {/* Parallax Background */}
         <motion.div 
           style={{ x: bgX, y: bgY }}
           className="absolute top-0 right-[-5%] w-full lg:w-[70%] h-[110vh] z-0 pointer-events-none"
@@ -285,7 +204,6 @@ const Destinations = () => {
           <div className="absolute inset-0 bg-gradient-to-t from-[#FDFBF7] via-transparent to-transparent" />
         </motion.div>
 
-        {/* Invisible Hover Zone for Hero Explore Cursor */}
         <div 
           className="absolute top-0 right-0 w-full lg:w-[60%] h-full z-10"
           onMouseEnter={() => handleCursorState("explore", "EXPLORE")}
@@ -293,14 +211,12 @@ const Destinations = () => {
         />
 
         <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 lg:px-16 flex flex-col justify-center h-full">
-          
           <div className="absolute left-6 lg:left-8 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2 opacity-30 hidden md:flex">
              <span className="font-montserrat text-[8px] font-bold tracking-widest text-[#1F2937]">01</span>
              <div className="w-[1px] h-8 bg-[#1F2937]"></div>
              <span className="font-montserrat text-[8px] font-bold tracking-widest text-[#1F2937]">05</span>
           </div>
 
-          {/* Parallax Text */}
           <motion.div 
             style={{ x: heroX, y: heroY }}
             className="w-full lg:w-[45%] pt-10 pl-0 md:pl-10"
@@ -348,7 +264,6 @@ const Destinations = () => {
       <div className="w-full px-4 lg:px-16 max-w-[1400px] mx-auto -mt-20 relative z-30 flex justify-center" style={{ perspective: 1500 }}>
         <Premium3DCard className="w-full max-w-[1100px] floating-banner">
           <div className="bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.08)] border border-[#EBE3D5] p-8 lg:p-10 w-full flex flex-col items-center relative overflow-hidden">
-            
             <div className="flex items-center justify-center gap-3 mb-8 w-full relative z-10">
               <div className="w-20 h-[1px] bg-[#C58B48]/30" />
               <span className="font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase">WHY THAILAND?</span>
@@ -384,7 +299,6 @@ const Destinations = () => {
       {/* ================= POPULAR DESTINATIONS ================= */}
       <section className="py-24 relative z-10">
         <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16 text-center">
-          
           <div className="flex flex-col items-center justify-center mb-16">
             <h2 className="font-cormorant text-4xl text-[#1F2937] mb-4 uppercase tracking-widest">
               Popular Destinations
@@ -427,14 +341,12 @@ const Destinations = () => {
           <button className="mt-16 font-montserrat text-[9px] font-bold tracking-[0.2em] text-[#C58B48] hover:text-amber-900 transition-colors flex items-center justify-center w-full gap-2 uppercase group">
             EXPLORE ALL DESTINATIONS <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
           </button>
-
         </div>
       </section>
 
       {/* ================= EXCLUSIVE VENUES ================= */}
       <section className="py-16 relative z-10 border-t border-[#EBE3D5]/50">
         <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16 text-center">
-          
           <div className="flex flex-col items-center justify-center mb-16">
             <h2 className="font-cormorant text-4xl text-[#1F2937] mb-4 uppercase tracking-widest">
               Exclusive Venues
@@ -474,7 +386,6 @@ const Destinations = () => {
           <button className="mt-16 font-montserrat text-[9px] font-bold tracking-[0.2em] text-[#C58B48] hover:text-amber-900 transition-colors flex items-center justify-center w-full gap-2 uppercase group">
             VIEW ALL VENUES <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
           </button>
-
         </div>
       </section>
 
@@ -482,8 +393,6 @@ const Destinations = () => {
       <section className="py-12 px-6 lg:px-16 w-full max-w-[1400px] mx-auto mt-10">
         <Premium3DCard>
           <div className="w-full bg-[#F5EFE6] rounded-2xl overflow-hidden flex flex-col lg:flex-row shadow-[0_20px_50px_rgba(0,0,0,0.06)] border border-white/50 relative z-10">
-            
-            {/* Left Text */}
             <div className="w-full lg:w-1/2 p-10 lg:p-16 flex flex-col justify-center relative z-20 bg-[#F5EFE6]">
               <span className="font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-4 block">
                 LET US PLAN YOUR
@@ -506,34 +415,30 @@ const Destinations = () => {
               </Button>
             </div>
 
-            {/* Right Image */}
             <div className="w-full lg:w-1/2 h-[350px] lg:h-auto relative z-10">
                <img 
-                  src="https://images.unsplash.com/photo-1585409677983-0f6c41ca9c3b?q=80&w=1000&auto=format&fit=crop" 
-                  alt="Happy Indian Couple" 
-                  className="w-full h-full object-cover"
+                 src="https://images.unsplash.com/photo-1585409677983-0f6c41ca9c3b?q=80&w=1000&auto=format&fit=crop" 
+                 alt="Happy Indian Couple" 
+                 className="w-full h-full object-cover"
                />
                <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-[#F5EFE6] hidden lg:block" />
                
-               {/* Gold Stamp Overlay */}
                <motion.div 
                  whileHover={{ scale: 1.1, rotate: 10 }}
                  className="absolute top-10 right-10 w-28 h-28 rounded-full border border-[#D4AF37]/40 flex items-center justify-center opacity-80 backdrop-blur-md hidden md:flex cursor-pointer bg-white/10"
                >
-                  <span className="font-cormorant text-4xl text-[#D4AF37]">V</span>
-                  <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full animate-[spin_20s_linear_infinite]">
-                    <path id="curve" d="M 50 15 A 35 35 0 1 1 49.9 15" fill="transparent" />
-                    <text className="font-montserrat text-[8.5px] uppercase tracking-[0.2em] fill-[#D4AF37]">
-                      <textPath href="#curve">Violin Events LLP • Crafting Timeless Celebrations •</textPath>
-                    </text>
-                  </svg>
+                 <span className="font-cormorant text-4xl text-[#D4AF37]">V</span>
+                 <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full animate-[spin_20s_linear_infinite]">
+                   <path id="curve" d="M 50 15 A 35 35 0 1 1 49.9 15" fill="transparent" />
+                   <text className="font-montserrat text-[8.5px] uppercase tracking-[0.2em] fill-[#D4AF37]">
+                     <textPath href="#curve">Violin Events LLP • Crafting Timeless Celebrations •</textPath>
+                   </text>
+                 </svg>
                </motion.div>
             </div>
-
           </div>
         </Premium3DCard>
       </section>
-
     </div>
   );
 };

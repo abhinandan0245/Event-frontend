@@ -21,45 +21,20 @@ import FAQSection from "../components/home/FAQSection";
  */
 const Home = () => {
   return (
-    <>
-      {/* 1. Introductory Cinematic Screen Hook with Custom Trailing Ribbon */}
+    <div className="home-page-container w-full overflow-hidden">
       <HeroSection />
-
-      {/* 2. Editorial Philosophy Statement Block */}
       <WelcomeSection />
-
-      {/* 3. Global Asymmetric Grid Flanked by Real 3D Rotational Earth */}
       <DestinationsSection />
-      
-       {/* signature experiences  */}
-
-       <SignatureExperiences/>
-      {/* 4. Fine-Art Workflow Stepper Timelines */}
+      <SignatureExperiences />
       <ProcessSection />
-
-      <VenueCollection/>
-
+      <VenueCollection />
       <PortfolioGallery />
-
-      <TrustedClients/>
-
-      <TestimonialSection/>
-      <BlogSection/>
-
+      <TrustedClients />
+      <TestimonialSection />
+      <BlogSection />
       <FAQSection />
-
-      {/* 5. Interactive Service Category Presentation Decks */}
-      {/* <ServicesSection />
-
-      {/* 6. Asymmetric Mosaic Portfolio Puzzle Layout with Generative WebGL Sparks */}
-      {/* <FeaturedCelebrations /> */}
-
-      {/* 7. High-End Numerical Metrics Analytics Block */}
-      {/* <StatsSection />  */}
-
-      {/* 8. Final Call-to-Action Closing Layout Container */}
       <ExtraordinarySection />
-    </>
+    </div>
   );
 };
 

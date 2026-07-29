@@ -99,14 +99,7 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] font-sans selection:bg-[#C58B48] selection:text-white">
-      {/* Font Definitions */}
-      <style>
-        {`
-          .font-cormorant { font-family: 'Cormorant Garamond', serif; }
-          .font-inter { font-family: 'Inter', sans-serif; }
-          .font-montserrat { font-family: 'Montserrat', sans-serif; }
-        `}
-      </style>
+     
 
       {/* ================= HERO SECTION ================= */}
       <section className="relative w-full min-h-[60vh] flex items-center overflow-hidden pt-24 lg:pt-32 pb-16">

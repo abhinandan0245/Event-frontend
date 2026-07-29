@@ -17,75 +17,7 @@ import Button from "../components/ui/Button";
 // Register GSAP ScrollTrigger
 gsap.registerPlugin(ScrollTrigger);
 
-// ================= CUSTOM CONTEXTUAL CURSOR =================
-const CustomCursor = ({ cursorVariant, cursorText }) => {
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
 
-  const springX = useSpring(mouseX, { stiffness: 500, damping: 28, mass: 0.5 });
-  const springY = useSpring(mouseY, { stiffness: 500, damping: 28, mass: 0.5 });
-
-  useEffect(() => {
-    const moveCursor = (e) => {
-      mouseX.set(e.clientX);
-      mouseY.set(e.clientY);
-    };
-    window.addEventListener("mousemove", moveCursor);
-    return () => window.removeEventListener("mousemove", moveCursor);
-  }, [mouseX, mouseY]);
-
-  const variants = {
-    default: {
-      width: 12,
-      height: 12,
-      backgroundColor: "#C58B48",
-      x: "-50%",
-      y: "-50%",
-      mixBlendMode: "normal",
-    },
-    explore: {
-      width: 80,
-      height: 80,
-      backgroundColor: "#FDFBF7",
-      color: "#1F2937",
-      x: "-50%",
-      y: "-50%",
-      mixBlendMode: "normal",
-    },
-    view: {
-      width: 70,
-      height: 70,
-      backgroundColor: "rgba(197, 139, 72, 0.95)",
-      color: "#FDFBF7",
-      x: "-50%",
-      y: "-50%",
-      mixBlendMode: "normal",
-    }
-  };
-
-  return (
-    <motion.div
-      className="fixed top-0 left-0 rounded-full pointer-events-none z-[9999] flex items-center justify-center overflow-hidden hidden md:flex shadow-lg"
-      variants={variants}
-      animate={cursorVariant}
-      style={{ x: springX, y: springY }}
-    >
-      <AnimatePresence mode="wait">
-        {cursorText && (
-          <motion.span
-            key={cursorText}
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.5 }}
-            className="font-montserrat text-[8px] font-bold tracking-widest uppercase"
-          >
-            {cursorText}
-          </motion.span>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
-};
 
 // ================= ENHANCED PREMIUM 3D CARD WITH GLARE =================
 const Premium3DCard = ({ children, className, onMouseEnter, onMouseLeave, borderRadiusClass = "rounded-xl" }) => {
@@ -267,16 +199,8 @@ const Services = () => {
 
   return (
     <div ref={compRef} className="min-h-screen bg-[#FDFBF7] font-sans selection:bg-[#C58B48] selection:text-white pb-20 overflow-hidden md:cursor-none">
-      <CustomCursor cursorVariant={cursorVariant} cursorText={cursorText} />
 
-      {/* Global Fonts */}
-      <style>
-        {`
-          .font-cormorant { font-family: 'Cormorant Garamond', serif; }
-          .font-inter { font-family: 'Inter', sans-serif; }
-          .font-montserrat { font-family: 'Montserrat', sans-serif; }
-        `}
-      </style>
+     
 
       {/* ================= HERO SECTION ================= */}
       <section className="relative w-full min-h-screen flex items-center pt-24 lg:pt-32 pb-16" style={{ perspective: 1200 }}>
