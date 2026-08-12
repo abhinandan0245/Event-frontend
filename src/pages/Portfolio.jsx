@@ -17,17 +17,23 @@ import {
   ArrowDown,
   Sparkles,
   Flower2,
-  Music
+  Music,
+  Calendar,
+  User,
+  Quote,
+  Video,
+  Image as ImageIcon,
 } from "lucide-react";
 import Button from "../components/ui/Button";
+import { portfolioApi } from "../api/portfolioApi";
+import { useNavigate } from "react-router-dom";
+import VideoModal from "../components/VideoModal";
 
 // Register GSAP ScrollTrigger
 gsap.registerPlugin(ScrollTrigger);
 
-
-
 // ================= ENHANCED PREMIUM 3D CARD WITH GLARE =================
-const Premium3DCard = ({ children, className, onMouseEnter, onMouseLeave }) => {
+const Premium3DCard = ({ children, className, onMouseEnter, onMouseLeave, onClick }) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const glareX = useMotionValue(50);
@@ -66,7 +72,8 @@ const Premium3DCard = ({ children, className, onMouseEnter, onMouseLeave }) => {
         glareOpacity.set(0);
         if (onMouseLeave) onMouseLeave(e);
       }}
-      style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+      onClick={onClick}
+      style={{ rotateX, rotateY, transformStyle: "preserve-3d", cursor: onClick ? "pointer" : "default" }}
       className={`relative ${className}`}
     >
       <div style={{ transform: "translateZ(30px)" }} className="w-full h-full relative rounded-xl overflow-hidden group">
@@ -91,9 +98,20 @@ const Portfolio = () => {
   const compRef = useRef(null);
   const [activeFilter, setActiveFilter] = useState("All Celebrations");
   const [selectedProject, setSelectedProject] = useState(null);
-  
+  const [portfolioItems, setPortfolioItems] = useState([]);
+  const [filteredItems, setFilteredItems] = useState([]);
+  const [featuredItems, setFeaturedItems] = useState([]);
+  const [videoItems, setVideoItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [videosLoading, setVideosLoading] = useState(true);
+  const [error, setError] = useState(null);
+  // Handle video card click
+  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+
   const [cursorVariant, setCursorVariant] = useState("default");
   const [cursorText, setCursorText] = useState("");
+  const navigate = useNavigate();
 
   const handleCursorState = (variant, text = "") => {
     setCursorVariant(variant);
@@ -117,8 +135,178 @@ const Portfolio = () => {
     return () => window.removeEventListener("mousemove", handleGlobalMouse);
   }, [globalX, globalY]);
 
+  // Fetch portfolio items from API
+  useEffect(() => {
+    const fetchPortfolioItems = async () => {
+      try {
+        setLoading(true);
+        const response = await portfolioApi.getAll();
+
+        if (response.success && response.data) {
+          let items = [];
+
+          if (response.data.items && Array.isArray(response.data.items)) {
+            items = response.data.items;
+          } else if (Array.isArray(response.data)) {
+            items = response.data;
+          } else if (response.data.portfolios) {
+            items = response.data.portfolios;
+          } else if (response.data.data) {
+            items = response.data.data;
+          }
+
+          setPortfolioItems(items);
+          setFilteredItems(items);
+
+          const featured = items.filter((item) => item.featured === true);
+          setFeaturedItems(featured.length > 0 ? featured : items.slice(0, 3));
+        } else {
+          setError("No portfolio items found");
+          const fallbackItems = getFallbackItems();
+          setPortfolioItems(fallbackItems);
+          setFilteredItems(fallbackItems);
+          setFeaturedItems(fallbackItems.slice(0, 3));
+        }
+      } catch (err) {
+        console.error("Error fetching portfolio items:", err);
+        setError("Failed to load portfolio items");
+        const fallbackItems = getFallbackItems();
+        setPortfolioItems(fallbackItems);
+        setFilteredItems(fallbackItems);
+        setFeaturedItems(fallbackItems.slice(0, 3));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPortfolioItems();
+  }, []);
+
+  // ✅ NEW: Fetch videos from API
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        setVideosLoading(true);
+        const response = await portfolioApi.getVideos();
+
+        if (response.success) {
+          setVideoItems(response.data || []);
+        } else {
+          console.error("Failed to fetch videos:", response.message);
+          setVideoItems([]);
+        }
+      } catch (err) {
+        console.error("Error fetching videos:", err);
+        setVideoItems([]);
+      } finally {
+        setVideosLoading(false);
+      }
+    };
+
+    fetchVideos();
+  }, []);
+
+  // Fallback items in case API fails
+  const getFallbackItems = () => {
+    return [
+      {
+        id: 1,
+        title: "Ananya & Rohan",
+        location: "Udaipur, Rajasthan",
+        category: "Weddings",
+        image:
+          "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=800&q=80",
+        date: "December 2024",
+        guests: 350,
+        description:
+          "A royal wedding at the iconic Lake Palace with traditional ceremonies and modern elegance.",
+        highlights: [
+          "Royal Procession",
+          "Lake View Ceremony",
+          "Grand Reception",
+        ],
+        featured: true,
+        clientName: "Ananya & Rohan",
+        clientTestimonial:
+          "Violin Events made our dream wedding a reality. Every detail was perfect!",
+        videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      },
+      {
+        id: 2,
+        title: "Ishita & Arjun",
+        location: "Phuket, Thailand",
+        category: "Destination Wedding",
+        image:
+          "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80",
+        date: "February 2025",
+        guests: 180,
+        description:
+          "A stunning beach wedding with breathtaking sunset views and luxurious Thai hospitality.",
+        highlights: ["Beach Ceremony", "Sunset Reception", "Thai Cuisine"],
+        featured: true,
+        clientName: "Ishita & Arjun",
+        clientTestimonial:
+          "An unforgettable destination wedding. Our guests are still talking about it!",
+        videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      },
+      // ... more fallback items
+    ];
+  };
+
+  // Filter items by category
+  useEffect(() => {
+    if (activeFilter === "All Celebrations") {
+      setFilteredItems(portfolioItems);
+    } else {
+      setFilteredItems(
+        portfolioItems.filter(
+          (item) =>
+            item.category?.toLowerCase() === activeFilter.toLowerCase() ||
+            item.category?.toLowerCase().includes(activeFilter.toLowerCase()),
+        ),
+      );
+    }
+  }, [activeFilter, portfolioItems]);
+
+  // Get unique categories for filters
+  const getCategories = () => {
+    const categories = new Set();
+    portfolioItems.forEach((item) => {
+      if (item.category) {
+        categories.add(item.category);
+      }
+    });
+    return ["All Celebrations", ...Array.from(categories)];
+  };
+
+  const filters = getCategories().map((cat) => {
+    const iconMap = {
+      "All Celebrations": Sparkles,
+      Weddings: Heart,
+      "Pre Wedding": Camera,
+      "Destination Wedding": Camera,
+      "Mehndi & Haldi": Flower2,
+      Sangeet: Music,
+      Reception: GlassWater,
+      "Corporate Events": Building2,
+      "Social Events": Users,
+    };
+    let Icon = Sparkles;
+    Object.keys(iconMap).forEach((key) => {
+      if (
+        cat.toLowerCase().includes(key.toLowerCase()) ||
+        key.toLowerCase().includes(cat.toLowerCase())
+      ) {
+        Icon = iconMap[key];
+      }
+    });
+    return { name: cat, icon: Icon };
+  });
+
   // GSAP Animations
   useLayoutEffect(() => {
+    if (loading) return;
+
     let ctx = gsap.context(() => {
       gsap.from(".hero-element", {
         y: 60,
@@ -159,77 +347,112 @@ const Portfolio = () => {
       });
     }, compRef);
     return () => ctx.revert();
-  }, []);
+  }, [loading, filteredItems]);
 
-  // === DATA ARRAYS ===
-  const filters = [
-    { name: "All Celebrations", icon: Sparkles },
-    { name: "Weddings", icon: Heart },
-    { name: "Pre Wedding", icon: Camera },
-    { name: "Mehndi & Haldi", icon: Flower2 },
-    { name: "Sangeet", icon: Music },
-    { name: "Reception", icon: GlassWater },
-    { name: "Corporate Events", icon: Building2 },
-    { name: "Social Events", icon: Users },
-  ];
-
-  const featuredProjects = [
-    { id: 1, title: "Ananya & Rohan", location: "Udaipur, Rajasthan", image: "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=800&q=80" },
-    { id: 2, title: "Ishita & Arjun", location: "Phuket, Thailand", image: "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80" },
-    { id: 3, title: "Meera & Karan", location: "Jaipur, Rajasthan", image: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&q=80" },
-  ];
-
+  // Get unique experience categories
   const experienceCategories = [
-    { title: "Royal Weddings", image: "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=400&q=80" },
-    { title: "Beach Weddings", image: "https://images.unsplash.com/photo-1512343879784-9602d5de7a10?w=400&q=80" },
-    { title: "Destination Weddings", image: "https://images.unsplash.com/photo-1519741497674-611481863552?w=400&q=80" },
-    { title: "Intimate Weddings", image: "https://images.unsplash.com/photo-1592656094267-764a45160876?w=400&q=80" },
-    { title: "Luxury Celebrations", image: "https://images.unsplash.com/photo-1593693397690-362cb9666fc2?w=400&q=80" },
-    { title: "Cultural Weddings", image: "https://images.unsplash.com/photo-1585409677983-0f6c41ca9c3b?w=400&q=80" },
-  ];
+    ...new Set(portfolioItems.map((item) => item.category)),
+  ]
+    .filter(Boolean)
+    .map((cat) => ({
+      title: cat,
+      image:
+        portfolioItems.find((item) => item.category === cat)?.image ||
+        "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=400&q=80",
+    }));
 
-  const films = [
-    "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=800&q=80",
-    "https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=800&q=80",
-    "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=80",
-    "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&q=80"
-  ];
+  // Get films (images for fallback)
+  const films = portfolioItems
+    .filter((item) => item.image)
+    .slice(0, 4)
+    .map(
+      (item) =>
+        item.image ||
+        "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80",
+    );
+
+  const displayFilms =
+    films.length > 0
+      ? films
+      : [
+          "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=800&q=80",
+          "https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=800&q=80",
+          "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=80",
+          "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&q=80",
+        ];
+
+  // Handle video click
+  const handleVideoClick = (video) => {
+    if (video.videoUrl) {
+      setSelectedVideo(video);
+      setIsVideoModalOpen(true);
+    }
+  };
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center">
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#C58B48] mb-4"></div>
+          <p className="text-gray-500 font-inter text-sm">
+            Loading portfolio...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div ref={compRef} className="min-h-screen bg-[#FDFBF7] font-sans selection:bg-[#C58B48] selection:text-white pb-20 overflow-x-hidden md:cursor-none">
-
-      
-
+    <div
+      ref={compRef}
+      className="min-h-screen bg-[#FDFBF7] font-sans selection:bg-[#C58B48] selection:text-white pb-20 overflow-x-hidden md:cursor-none"
+    >
       {/* ================= HERO SECTION ================= */}
-      <section className="relative w-full min-h-[85vh] flex items-center pt-24 lg:pt-32 pb-24" style={{ perspective: 1200 }}>
-        
+      <section
+        className="relative w-full min-h-[85vh] flex items-center pt-24 lg:pt-32 pb-24"
+        style={{ perspective: 1200 }}
+      >
         {/* Parallax Background Image */}
-        <motion.div style={{ x: bgX, y: bgY }} className="absolute top-0 right-[-5%] w-full lg:w-[65%] h-[110vh] z-0 pointer-events-none">
+        <motion.div
+          style={{ x: bgX, y: bgY }}
+          className="absolute top-0 right-[-5%] w-full lg:w-[65%] h-[110vh] z-0 pointer-events-none"
+        >
           <img
             src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1600&auto=format&fit=crop"
             alt="Beautiful Wedding Setup"
             className="w-full h-full object-cover opacity-90 scale-110"
-            style={{ maskImage: "linear-gradient(to right, transparent 0%, black 35%)", WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 35%)" }}
+            style={{
+              maskImage: "linear-gradient(to right, transparent 0%, black 35%)",
+              WebkitMaskImage:
+                "linear-gradient(to right, transparent 0%, black 35%)",
+            }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#FDFBF7] via-transparent to-transparent" />
         </motion.div>
 
         {/* Invisible Hover Zone for Cursor */}
-        <div 
+        <div
           className="absolute top-0 right-0 w-full lg:w-[60%] h-full z-10"
           onMouseEnter={() => handleCursorState("explore", "EXPLORE")}
           onMouseLeave={() => handleCursorState("default")}
         />
 
         <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 lg:px-16 flex flex-col justify-center h-full">
-          
           <div className="absolute left-6 lg:left-8 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2 opacity-30 hidden md:flex">
-             <span className="font-montserrat text-[8px] font-bold tracking-widest text-[#1F2937]">01</span>
-             <div className="w-[1px] h-8 bg-[#1F2937]"></div>
-             <span className="font-montserrat text-[8px] font-bold tracking-widest text-[#1F2937]">06</span>
+            <span className="font-montserrat text-[8px] font-bold tracking-widest text-[#1F2937]">
+              01
+            </span>
+            <div className="w-[1px] h-8 bg-[#1F2937]"></div>
+            <span className="font-montserrat text-[8px] font-bold tracking-widest text-[#1F2937]">
+              06
+            </span>
           </div>
 
-          <motion.div style={{ x: heroX, y: heroY }} className="w-full lg:w-[50%] pt-10 pl-0 md:pl-10">
+          <motion.div
+            style={{ x: heroX, y: heroY }}
+            className="w-full lg:w-[50%] pt-10 pl-0 md:pl-10"
+          >
             <span className="hero-element font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-4 block">
               OUR PORTFOLIO
             </span>
@@ -237,43 +460,47 @@ const Portfolio = () => {
               Stories we've <br />
               <span className="italic text-[#C58B48]">Beautifully Crafted</span>
             </h1>
-            
+
             <p className="hero-element font-inter text-gray-600 text-sm leading-[1.8] max-w-[380px] mb-10">
-              A glimpse of celebrations we've designed with passion, precision and perfection across breathtaking destinations.
+              A glimpse of celebrations we've designed with passion, precision
+              and perfection across breathtaking destinations.
             </p>
 
             <div className="hero-element flex flex-col sm:flex-row items-center gap-6">
-              <Button 
-                variant="champagne" 
-                size="md" 
+              <Button
+                variant="champagne"
+                size="md"
                 className="font-montserrat tracking-[0.2em] shadow-none w-full sm:w-auto hover:scale-105 transition-transform"
-                onMouseEnter={() => handleCursorState("default")}
+                // onMouseEnter={() => handleCursorState("default")}
+                onClick={() => navigate("/contact")}
               >
                 EXPLORE OUR WORK <ArrowRight size={14} className="ml-1" />
               </Button>
-              <button 
+              {/* <button
                 onMouseEnter={() => handleCursorState("view", "PLAY")}
                 onMouseLeave={() => handleCursorState("default")}
                 className="flex items-center gap-3 font-montserrat text-[9px] font-bold tracking-[0.2em] text-[#1F2937] hover:text-[#C58B48] transition-colors group"
               >
                 <div className="w-10 h-10 rounded-full border border-[#EBE3D5] group-hover:border-[#C58B48] flex items-center justify-center transition-colors shadow-sm bg-white">
-                   <Play className="w-3 h-3 ml-0.5 fill-[#C58B48] text-[#C58B48]" />
+                  <Play className="w-3 h-3 ml-0.5 fill-[#C58B48] text-[#C58B48]" />
                 </div>
                 WATCH SHOWREEL
-              </button>
+              </button> */}
             </div>
           </motion.div>
         </div>
 
         {/* Scroll Indicator */}
-        <motion.div 
-           initial={{ opacity: 0 }} 
-           animate={{ opacity: 1 }} 
-           transition={{ delay: 1.5, duration: 1 }}
-           className="absolute bottom-16 left-6 lg:left-24 flex flex-col items-center gap-2 text-gray-400 opacity-60 pointer-events-none"
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5, duration: 1 }}
+          className="absolute bottom-16 left-6 lg:left-24 flex flex-col items-center gap-2 text-gray-400 opacity-60 pointer-events-none"
         >
-           <span className="font-montserrat text-[8px] font-bold tracking-[0.2em] uppercase">SCROLL</span>
-           <ArrowDown size={14} className="animate-bounce" strokeWidth={1.5} />
+          <span className="font-montserrat text-[8px] font-bold tracking-[0.2em] uppercase">
+            SCROLL
+          </span>
+          <ArrowDown size={14} className="animate-bounce" strokeWidth={1.5} />
         </motion.div>
       </section>
 
@@ -302,63 +529,79 @@ const Portfolio = () => {
       {/* ================= FEATURED CELEBRATIONS ================= */}
       <section className="py-20 lg:py-32 relative z-10">
         <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16">
-          <div className="portfolio-grid grid grid-cols-1 lg:grid-cols-4 gap-12" style={{ perspective: 1500 }}>
-            
+          <div
+            className="portfolio-grid grid grid-cols-1 lg:grid-cols-4 gap-12"
+            style={{ perspective: 1500 }}
+          >
             {/* Left Column (Sticky Text) */}
             <div className="lg:col-span-1 flex flex-col pt-10 relative">
               <span className="font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-4 block">
                 FEATURED CELEBRATIONS
               </span>
               <h2 className="font-cormorant text-4xl lg:text-[42px] text-[#1F2937] leading-[1.1] mb-12">
-                Timeless Moments <br/> Across the Globe
+                Timeless Moments <br /> Across the Globe
               </h2>
-              
-              <div className="absolute top-32 -left-10 w-64 h-64 opacity-20 pointer-events-none mix-blend-multiply grayscale">
-                <img src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=400&q=80" alt="Floral" className="w-full h-full object-cover" />
-              </div>
 
-              <div className="mt-auto relative z-10 hidden lg:block">
-                <Button variant="outline" size="md" className="font-montserrat text-[9px] border-[#EBE3D5] text-[#1F2937] hover:border-[#C58B48] w-fit">
-                  VIEW FULL PORTFOLIO <ArrowRight size={12} className="ml-1" />
-                </Button>
+              <div className="absolute top-32 -left-10 w-64 h-64 opacity-20 pointer-events-none mix-blend-multiply grayscale">
+                <img
+                  src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=400&q=80"
+                  alt="Floral"
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
 
             {/* Right Columns (Projects) */}
             <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6 relative">
-              {featuredProjects.map((project, index) => (
-                <div key={project.id} className="portfolio-card h-full">
-                  <Premium3DCard 
-                    onMouseEnter={() => handleCursorState("view", "VIEW")}
+              {featuredItems.map((project, index) => (
+                <div
+                  key={project.id || index}
+                  className="portfolio-card h-full"
+                >
+                  <Premium3DCard                    
+                    onMouseEnter={() => handleCursorState("view", "PLAY")}
                     onMouseLeave={() => handleCursorState("default")}
+                    onClick={() => handleVideoClick(video)}
                     className="h-full"
                   >
-                    <div 
-                      className="group bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#EBE3D5] flex flex-col h-full hover:border-[#C58B48]/40 transition-colors cursor-none"
-                      onClick={() => {
-                        setSelectedProject(project);
-                        handleCursorState("default");
-                      }}
-                    >
+                    <div className="group bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#EBE3D5] flex flex-col h-full hover:border-[#C58B48]/40 transition-colors">
                       <div className="relative overflow-hidden aspect-[3/4] rounded-lg mb-4 m-2">
                         <img
                           src={project.image}
                           alt={project.title}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                          onError={(e) => {
+                            e.target.src =
+                              "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80";
+                          }}
                         />
+                        {project.featured && (
+                          <div className="absolute top-4 left-4 bg-[#C58B48] text-white px-3 py-1 rounded-full text-[10px] font-semibold">
+                            Featured
+                          </div>
+                        )}
                         <button className="absolute top-4 right-4 text-white/80 hover:text-white transition-colors z-20">
-                          <Heart className="w-5 h-5 drop-shadow-md" strokeWidth={1.5} />
+                          <Heart
+                            className="w-5 h-5 drop-shadow-md"
+                            strokeWidth={1.5}
+                          />
                         </button>
                       </div>
-                      
+
                       <div className="px-5 pb-5 flex items-center justify-between mt-auto bg-white z-10">
                         <div>
                           <h3 className="font-cormorant text-2xl text-[#1F2937] mb-1">
                             {project.title}
                           </h3>
-                          <p className="font-inter text-[11px] text-gray-400">
+                          <p className="font-inter text-[11px] text-gray-400 flex items-center gap-1">
+                            <MapPin className="w-3 h-3" />
                             {project.location}
                           </p>
+                          {project.category && (
+                            <p className="font-inter text-[10px] text-[#C58B48] mt-0.5">
+                              {project.category}
+                            </p>
+                          )}
                         </div>
                         <div className="w-8 h-8 rounded-full border border-[#EBE3D5] flex items-center justify-center text-gray-400 group-hover:border-[#C58B48] group-hover:text-[#C58B48] transition-colors shrink-0">
                           <ArrowRight size={14} />
@@ -369,50 +612,50 @@ const Portfolio = () => {
                 </div>
               ))}
             </div>
-
           </div>
         </div>
       </section>
 
       {/* ================= EXPLORE BY EXPERIENCE (TIMELINE) ================= */}
-      <section className="py-16 bg-white border-y border-[#EBE3D5]/50 overflow-hidden">
-        <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16 flex flex-col lg:flex-row items-center gap-12">
-          
-          <div className="w-full lg:w-[25%] flex flex-col">
-            <span className="font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-3 block">
-              EXPLORE BY EXPERIENCE
-            </span>
-            <h2 className="font-cormorant text-3xl lg:text-[40px] text-[#1F2937] leading-[1.1]">
-              Find the Celebration that Inspires You
-            </h2>
+      {experienceCategories.length > 0 && (
+        <section className="py-16 bg-white border-y border-[#EBE3D5]/50 overflow-hidden">
+          <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16 flex flex-col lg:flex-row items-center gap-12">
+            <div className="w-full lg:w-[25%] flex flex-col">
+              <span className="font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-3 block">
+                EXPLORE BY EXPERIENCE
+              </span>
+              <h2 className="font-cormorant text-3xl lg:text-[40px] text-[#1F2937] leading-[1.1]">
+                Find the Celebration that Inspires You
+              </h2>
+            </div>
+
+            <div className="w-full lg:w-[75%] relative flex items-center justify-between pb-6 overflow-x-auto no-scrollbar pt-4">
+              <div className="absolute top-[40px] left-0 w-full h-[1px] bg-[#C58B48]/30 z-0 hidden lg:block" />
+
+              {experienceCategories.slice(0, 8).map((cat, idx) => (
+                <motion.div
+                  key={idx}
+                  whileHover={{ y: -10, scale: 1.05 }}
+                  className="relative z-10 flex flex-col items-center min-w-[110px] cursor-pointer group px-2"
+                  onClick={() => setActiveFilter(cat.title)}
+                >
+                  <div className="w-20 h-20 rounded-full border-4 border-white shadow-[0_4px_15px_rgba(0,0,0,0.08)] overflow-hidden mb-4 relative bg-white">
+                    <img
+                      src={cat.image}
+                      alt={cat.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-[#C58B48]/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
+                  <h4 className="font-montserrat text-[8px] font-bold tracking-widest uppercase text-[#1F2937] text-center">
+                    {cat.title}
+                  </h4>
+                </motion.div>
+              ))}
+            </div>
           </div>
-
-          <div className="w-full lg:w-[75%] relative flex items-center justify-between pb-6 overflow-x-auto no-scrollbar pt-4">
-             <div className="absolute top-[40px] left-0 w-full h-[1px] bg-[#C58B48]/30 z-0 hidden lg:block" />
-             
-             {experienceCategories.map((cat, idx) => (
-               <motion.div 
-                 key={idx}
-                 whileHover={{ y: -10, scale: 1.05 }}
-                 className="relative z-10 flex flex-col items-center min-w-[110px] cursor-pointer group px-2"
-               >
-                 <div className="w-20 h-20 rounded-full border-4 border-white shadow-[0_4px_15px_rgba(0,0,0,0.08)] overflow-hidden mb-4 relative bg-white">
-                   <img src={cat.image} alt={cat.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                   <div className="absolute inset-0 bg-[#C58B48]/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-                 </div>
-                 <h4 className="font-montserrat text-[8px] font-bold tracking-widest uppercase text-[#1F2937] text-center">
-                   {cat.title}
-                 </h4>
-               </motion.div>
-             ))}
-
-             <button className="relative z-10 w-10 h-10 rounded-full border border-[#EBE3D5] flex items-center justify-center text-gray-400 hover:text-[#C58B48] hover:border-[#C58B48] transition-colors bg-white shadow-sm shrink-0 ml-4 hidden lg:flex">
-               <ChevronRight size={16} />
-             </button>
-          </div>
-
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ================= A CELEBRATION TO REMEMBER ================= */}
       <section className="py-20 lg:py-32" style={{ perspective: 1500 }}>
@@ -420,14 +663,20 @@ const Portfolio = () => {
           <Premium3DCard>
             <div className="bg-[#FDFBF7] border border-[#EBE3D5] rounded-xl overflow-hidden p-4 lg:p-6 shadow-[0_15px_40px_rgba(0,0,0,0.04)] relative z-10">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center bg-[#FDFBF7]">
-                
                 {/* Left Large Video/Image */}
-                <div 
+                <div
                   className="lg:col-span-5 h-[400px] lg:h-[500px] relative rounded-lg overflow-hidden group cursor-none"
                   onMouseEnter={() => handleCursorState("view", "PLAY")}
                   onMouseLeave={() => handleCursorState("default")}
                 >
-                  <img src="https://images.unsplash.com/photo-1585409677983-0f6c41ca9c3b?w=800&q=80" alt="Couple" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
+                  <img
+                    src={
+                      featuredItems[0]?.image ||
+                      "https://images.unsplash.com/photo-1585409677983-0f6c41ca9c3b?w=800&q=80"
+                    }
+                    alt="Couple"
+                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                  />
                   <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors" />
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 md:hidden">
                     <div className="w-14 h-14 bg-white/95 rounded-full flex items-center justify-center shadow-lg">
@@ -439,45 +688,155 @@ const Portfolio = () => {
                 {/* Center Text */}
                 <div className="lg:col-span-4 flex flex-col justify-center px-4 lg:px-10 text-center lg:text-left py-10 lg:py-0">
                   <h2 className="font-cormorant text-4xl lg:text-[46px] text-[#1F2937] leading-[1.1] mb-6">
-                    A Celebration to <br/>
+                    A Celebration to <br />
                     <span className="italic text-[#C58B48]">Remember</span>
                   </h2>
                   <div className="w-10 h-[1px] bg-[#C58B48]/50 mx-auto lg:mx-0 mb-6" />
                   <p className="font-inter text-xs text-gray-500 leading-relaxed mb-8">
-                    Every love story is unique. We bring your dreams to life with creativity, flawless execution and heartfelt moments.
+                    Every love story is unique. We bring your dreams to life
+                    with creativity, flawless execution and heartfelt moments.
                   </p>
-                  <Button variant="outline" size="sm" className="font-montserrat text-[9px] border-[#EBE3D5] text-[#1F2937] hover:border-[#C58B48] mx-auto lg:mx-0 w-fit">
-                    VIEW STORY <ArrowRight size={12} className="ml-1" />
-                  </Button>
                 </div>
 
                 {/* Right Stacked Images */}
-                <div 
+                <div
                   className="lg:col-span-3 flex flex-col gap-4 h-[400px] lg:h-[500px]"
                   onMouseEnter={() => handleCursorState("view", "VIEW")}
                   onMouseLeave={() => handleCursorState("default")}
                 >
-                  <div className="h-1/3 rounded-lg overflow-hidden relative group cursor-none">
-                     <img src="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&q=80" alt="Moment 1" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                  </div>
-                  <div className="h-1/3 rounded-lg overflow-hidden relative group cursor-none">
-                     <img src="https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=600&q=80" alt="Moment 2" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                  </div>
-                  <div className="h-1/3 rounded-lg overflow-hidden relative group cursor-none">
-                     <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&q=80" alt="Moment 3" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                  </div>
+                  {portfolioItems.slice(0, 3).map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="h-1/3 rounded-lg overflow-hidden relative group cursor-none"
+                    >
+                      <img
+                        src={
+                          item.image ||
+                          "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&q=80"
+                        }
+                        alt={item.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                    </div>
+                  ))}
                 </div>
-
               </div>
             </div>
           </Premium3DCard>
         </div>
       </section>
 
+      {/* ================= VIDEOS SECTION (NEW) ================= */}
+      <section className="py-16 relative z-10 bg-[#FAF8F0]">
+        <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
+            <div>
+              <span className="font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-3 block">
+                FEATURED VIDEOS
+              </span>
+              <h2 className="font-cormorant text-4xl lg:text-[42px] text-[#1F2937]">
+                Cinematic Storytelling
+              </h2>
+              <p className="font-inter text-sm text-gray-500 mt-2">
+                Watch our featured celebration films
+              </p>
+            </div>
+            {videoItems.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="font-montserrat text-[9px] border-[#EBE3D5] text-[#1F2937] hover:border-[#C58B48] mt-6 md:mt-0"
+              >
+                WATCH ALL VIDEOS <ArrowRight size={12} className="ml-1" />
+              </Button>
+            )}
+          </div>
+
+          {videosLoading ? (
+            <div className="flex justify-center items-center py-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#C58B48]"></div>
+            </div>
+          ) : videoItems.length > 0 ? (
+            <div
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              style={{ perspective: 1200 }}
+            >
+              {videoItems.map((video, idx) => (
+                <div key={video.id || idx} className="video-card">
+                  <Premium3DCard
+                    onMouseEnter={() => handleCursorState("view", "PLAY")}
+                    onMouseLeave={() => handleCursorState("default")}
+                    onClick={() => handleVideoClick(video)}
+                  >
+                    <div className="group bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#EBE3D5] hover:border-[#C58B48]/40 transition-all cursor-pointer">
+                      <div className="relative aspect-video overflow-hidden">
+                        <img
+                          src={
+                            video.image ||
+                            "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80"
+                          }
+                          alt={video.title}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                          onError={(e) => {
+                            e.target.src =
+                              "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80";
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition-colors duration-500" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="w-16 h-16 bg-white/95 rounded-full flex items-center justify-center shadow-2xl transform scale-90 opacity-80 group-hover:scale-110 group-hover:opacity-100 transition-all duration-300 ease-out">
+                            <Play className="w-6 h-6 text-[#C58B48] fill-[#C58B48] ml-1" />
+                          </div>
+                        </div>
+                        {video.featured && (
+                          <div className="absolute top-3 left-3 bg-[#C58B48] text-white text-[8px] px-2 py-0.5 rounded-full font-semibold tracking-wider">
+                            Featured
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-4">
+                        <h3 className="font-cormorant text-xl text-[#1F2937] mb-1">
+                          {video.title}
+                        </h3>
+                        <div className="flex items-center gap-4 text-sm text-gray-500">
+                          <span className="flex items-center gap-1">
+                            <MapPin size={14} />
+                            {video.location}
+                          </span>
+                          {video.date && (
+                            <span className="flex items-center gap-1">
+                              <Calendar size={14} />
+                              {video.date}
+                            </span>
+                          )}
+                        </div>
+                        {video.category && (
+                          <span className="inline-block mt-2 text-xs text-[#C58B48] font-medium">
+                            {video.category}
+                          </span>
+                        )}
+                        <div className="mt-3 flex items-center gap-2 text-[#C58B48] hover:text-[#1F2937] transition-colors font-inter text-sm font-medium">
+                          <span>Watch Video</span>
+                          <Play size={14} />
+                        </div>
+                      </div>
+                    </div>
+                  </Premium3DCard>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-20">
+              <Video className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500 font-inter">No videos available</p>
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* ================= CINEMATIC FILMS ================= */}
       <section className="py-16">
         <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16">
-          
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
             <div>
               <span className="font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-3 block">
@@ -487,20 +846,24 @@ const Portfolio = () => {
                 Cinematic Films
               </h2>
             </div>
-            <Button variant="outline" size="sm" className="font-montserrat text-[9px] border-[#EBE3D5] text-[#1F2937] hover:border-[#C58B48] mt-6 md:mt-0">
-              VIEW ALL FILMS <ArrowRight size={12} className="ml-1" />
-            </Button>
           </div>
 
-          <div className="films-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" style={{ perspective: 1200 }}>
-            {films.map((img, idx) => (
+          <div
+            className="films-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+            style={{ perspective: 1200 }}
+          >
+            {displayFilms.map((img, idx) => (
               <div key={idx} className="film-card">
-                <Premium3DCard 
+                <Premium3DCard
                   onMouseEnter={() => handleCursorState("view", "PLAY")}
                   onMouseLeave={() => handleCursorState("default")}
                 >
                   <div className="relative aspect-video rounded-xl overflow-hidden group cursor-none shadow-sm border border-[#EBE3D5] bg-white">
-                    <img src={img} alt="Film Thumbnail" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+                    <img
+                      src={img}
+                      alt="Film Thumbnail"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                    />
                     <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-500" />
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 md:hidden">
                       <div className="w-12 h-12 border border-white/50 rounded-full flex items-center justify-center backdrop-blur-sm">
@@ -516,70 +879,78 @@ const Portfolio = () => {
       </section>
 
       {/* ================= FINAL CTA ================= */}
-      <section className="py-12 px-6 lg:px-16 w-full max-w-[1400px] mx-auto mt-10" style={{ perspective: 1500 }}>
+      <section
+        className="py-12 px-6 lg:px-16 w-full max-w-[1400px] mx-auto mt-10"
+        style={{ perspective: 1500 }}
+      >
         <Premium3DCard>
           <div className="w-full bg-[#F5EFE6] rounded-2xl overflow-hidden flex flex-col lg:flex-row shadow-[0_20px_50px_rgba(0,0,0,0.06)] border border-white/50 relative z-10 group">
-            
             {/* Left Text */}
             <div className="w-full lg:w-1/2 p-10 lg:p-16 flex flex-col justify-center relative z-20 bg-[#F5EFE6]">
               <span className="font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-4 block">
                 READY TO BEGIN YOUR JOURNEY?
               </span>
               <h2 className="font-cormorant text-4xl lg:text-[48px] text-[#1F2937] leading-[1.1] mb-6">
-                Let's Create Your <br/>
-                <span className="italic text-[#C58B48]">Unforgettable Story</span>
+                Let's Create Your <br />
+                <span className="italic text-[#C58B48]">
+                  Unforgettable Story
+                </span>
               </h2>
               <p className="font-inter text-sm text-gray-600 leading-relaxed mb-10 max-w-md">
-                Share your vision with us and let our experts craft a celebration that reflects your style and story.
+                Share your vision with us and let our experts craft a
+                celebration that reflects your style and story.
               </p>
-              
+
               <div className="flex flex-col sm:flex-row items-center gap-6">
-                <Button 
-                  variant="champagne" 
-                  size="md" 
+                <Button
+                  variant="champagne"
+                  size="md"
                   className="font-montserrat text-[10px] w-full sm:w-auto shadow-none hover:scale-105 transition-transform"
-                  onMouseEnter={() => handleCursorState("default")}
+                  onClick={() => navigate("/contact")}
                 >
-                  SCHEDULE A CONSULTATION <ArrowRight size={14} className="ml-2" />
+                  SCHEDULE A CONSULTATION{" "}
+                  <ArrowRight size={14} className="ml-2" />
                 </Button>
-                
-                <button 
-                  onMouseEnter={() => handleCursorState("view", "PLAY")}
-                  onMouseLeave={() => handleCursorState("default")}
-                  className="flex items-center gap-3 font-montserrat text-[10px] font-bold tracking-widest text-[#1F2937] hover:text-[#C58B48] transition-colors group/btn"
-                >
-                  <div className="w-8 h-8 rounded-full border border-[#1F2937] group-hover/btn:border-[#C58B48] flex items-center justify-center transition-colors">
-                     <Play className="w-3 h-3 ml-0.5 fill-current" />
-                  </div>
-                  WATCH SHOWREEL
-                </button>
               </div>
             </div>
 
             {/* Right Image */}
             <div className="w-full lg:w-1/2 h-[300px] lg:h-auto relative z-10 overflow-hidden">
-               <img 
-                  src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1000&auto=format&fit=crop" 
-                  alt="Luxury Palace Celebration" 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
-               />
-               <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-[#F5EFE6] hidden lg:block" />
+              <img
+                src={
+                  featuredItems[0]?.image ||
+                  "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1000&auto=format&fit=crop"
+                }
+                alt="Luxury Palace Celebration"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+              />
+              <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-[#F5EFE6] hidden lg:block" />
 
-               {/* Gold Stamp Overlay */}
-               <motion.div 
-                 whileHover={{ scale: 1.1, rotate: 10 }}
-                 className="absolute top-10 right-10 w-28 h-28 rounded-full border border-[#D4AF37]/40 flex items-center justify-center opacity-80 backdrop-blur-md hidden md:flex cursor-pointer bg-white/10"
-               >
-                  <span className="font-cormorant text-4xl text-[#D4AF37]">V</span>
-                  <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full animate-[spin_20s_linear_infinite]">
-                    <path id="curve" d="M 50 15 A 35 35 0 1 1 49.9 15" fill="transparent" />
-                    <text className="font-montserrat text-[8.5px] uppercase tracking-[0.2em] fill-[#D4AF37]">
-                      <textPath href="#curve">Violin Events LLP • Crafting Timeless Celebrations •</textPath>
-                    </text>
-                  </svg>
-               </motion.div>
+              {/* Gold Stamp Overlay */}
+              <motion.div
+                whileHover={{ scale: 1.1, rotate: 10 }}
+                className="absolute top-10 right-10 w-28 h-28 rounded-full border border-[#D4AF37]/40 flex items-center justify-center opacity-80 backdrop-blur-md hidden md:flex cursor-pointer bg-white/10"
+              >
+                <span className="font-cormorant text-4xl text-[#D4AF37]">
+                  V
+                </span>
+                <svg
+                  viewBox="0 0 100 100"
+                  className="absolute inset-0 w-full h-full animate-[spin_20s_linear_infinite]"
+                >
+                  <path
+                    id="curve"
+                    d="M 50 15 A 35 35 0 1 1 49.9 15"
+                    fill="transparent"
+                  />
+                  <text className="font-montserrat text-[8.5px] uppercase tracking-[0.2em] fill-[#D4AF37]">
+                    <textPath href="#curve">
+                      Violin Events LLP • Crafting Timeless Celebrations •
+                    </textPath>
+                  </text>
+                </svg>
+              </motion.div>
             </div>
-
           </div>
         </Premium3DCard>
       </section>
@@ -606,6 +977,10 @@ const Portfolio = () => {
                   src={selectedProject.image}
                   alt={selectedProject.title}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.src =
+                      "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80";
+                  }}
                 />
                 <button
                   onClick={() => setSelectedProject(null)}
@@ -613,29 +988,95 @@ const Portfolio = () => {
                 >
                   <X className="w-5 h-5" />
                 </button>
+                {selectedProject.featured && (
+                  <div className="absolute top-4 left-4 bg-[#C58B48] text-white px-4 py-1.5 rounded-full text-xs font-semibold">
+                    Featured
+                  </div>
+                )}
               </div>
-              <div className="p-8 lg:p-12 text-center">
-                <span className="font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.2em] uppercase mb-3 block">
-                  {selectedProject.location}
-                </span>
-                <h2 className="font-cormorant text-4xl lg:text-5xl text-[#1F2937] mb-6">
-                  {selectedProject.title}
-                </h2>
-                <div className="w-12 h-[1px] bg-[#C58B48]/50 mx-auto mb-6" />
-                <p className="font-inter text-sm text-gray-600 leading-[1.8] max-w-xl mx-auto mb-10">
-                  A beautiful celebration filled with love, laughter, and unforgettable moments. This project highlights our dedication to flawless execution and bespoke luxury.
-                </p>
-                <Button variant="champagne" size="md" className="font-montserrat text-[10px] shadow-none">
-                  VIEW FULL GALLERY
-                </Button>
+              <div className="p-8 lg:p-12">
+                <div className="text-center">
+                  <span className="font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.2em] uppercase mb-3 block">
+                    {selectedProject.location}
+                  </span>
+                  <h2 className="font-cormorant text-4xl lg:text-5xl text-[#1F2937] mb-2">
+                    {selectedProject.title}
+                  </h2>
+                  {selectedProject.category && (
+                    <p className="text-sm text-[#C58B48] font-inter font-medium mb-4">
+                      {selectedProject.category}
+                    </p>
+                  )}
+                  <div className="flex items-center justify-center gap-6 text-sm text-gray-500 font-inter mb-6">
+                    {selectedProject.date && (
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-4 h-4" />
+                        {selectedProject.date}
+                      </span>
+                    )}
+                    {selectedProject.guests && (
+                      <span className="flex items-center gap-1">
+                        <Users className="w-4 h-4" />
+                        {selectedProject.guests} Guests
+                      </span>
+                    )}
+                  </div>
+                  <div className="w-12 h-[1px] bg-[#C58B48]/50 mx-auto mb-6" />
+                  <p className="font-inter text-sm text-gray-600 leading-[1.8] max-w-xl mx-auto mb-8">
+                    {selectedProject.description ||
+                      "A beautiful celebration filled with love, laughter, and unforgettable moments. This project highlights our dedication to flawless execution and bespoke luxury."}
+                  </p>
+
+                  {selectedProject.highlights &&
+                    selectedProject.highlights.length > 0 && (
+                      <div className="mb-8">
+                        <h4 className="font-montserrat text-[10px] font-bold tracking-widest text-gray-400 uppercase mb-3">
+                          Highlights
+                        </h4>
+                        <div className="flex flex-wrap justify-center gap-2">
+                          {selectedProject.highlights.map((highlight, idx) => (
+                            <span
+                              key={idx}
+                              className="bg-[#FDFBF7] border border-[#EBE3D5] px-3 py-1 rounded-full text-xs text-gray-600 font-inter"
+                            >
+                              {highlight}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                  {selectedProject.clientTestimonial && (
+                    <div className="bg-[#FDFBF7] border border-[#EBE3D5] rounded-xl p-6 mb-8">
+                      <Quote className="w-6 h-6 text-[#C58B48] mb-2 mx-auto" />
+                      <p className="font-inter text-sm text-gray-600 italic max-w-xl mx-auto">
+                        "{selectedProject.clientTestimonial}"
+                      </p>
+                      {selectedProject.clientName && (
+                        <p className="font-inter text-sm font-semibold text-[#1F2937] mt-2">
+                          - {selectedProject.clientName}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
+      <VideoModal
+        isOpen={isVideoModalOpen}
+        onClose={() => {
+          setIsVideoModalOpen(false);
+          setSelectedVideo(null);
+        }}
+        videoUrl={selectedVideo?.videoUrl}
+        title={selectedVideo?.title}
+      />
     </div>
   );
-};
+};;
 
 export default Portfolio;

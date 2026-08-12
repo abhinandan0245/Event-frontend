@@ -407,12 +407,13 @@ const Services = () => {
                   variant="champagne" 
                   size="md" 
                   className="font-montserrat text-[10px] w-full sm:w-max shadow-none hover:scale-105 transition-transform"
-                  onMouseEnter={() => handleCursorState("default")}
+                  // onMouseEnter={() => handleCursorState("default")}
+                  onClick={() => window.location.href = "/contact"}
                 >
                   SCHEDULE A CONSULTATION <ArrowRight size={14} className="ml-2" />
                 </Button>
                 
-                <button 
+                {/* <button 
                   onMouseEnter={() => handleCursorState("view", "PLAY")}
                   onMouseLeave={() => handleCursorState("default")}
                   className="flex items-center gap-3 font-montserrat text-[10px] font-bold tracking-widest text-[#1F2937] hover:text-[#C58B48] transition-colors group/btn"
@@ -421,7 +422,7 @@ const Services = () => {
                      <Play className="w-3 h-3 ml-0.5 fill-current" />
                   </div>
                   WATCH SHOWREEL
-                </button>
+                </button> */}
               </div>
             </div>
 

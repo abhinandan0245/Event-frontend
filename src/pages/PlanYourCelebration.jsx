@@ -21,9 +21,12 @@ import {
   ChevronRight,
   HeartHandshake,
   Award,
-  Settings
+  Settings,
+  Loader,
 } from "lucide-react";
 import Button from "../components/ui/Button";
+import toast from "react-hot-toast";
+import { contactApi } from "../api/contactApi";
 
 const PlanYourCelebration = () => {
   // --- FORM STATE ---
@@ -47,17 +50,34 @@ const PlanYourCelebration = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => {
+
+    try {
+      const response = await contactApi.submit(formData);
+      
+      if (response.success) {
+        setIsSubmitted(true);
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          guests: "",
+          destination: "",
+          celebrationType: "",
+          message: "",
+        });
+        toast.success("Inquiry submitted successfully! We'll get back to you soon.");
+      } else {
+        toast.error(response.message || "Failed to submit inquiry");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error(error.response?.data?.message || "Something went wrong. Please try again.");
+    } finally {
       setIsSubmitting(false);
-      setIsSubmitted(true);
-      setFormData({
-        name: "", email: "", phone: "", guests: "",
-        destination: "", celebrationType: "", message: "",
-      });
-    }, 2000);
+    }
   };
 
   const processSteps = [
@@ -103,7 +123,6 @@ const PlanYourCelebration = () => {
   return (
     <div className="min-h-screen bg-[#FDFBF7] font-sans selection:bg-[#C58B48] selection:text-white pb-20 overflow-x-hidden">
       
-
       {/* ================= HERO SECTION WITH FORM ================= */}
       <section className="relative w-full min-h-[90vh] flex items-center pt-24 lg:pt-32 pb-16 overflow-hidden">
         <div className="absolute top-0 right-0 w-full lg:w-[60%] h-full z-0 pointer-events-none">
@@ -273,6 +292,7 @@ const PlanYourCelebration = () => {
                       <option value="Wedding">Wedding</option>
                       <option value="Engagement">Engagement</option>
                       <option value="Corporate">Corporate</option>
+                      <option value="Private">Private</option>
                     </select>
                     <textarea
                       name="message"
@@ -292,7 +312,10 @@ const PlanYourCelebration = () => {
                     className="w-full mt-2 font-montserrat tracking-[0.2em] shadow-none"
                   >
                     {isSubmitting ? (
-                      "SENDING..."
+                      <span className="flex items-center justify-center gap-2">
+                        <Loader className="w-4 h-4 animate-spin" />
+                        SENDING...
+                      </span>
                     ) : (
                       <>
                         SUBMIT ENQUIRY{" "}
@@ -564,7 +587,7 @@ const PlanYourCelebration = () => {
             <div className="w-full overflow-hidden">
               <div
                 className="flex transition-transform duration-700 ease-in-out testi-track"
-                style={{ "--slide-idx": testiIndex }}
+                style={{ transform: `translateX(-${testiIndex * 33.333}%)` }}
               >
                 {testimonials.map((t, i) => (
                   <div
@@ -641,6 +664,7 @@ const PlanYourCelebration = () => {
 
             <div className="flex flex-col sm:flex-row items-center gap-6">
               <Button
+              onClick={() => window.location.href = '/contact'}
                 variant="champagne"
                 size="md"
                 className="font-montserrat text-[10px] w-full sm:w-auto shadow-none"
@@ -649,19 +673,18 @@ const PlanYourCelebration = () => {
                 <ArrowRight size={14} className="ml-2" />
               </Button>
 
-              <button className="flex items-center gap-3 font-montserrat text-[10px] font-bold tracking-widest text-[#1F2937] hover:text-[#C58B48] transition-colors group">
+              {/* <button className="flex items-center gap-3 font-montserrat text-[10px] font-bold tracking-widest text-[#1F2937] hover:text-[#C58B48] transition-colors group">
                 <div className="w-8 h-8 rounded-full border border-[#1F2937] group-hover:border-[#C58B48] flex items-center justify-center transition-colors">
                   <Play className="w-3 h-3 ml-0.5 fill-current" />
                 </div>
                 WATCH SHOWREEL
-              </button>
+              </button> */}
             </div>
           </div>
 
           {/* Right Image */}
           <div className="w-full lg:w-1/2 h-[300px] lg:h-auto relative">
             <img
-              /* 1. Replaced the broken link with a working luxury palace image */
               src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1000&auto=format&fit=crop"
               alt="Luxury Palace Celebration"
               className="w-full h-full object-cover"

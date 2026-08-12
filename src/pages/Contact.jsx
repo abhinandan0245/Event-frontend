@@ -11,9 +11,12 @@ import {
   ArrowRight,
   CheckCircle,
   PenTool,
+  Loader,
 } from "lucide-react";
 import { FaInstagram, FaFacebookF, FaPinterestP } from "react-icons/fa";
 import Button from "../components/ui/Button";
+import { contactApi } from "../api/contactApi";
+import toast from "react-hot-toast";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -36,22 +39,34 @@ const Contact = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => {
+
+    try {
+      const response = await contactApi.submit(formData);
+      
+      if (response.success) {
+        setIsSubmitted(true);
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          guests: "",
+          destination: "",
+          celebrationType: "",
+          message: "",
+        });
+        toast.success("Inquiry submitted successfully! We'll get back to you soon.");
+      } else {
+        toast.error(response.message || "Failed to submit inquiry");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error(error.response?.data?.message || "Something went wrong. Please try again.");
+    } finally {
       setIsSubmitting(false);
-      setIsSubmitted(true);
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        guests: "",
-        destination: "",
-        celebrationType: "",
-        message: "",
-      });
-    }, 2000);
+    }
   };
 
   const contactInfo = [
@@ -99,8 +114,6 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] font-sans selection:bg-[#C58B48] selection:text-white">
-     
-
       {/* ================= HERO SECTION ================= */}
       <section className="relative w-full min-h-[60vh] flex items-center overflow-hidden pt-24 lg:pt-32 pb-16">
         {/* Background Floral Overlay */}
@@ -110,8 +123,6 @@ const Contact = () => {
             alt="Wedding Setup"
             className="w-full h-full object-cover"
           />
-          {/* <div className="absolute inset-0 bg-gradient-to-r from-[#FDFBF7] via-[#FDFBF7]/70 to-transparent" /> */}
-          {/* <div className="absolute inset-0 bg-gradient-to-b from-[#FDFBF7]/30 via-transparent to-[#FDFBF7]" /> */}
         </div>
 
         <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 lg:px-16">
@@ -350,7 +361,10 @@ const Contact = () => {
                     className="w-full font-montserrat tracking-[0.2em]"
                   >
                     {isSubmitting ? (
-                      "SENDING..."
+                      <span className="flex items-center justify-center gap-2">
+                        <Loader className="w-4 h-4 animate-spin" />
+                        SENDING...
+                      </span>
                     ) : (
                       <>
                         SEND ENQUIRY{" "}

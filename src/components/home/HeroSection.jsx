@@ -6,10 +6,12 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TextPlugin } from "gsap/TextPlugin";
 
 import Button from "../ui/Button";
+import { useNavigate } from "react-router-dom";
 
 gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
 const HeroSection = () => {
+  const navigate = useNavigate();
   const sectionRef = useRef(null);
   const bgRef = useRef(null);
   // const guitarRef = useRef(null);
@@ -285,6 +287,7 @@ const HeroSection = () => {
                 size="md"
                 shape="leaf"
                 className="w-full rounded-[3px] sm:w-auto"
+                onClick={() => navigate("/plan-your-celebration")}
               >
                 <span className="font-Manrope SemiBold text-[11px] tracking-[0.18em] uppercase sm:text-xs">
                   BEGIN YOUR JOURNEY
@@ -296,6 +299,7 @@ const HeroSection = () => {
 
             <div className="hero-btn">
               <Button
+                onClick={() => navigate("/portfolio")}
                 variant="secondary"
                 size="md"
                 shape="leaf"

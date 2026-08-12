@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Plus, Minus } from "lucide-react";
+import { Link } from "react-router-dom";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -238,9 +239,9 @@ const FAQSection = () => {
           bring your celebration to life.
         </p>
 
-        <button className="px-8 py-3.5 bg-[#C58B48] text-white font-montserrat text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase hover:bg-[#A8753B] transition-colors shadow-md hover:shadow-xl transform hover:-translate-y-0.5">
+        <Link to="/contact" className="px-8 py-3.5 bg-[#C58B48] text-white font-montserrat text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase hover:bg-[#A8753B] transition-colors shadow-md hover:shadow-xl transform hover:-translate-y-0.5">
           SCHEDULE A CONSULTATION
-        </button>
+        </Link>
       </div>
     </section>
   );

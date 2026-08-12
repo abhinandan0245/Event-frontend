@@ -311,12 +311,12 @@ const About = () => {
                 GET STARTED <ArrowRight size={14} className="ml-2" />
               </Button>
               
-              <button className="flex items-center gap-3 font-montserrat text-[10px] font-bold tracking-widest text-[#1F2937] hover:text-[#C58B48] transition-colors group">
+              {/* <button className="flex items-center gap-3 font-montserrat text-[10px] font-bold tracking-widest text-[#1F2937] hover:text-[#C58B48] transition-colors group">
                 <div className="w-8 h-8 rounded-full border border-[#1F2937] group-hover:border-[#C58B48] flex items-center justify-center transition-colors">
                    <Play className="w-3 h-3 ml-0.5 fill-current" />
                 </div>
                 WATCH SHOWREEL
-              </button>
+              </button> */}
             </div>
           </div>
 

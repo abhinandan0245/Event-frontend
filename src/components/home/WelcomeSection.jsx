@@ -10,6 +10,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Button from "../ui/Button";
+import { useNavigate } from "react-router-dom";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -18,6 +19,7 @@ const WelcomeSection = () => {
   const textRef = useRef(null);
   const imagesRef = useRef(null);
   const statsRef = useRef(null);
+  const navigate = useNavigate();
 
   useGSAP(
     () => {
@@ -124,6 +126,7 @@ const WelcomeSection = () => {
             <div className="fade-up-text flex flex-col gap-4 sm:flex-row sm:items-center">
               <Button
                 shape="cut"
+                onClick={() => navigate("/services")}
                 className="flex  items-center rounded-[3px] justify-center gap-2 bg-[#171717] px-8 font-manrope text-[13px] font-semibold uppercase tracking-[0.1em] text-white transition-colors hover:bg-[#333]"
               >
                 Explore Our World
@@ -131,6 +134,7 @@ const WelcomeSection = () => {
               </Button>
 
               <Button
+                onClick={() => navigate("/contact")}
                 shape="cut"
                 className="flex  items-center rounded-[3px] justify-center  border border-[#B5793F] px-8 font-manrope text-[13px] font-medium uppercase tracking-[0.1em] text-[#171717] transition-colors hover:bg-[#B5793F] hover:text-white"
               >
