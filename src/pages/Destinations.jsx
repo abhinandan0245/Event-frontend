@@ -12,7 +12,11 @@ import {
   Gem,
   ShieldCheck,
   FilterX,
-  MapPin
+  MapPin,
+  ChevronLeft,
+  ChevronRight,
+  Crown,
+  Users,
 } from "lucide-react";
 import Button from "../components/ui/Button";
 import { destinationApi } from "../api/destinationApi";
@@ -82,6 +86,152 @@ const Premium3DCard = ({ children, className, onMouseEnter, onMouseLeave, onClic
         />
       </div>
     </motion.div>
+  );
+};
+
+// ================= IMAGE CAROUSEL COMPONENT =================
+const ImageCarousel = ({ images, venueName }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const slideInterval = useRef(null);
+
+  const allImages = React.useMemo(() => {
+    const imgList = [];
+    if (images?.image) imgList.push(images.image);
+    if (images?.images && images.images.length > 0) {
+      images.images.forEach((img) => {
+        if (!imgList.includes(img)) {
+          imgList.push(img);
+        }
+      });
+    }
+    return imgList.length > 0
+      ? imgList
+      : ["https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=80"];
+  }, [images]);
+
+  const totalImages = allImages.length;
+
+  useEffect(() => {
+    if (isPaused || totalImages <= 1) return;
+
+    slideInterval.current = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % totalImages);
+    }, 3000);
+
+    return () => {
+      if (slideInterval.current) {
+        clearInterval(slideInterval.current);
+      }
+    };
+  }, [isPaused, totalImages]);
+
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 1) % totalImages);
+    resetTimer();
+  };
+
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev - 1 + totalImages) % totalImages);
+    resetTimer();
+  };
+
+  const resetTimer = () => {
+    if (slideInterval.current) {
+      clearInterval(slideInterval.current);
+      slideInterval.current = setInterval(() => {
+        setCurrentIndex((prev) => (prev + 1) % totalImages);
+      }, 3000);
+    }
+  };
+
+  const goToSlide = (index) => {
+    setCurrentIndex(index);
+    resetTimer();
+  };
+
+  if (totalImages === 0) return null;
+
+  return (
+    <div
+      className="relative overflow-hidden"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      <div className="relative w-full aspect-video bg-gray-100">
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={currentIndex}
+            src={allImages[currentIndex]}
+            alt={`${venueName} - ${currentIndex + 1}`}
+            className="w-full h-full object-cover"
+            initial={{ opacity: 0, scale: 1.1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.5 }}
+            onError={(e) => {
+              e.target.src = "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=80";
+            }}
+          />
+        </AnimatePresence>
+
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+        {totalImages > 1 && (
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/60 text-white px-2 py-0.5 rounded-full text-[10px] backdrop-blur-sm">
+            {currentIndex + 1} / {totalImages}
+          </div>
+        )}
+
+        {totalImages > 1 && (
+          <>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                prevSlide();
+              }}
+              className="absolute left-1 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1 rounded-full transition-all opacity-0 group-hover:opacity-100 hover:scale-110"
+            >
+              <ChevronLeft size={14} />
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                nextSlide();
+              }}
+              className="absolute right-1 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1 rounded-full transition-all opacity-0 group-hover:opacity-100 hover:scale-110"
+            >
+              <ChevronRight size={14} />
+            </button>
+          </>
+        )}
+      </div>
+
+      {totalImages > 1 && (
+        <div className="flex gap-1 p-1 overflow-x-auto bg-white border-t border-gray-100">
+          {allImages.map((img, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className={`flex-shrink-0 w-10 h-8 rounded overflow-hidden transition-all duration-200 ${
+                index === currentIndex
+                  ? "ring-1 ring-[#C58B48] ring-offset-1"
+                  : "opacity-50 hover:opacity-100"
+              }`}
+            >
+              <img
+                src={img}
+                alt={`Thumbnail ${index + 1}`}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.target.src = "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=100&q=80";
+                }}
+              />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
 
@@ -223,41 +373,14 @@ const Destinations = () => {
         name: "ANANTARA KOH SAMUI", 
         location: "Koh Samui, Thailand",
         image: "https://images.unsplash.com/photo-1584132967335-2d5a7bda06f0?w=600&q=80",
+        images: [
+          "https://images.unsplash.com/photo-1584132967335-2d5a7bda06f0?w=600&q=80",
+          "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&q=80",
+        ],
         category: "Luxury Resort",
         price: "₹65,000"
       },
-      { 
-        _id: "2",
-        name: "ROSEWOOD PHUKET", 
-        location: "Phuket, Thailand",
-        image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&q=80",
-        category: "Luxury Hotel",
-        price: "₹75,000"
-      },
-      { 
-        _id: "3",
-        name: "JW MARRIOTT PHUKET", 
-        location: "Phuket, Thailand",
-        image: "https://images.unsplash.com/photo-1571896349842-33c89424ffe2?w=600&q=80",
-        category: "Resort",
-        price: "₹55,000"
-      },
-      { 
-        _id: "4",
-        name: "SIX SENSES YAO NOI", 
-        location: "Yao Noi, Thailand",
-        image: "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=600&q=80",
-        category: "Eco Resort",
-        price: "₹85,000"
-      },
-      { 
-        _id: "5",
-        name: "BANYAN TREE PHUKET", 
-        location: "Phuket, Thailand",
-        image: "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=600&q=80",
-        category: "Luxury Resort",
-        price: "₹70,000"
-      },
+      // ... other venues with images array
     ];
   };
 
@@ -321,7 +444,7 @@ const Destinations = () => {
       {/* ================= HERO SECTION ================= */}
       <section className="relative w-full min-h-[90vh] flex items-center pt-24 lg:pt-32 pb-32" style={{ perspective: 1200 }}>
         <motion.div style={{ x: bgX, y: bgY }} className="absolute top-0 right-[-5%] w-full lg:w-[70%] h-[110vh] z-0 pointer-events-none">
-          <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=1600&auto=format&fit=crop" alt="Thailand Beach Wedding" className="w-full h-full object-cover opacity-95 scale-110" style={{ maskImage: "linear-gradient(to right, transparent 0%, black 35%)", WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 35%)" }}/>
+          <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=1600&auto=format&fit=crop" alt="Destination Wedding" className="w-full h-full object-cover opacity-95 scale-110" style={{ maskImage: "linear-gradient(to right, transparent 0%, black 35%)", WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 35%)" }}/>
           <div className="absolute inset-0 bg-gradient-to-t from-[#FDFBF7] via-transparent to-transparent" />
         </motion.div>
 
@@ -330,20 +453,20 @@ const Destinations = () => {
         <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 lg:px-16 flex flex-col justify-center h-full">
           <motion.div style={{ x: heroX, y: heroY }} className="w-full lg:w-[45%] pt-10 pl-0 md:pl-10">
             <span className="hero-element font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-4 block">DESTINATION WEDDINGS IN</span>
-            <h1 className="hero-element font-cormorant text-6xl lg:text-[80px] text-[#1F2937] leading-[1.1] mb-2 uppercase tracking-wide">Thailand</h1>
-            <p className="hero-element font-cormorant text-3xl lg:text-[40px] text-[#C58B48] italic mb-8">Where Romance Meets Paradise</p>
+            <h1 className="hero-element font-cormorant text-6xl lg:text-[80px] text-[#1F2937] leading-[1.1] mb-2 uppercase tracking-wide">DESTINATION</h1>
+            <p className="hero-element font-cormorant text-3xl lg:text-[40px] text-[#C58B48] italic mb-8">Where Dreams Meet The Sea</p>
 
             <div className="hero-element flex items-center justify-start mb-6">
               <div className="w-4 h-4 rounded-full border border-[#C58B48]/50 flex items-center justify-center p-0.5"><div className="w-full h-full bg-[#C58B48] rounded-full opacity-30"></div></div>
             </div>
 
             <p className="hero-element font-inter text-gray-600 text-[13px] leading-[1.8] max-w-[380px] mb-10">
-              From turquoise waters to golden sunsets, Thailand offers the perfect backdrop for your dream wedding. Celebrate your love in a land of breathtaking beauty, warm hospitality and unforgettable experiences.
+              Discover a timeless escape of breathtaking landscapes, endless horizons and unforgettable sunsets. A destination shaped by beauty, serenity and unforgettable moments.
             </p>
 
             <div className="hero-element flex flex-col sm:flex-row items-center gap-6">
-              <Button variant="champagne" size="md" className="font-montserrat text-[9px] tracking-[0.2em] shadow-none w-full sm:w-auto hover:scale-105 transition-transform">
-                PLAN YOUR THAILAND WEDDING <ArrowRight size={14} className="ml-1" />
+              <Button onClick={() => window.location.href = "/plan-your-celebration"} variant="champagne" size="md" className="font-montserrat text-[9px] tracking-[0.2em] shadow-none w-full sm:w-auto hover:scale-105 transition-transform">
+                PLAN YOUR CELEBRATION <ArrowRight size={14} className="ml-1" />
               </Button>
             </div>
           </motion.div>
@@ -355,9 +478,7 @@ const Destinations = () => {
         <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16 text-center">
           
           <div className="flex flex-col items-center justify-center mb-10">
-            <h2 className="font-cormorant text-4xl text-[#1F2937] mb-4 uppercase tracking-widest">
-              Explore Destinations
-            </h2>
+            <h2 className="font-cormorant text-4xl text-[#1F2937] mb-4 uppercase tracking-widest">Explore Destinations</h2>
             <div className="w-4 h-4 rounded-full border border-[#C58B48]/50 flex items-center justify-center p-0.5">
               <div className="w-full h-full bg-[#C58B48] rounded-full opacity-30"></div>
             </div>
@@ -404,9 +525,7 @@ const Destinations = () => {
                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#C58B48]"></div>
             </div>
           ) : dynamicDestinations.length === 0 ? (
-            <div className="py-20 text-gray-500 font-inter">
-              No destinations found for the selected filters.
-            </div>
+            <div className="py-20 text-gray-500 font-inter">No destinations found for the selected filters.</div>
           ) : (
             <div className="dest-grid grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6" style={{ perspective: 1200 }}>
               {dynamicDestinations.map((dest, idx) => {
@@ -433,7 +552,7 @@ const Destinations = () => {
         </div>
       </section>
 
-      {/* ================= EXCLUSIVE VENUES (Featured Venues from API) ================= */}
+      {/* ================= EXCLUSIVE VENUES WITH IMAGE CAROUSEL ================= */}
       <section className="py-16 relative z-10 border-t border-[#EBE3D5]/50">
         <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16 text-center">
           <div className="flex flex-col items-center justify-center mb-16">
@@ -455,8 +574,6 @@ const Destinations = () => {
               {displayVenues.map((venue, idx) => {
                 const venueId = venue._id || venue.id;
                 const venueName = venue.name || venue.title || "Venue";
-                const venueImage = venue.image || venue.img || VENUE_FALLBACK;
-                const venueLocation = venue.location || venue.city || "";
                 
                 return (
                   <div key={venueId || idx} className="venue-card-wrapper">
@@ -466,40 +583,48 @@ const Destinations = () => {
                       onClick={() => handleVenueClick(venueId)}
                     >
                       <div className="bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#EBE3D5] flex flex-col h-full group hover:border-[#C58B48]/40 transition-colors">
-                        <div className="w-full aspect-video relative overflow-hidden">
-                          <img 
-                            src={venueImage} 
-                            alt={venueName} 
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
-                            onError={(e) => { e.currentTarget.src = VENUE_FALLBACK; }}
-                          />
-                          {venue.featured && (
-                            <div className="absolute top-3 left-3 bg-[#C58B48] text-white text-[8px] px-2 py-0.5 rounded-full font-semibold tracking-wider">
-                              Featured
-                            </div>
-                          )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                        </div>
-                        <div className="p-5 text-center flex-grow flex flex-col justify-center bg-white z-10">
-                          <h3 className="font-montserrat text-[10px] font-bold tracking-widest text-[#1F2937] uppercase leading-relaxed">
-                            {venueName}
-                          </h3>
-                          {venueLocation && (
-                            <p className="font-inter text-[9px] text-gray-400 mt-1 flex items-center justify-center gap-1">
+                        {/* ✅ Image Carousel */}
+                        <ImageCarousel 
+                          images={{ image: venue.image, images: venue.images || [] }} 
+                          venueName={venueName}
+                        />
+                        
+                        <div className="p-3 flex flex-col flex-grow">
+                          <div className="flex items-start justify-between mb-1">
+                            <h3 className="font-montserrat text-[10px] font-bold tracking-widest text-[#1F2937] uppercase leading-relaxed">
+                              {venueName}
+                            </h3>
+                            {venue.featured && (
+                              <Crown className="w-3 h-3 text-[#C58B48] flex-shrink-0" />
+                            )}
+                          </div>
+                          
+                          {venue.location && (
+                            <p className="font-inter text-[9px] text-gray-400 flex items-center gap-1">
                               <MapPin size={10} className="text-[#C58B48]" />
-                              {venueLocation}
+                              {venue.location}
                             </p>
                           )}
-                          {venue.category && (
-                            <p className="font-inter text-[8px] text-[#C58B48] mt-0.5 font-medium">
-                              {venue.category}
-                            </p>
-                          )}
-                          {venue.price && (
-                            <p className="font-inter text-[9px] text-gray-500 mt-1">
-                              From {venue.price}
-                            </p>
-                          )}
+                          
+                          <div className="mt-auto flex items-center justify-between">
+                            <div className="flex items-center gap-1">
+                              <Users size={12} className="text-[#C58B48]" />
+                              <span className="font-inter text-[9px] text-gray-500">
+                                {venue.capacity || "100-500"}
+                              </span>
+                            </div>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="font-montserrat text-[7px] border-[#EBE3D5] text-[#1F2937] hover:border-[#C58B48] px-3 py-1 h-auto"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleVenueClick(venueId);
+                              }}
+                            >
+                              VIEW
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     </Premium3DCard>

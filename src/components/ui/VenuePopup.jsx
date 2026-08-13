@@ -23,6 +23,8 @@ import {
   Hotel,
   TreePalm,
   Info,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import Button from "./Button";
 import { venueApi } from "../../api/venueApi";
@@ -64,7 +66,9 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [activeImage, setActiveImage] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
   const popupRef = useRef(null);
+  const slideInterval = useRef(null);
 
   // Fetch venue details when popup opens
   useEffect(() => {
@@ -72,6 +76,22 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
       fetchVenueDetails();
     }
   }, [isOpen, venueId]);
+
+  // Auto-slide functionality
+  useEffect(() => {
+    const images = getImages();
+    if (isOpen && images.length > 1 && !isPaused) {
+      slideInterval.current = setInterval(() => {
+        setActiveImage((prev) => (prev + 1) % images.length);
+      }, 3000); // Change every 3 seconds
+    }
+
+    return () => {
+      if (slideInterval.current) {
+        clearInterval(slideInterval.current);
+      }
+    };
+  }, [isOpen, isPaused, venue]);
 
   // Handle escape key
   useEffect(() => {
@@ -110,6 +130,7 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
       const response = await venueApi.getById(venueId);
       if (response.success && response.data) {
         setVenue(response.data);
+        setActiveImage(0);
       } else {
         setError("Failed to load venue details");
       }
@@ -123,10 +144,57 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
 
   // Get venue images array
   const getImages = () => {
-    if (venue?.images && venue.images.length > 0) {
-      return venue.images;
+    const images = [];
+    if (venue?.image) {
+      images.push(venue.image);
     }
-    return [venue?.image || FALLBACK_IMAGE];
+    if (venue?.images && venue.images.length > 0) {
+      venue.images.forEach(img => {
+        if (!images.includes(img)) {
+          images.push(img);
+        }
+      });
+    }
+    return images.length > 0 ? images : [FALLBACK_IMAGE];
+  };
+
+  // Navigate to next image
+  const nextImage = (e) => {
+    e?.stopPropagation();
+    const images = getImages();
+    if (images.length > 1) {
+      setActiveImage((prev) => (prev + 1) % images.length);
+      resetTimer();
+    }
+  };
+
+  // Navigate to previous image
+  const prevImage = (e) => {
+    e?.stopPropagation();
+    const images = getImages();
+    if (images.length > 1) {
+      setActiveImage((prev) => (prev - 1 + images.length) % images.length);
+      resetTimer();
+    }
+  };
+
+  // Reset timer
+  const resetTimer = () => {
+    if (slideInterval.current) {
+      clearInterval(slideInterval.current);
+      const images = getImages();
+      if (images.length > 1 && !isPaused) {
+        slideInterval.current = setInterval(() => {
+          setActiveImage((prev) => (prev + 1) % images.length);
+        }, 3000);
+      }
+    }
+  };
+
+  // Go to specific image
+  const goToImage = (index) => {
+    setActiveImage(index);
+    resetTimer();
   };
 
   // Get amenity icon
@@ -135,13 +203,10 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
     return Icon;
   };
 
-  // Format price
-  const formatPrice = (price) => {
-    if (!price) return "Contact for pricing";
-    return price;
-  };
-
   if (!isOpen) return null;
+
+  const images = getImages();
+  const hasMultipleImages = images.length > 1;
 
   return (
     <AnimatePresence>
@@ -185,24 +250,79 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
               </div>
             ) : (
               <div className="bg-white">
-                {/* Image Gallery */}
-                <div className="relative h-[300px] md:h-[400px] bg-gray-900">
-                  <img
-                    src={getImages()[activeImage]}
-                    alt={venue.name}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.target.src = FALLBACK_IMAGE;
-                    }}
-                  />
+                {/* Image Gallery with Auto-Slide */}
+                <div 
+                  className="relative h-[300px] md:h-[400px] bg-gray-900"
+                  onMouseEnter={() => setIsPaused(true)}
+                  onMouseLeave={() => setIsPaused(false)}
+                >
+                  {/* Main Image with Animation */}
+                  <AnimatePresence mode="wait">
+                    <motion.img
+                      key={activeImage}
+                      src={images[activeImage]}
+                      alt={venue.name}
+                      className="w-full h-full object-cover"
+                      initial={{ opacity: 0, scale: 1.05 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.5 }}
+                      onError={(e) => {
+                        e.target.src = FALLBACK_IMAGE;
+                      }}
+                    />
+                  </AnimatePresence>
 
-                  {/* Image Navigation Dots */}
-                  {getImages().length > 1 && (
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                      {getImages().map((_, index) => (
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+
+                  {/* Image Counter */}
+                  {hasMultipleImages && (
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white px-3 py-1.5 rounded-full text-xs backdrop-blur-sm z-10">
+                      {activeImage + 1} / {images.length}
+                    </div>
+                  )}
+
+                  {/* Navigation Arrows */}
+                  {hasMultipleImages && (
+                    <>
+                      <button
+                        onClick={prevImage}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all hover:scale-110 z-10"
+                      >
+                        <ChevronLeft size={20} />
+                      </button>
+                      <button
+                        onClick={nextImage}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all hover:scale-110 z-10"
+                      >
+                        <ChevronRight size={20} />
+                      </button>
+                    </>
+                  )}
+
+                  {/* Pause/Play Indicator */}
+                  {hasMultipleImages && (
+                    <div className="absolute top-4 right-4 bg-black/50 text-white/80 text-[8px] px-2 py-1 rounded-full backdrop-blur-sm z-10">
+                      {isPaused ? '⏸' : '▶'}
+                    </div>
+                  )}
+
+                  {/* Featured Badge */}
+                  {venue.featured && (
+                    <div className="absolute top-4 left-4 bg-[#C58B48] text-white px-4 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 z-10">
+                      <Crown className="w-3.5 h-3.5" />
+                      Featured
+                    </div>
+                  )}
+
+                  {/* Thumbnail Strip */}
+                  {hasMultipleImages && (
+                    <div className="absolute bottom-14 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                      {images.map((_, index) => (
                         <button
                           key={index}
-                          onClick={() => setActiveImage(index)}
+                          onClick={() => goToImage(index)}
                           className={`w-2 h-2 rounded-full transition-all ${
                             index === activeImage
                               ? "bg-white w-6"
@@ -212,24 +332,6 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
                       ))}
                     </div>
                   )}
-
-                  {/* Featured Badge */}
-                  {venue.featured && (
-                    <div className="absolute top-4 left-4 bg-[#C58B48] text-white px-4 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5">
-                      <Crown className="w-3.5 h-3.5" />
-                      Featured
-                    </div>
-                  )}
-
-                  {/* Action Buttons */}
-                  {/* <div className="absolute top-4 right-16 flex gap-2">
-                    <button className="p-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-white transition-colors">
-                      <Heart className="w-5 h-5" />
-                    </button>
-                    <button className="p-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-white transition-colors">
-                      <Share2 className="w-5 h-5" />
-                    </button>
-                  </div> */}
                 </div>
 
                 {/* Content */}
@@ -254,19 +356,9 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
                         </div>
                       )}
                     </div>
-                    {venue.price && (
-                      <div className="text-right">
-                        <p className="text-2xl font-bold text-[#C58B48] font-inter">
-                          {formatPrice(venue.price)}
-                        </p>
-                        <p className="text-xs text-gray-400 font-inter">
-                          Starting Price
-                        </p>
-                      </div>
-                    )}
                   </div>
 
-                  {/* Quick Stats - Only show if data exists */}
+                  {/* Quick Stats */}
                   {(venue.capacity || venue.featured) && (
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4 bg-[#FDFBF7] rounded-xl mb-6">
                       {venue.capacity && (
@@ -329,61 +421,28 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
                     </div>
                   )}
 
-                  {/* Contact Information - Only show if data exists */}
-                  {(venue.contactNumber || venue.phone || venue.email || venue.website) && (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-[#FDFBF7] rounded-xl mb-6">
-                      {(venue.contactNumber || venue.phone) && (
-                        <div className="flex items-center gap-3">
-                          <Phone className="w-4 h-4 text-[#C58B48]" />
-                          <div>
-                            <p className="text-xs text-gray-500">Phone</p>
-                            <p className="text-sm font-inter text-gray-900">
-                              {venue.contactNumber || venue.phone}
-                            </p>
-                          </div>
+                  {/* Website */}
+                  {venue.website && (
+                    <div className="grid grid-cols-1 gap-4 p-4 bg-[#FDFBF7] rounded-xl mb-6">
+                      <div className="flex items-center gap-3">
+                        <Globe className="w-4 h-4 text-[#C58B48]" />
+                        <div>
+                          <p className="text-xs text-gray-500">Website</p>
+                          <a
+                            href={`https://${venue.website}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm font-inter text-[#C58B48] hover:underline truncate block"
+                          >
+                            {venue.website}
+                          </a>
                         </div>
-                      )}
-                      {venue.email && (
-                        <div className="flex items-center gap-3">
-                          <Mail className="w-4 h-4 text-[#C58B48]" />
-                          <div>
-                            <p className="text-xs text-gray-500">Email</p>
-                            <p className="text-sm font-inter text-gray-900 truncate">
-                              {venue.email}
-                            </p>
-                          </div>
-                        </div>
-                      )}
-                      {venue.website && (
-                        <div className="flex items-center gap-3">
-                          <Globe className="w-4 h-4 text-[#C58B48]" />
-                          <div>
-                            <p className="text-xs text-gray-500">Website</p>
-                            <a
-                              href={`https://${venue.website}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-sm font-inter text-[#C58B48] hover:underline truncate block"
-                            >
-                              {venue.website}
-                            </a>
-                          </div>
-                        </div>
-                      )}
+                      </div>
                     </div>
                   )}
 
                   {/* Action Buttons */}
                   <div className="flex flex-col sm:flex-row gap-3">
-                    {/* <Button
-                      variant="champagne"
-                      className="flex-1 font-inter"
-                      onClick={() =>
-                        (window.location.href = `/venue/${venue._id}`)
-                      }
-                    >
-                      View Full Details
-                    </Button> */}
                     <Button
                       variant="primary"
                       className="flex-1 font-inter"
