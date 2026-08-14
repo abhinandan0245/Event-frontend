@@ -149,7 +149,7 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
       images.push(venue.image);
     }
     if (venue?.images && venue.images.length > 0) {
-      venue.images.forEach(img => {
+      venue.images.forEach((img) => {
         if (!images.includes(img)) {
           images.push(img);
         }
@@ -251,7 +251,7 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
             ) : (
               <div className="bg-white">
                 {/* Image Gallery with Auto-Slide */}
-                <div 
+                <div
                   className="relative h-[300px] md:h-[400px] bg-gray-900"
                   onMouseEnter={() => setIsPaused(true)}
                   onMouseLeave={() => setIsPaused(false)}
@@ -304,7 +304,7 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
                   {/* Pause/Play Indicator */}
                   {hasMultipleImages && (
                     <div className="absolute top-4 right-4 bg-black/50 text-white/80 text-[8px] px-2 py-1 rounded-full backdrop-blur-sm z-10">
-                      {isPaused ? '⏸' : '▶'}
+                      {isPaused ? "⏸" : "▶"}
                     </div>
                   )}
 
@@ -368,7 +368,7 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
                             <p className="text-sm font-semibold text-gray-900 font-inter">
                               {venue.capacity}
                             </p>
-                            <p className="text-xs text-gray-500">Capacity</p>
+                            <p className="text-xs text-gray-500">Rooms</p>
                           </div>
                         </div>
                       )}
@@ -421,25 +421,7 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
                     </div>
                   )}
 
-                  {/* Website */}
-                  {venue.website && (
-                    <div className="grid grid-cols-1 gap-4 p-4 bg-[#FDFBF7] rounded-xl mb-6">
-                      <div className="flex items-center gap-3">
-                        <Globe className="w-4 h-4 text-[#C58B48]" />
-                        <div>
-                          <p className="text-xs text-gray-500">Website</p>
-                          <a
-                            href={`https://${venue.website}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-sm font-inter text-[#C58B48] hover:underline truncate block"
-                          >
-                            {venue.website}
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                 
 
                   {/* Action Buttons */}
                   <div className="flex flex-col sm:flex-row gap-3">
