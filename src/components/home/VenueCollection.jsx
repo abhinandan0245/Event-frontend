@@ -24,17 +24,9 @@ import VenuePopup from "../ui/VenuePopup";
 
 gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
-// Fallback images by category
+// ✅ Only FALLBACK_IMAGES for error handling (when image URL fails to load)
 const FALLBACK_IMAGES = {
   default: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=80",
-  palace: "https://images.unsplash.com/photo-1583089892943-e02e5be026b9?w=800&q=80",
-  hotel: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80",
-  estate: "https://images.unsplash.com/photo-1613490908592-5b927361a913?w=800&q=80",
-  beach: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80",
-  vineyard: "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=800&q=80",
-  mountain: "https://images.unsplash.com/photo-1512100356356-de1b84283e18?w=800&q=80",
-  desert: "https://images.unsplash.com/photo-1526761122248-b31c93f8b2f9?w=800&q=80",
-  yacht: "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=800&q=80",
 };
 
 // Icon mapping based on venue category
@@ -61,32 +53,6 @@ const getVenueIcon = (category) => {
     "Island": Waves,
   };
   return categoryMap[category] || Building2;
-};
-
-// Get fallback image based on category
-const getFallbackImage = (category) => {
-  const categoryMap = {
-    "Palace": FALLBACK_IMAGES.palace,
-    "Palace Hotel": FALLBACK_IMAGES.palace,
-    "Heritage Palace": FALLBACK_IMAGES.palace,
-    "Luxury Hotel": FALLBACK_IMAGES.hotel,
-    "Hotel": FALLBACK_IMAGES.hotel,
-    "Private Estate": FALLBACK_IMAGES.estate,
-    "Estate": FALLBACK_IMAGES.estate,
-    "Beachfront": FALLBACK_IMAGES.beach,
-    "Beachfront Resort": FALLBACK_IMAGES.beach,
-    "Resort": FALLBACK_IMAGES.beach,
-    "Vineyard": FALLBACK_IMAGES.vineyard,
-    "Winery": FALLBACK_IMAGES.vineyard,
-    "Mountain": FALLBACK_IMAGES.mountain,
-    "Retreat": FALLBACK_IMAGES.mountain,
-    "Desert": FALLBACK_IMAGES.desert,
-    "Camp": FALLBACK_IMAGES.desert,
-    "Yacht": FALLBACK_IMAGES.yacht,
-    "Cruise": FALLBACK_IMAGES.yacht,
-    "Island": FALLBACK_IMAGES.beach,
-  };
-  return categoryMap[category] || FALLBACK_IMAGES.default;
 };
 
 // ==========================================
@@ -137,7 +103,7 @@ const VenueCard = ({ venue, onCardClick }) => {
   };
 
   const Icon = getVenueIcon(venue.category);
-  const imageSrc = venue.image || getFallbackImage(venue.category);
+  const imageSrc = venue.image || FALLBACK_IMAGES.default;
 
   return (
     <div
@@ -218,8 +184,18 @@ const MarqueeRow = ({ items, direction = "left", speed = 40, onCardClick }) => {
     };
   }, [direction, speed, items.length]);
 
-  // Duplicate items for seamless infinite scroll
-  const duplicatedItems = items.length > 0 ? [...items, ...items] : [];
+  // ✅ Create unique keys for duplicated items
+  const duplicatedItems = items.length > 0 
+    ? items.map((item, idx) => ({
+        ...item,
+        _key: `${item._id || item.id || idx}-first`
+      })).concat(
+        items.map((item, idx) => ({
+          ...item,
+          _key: `${item._id || item.id || idx}-second`
+        }))
+      )
+    : [];
 
   return (
     <div
@@ -228,9 +204,9 @@ const MarqueeRow = ({ items, direction = "left", speed = 40, onCardClick }) => {
       onMouseLeave={() => tweenRef.current?.play()}
     >
       <div ref={rowRef} className="flex gap-6 px-3">
-        {duplicatedItems.map((venue, idx) => (
+        {duplicatedItems.map((venue) => (
           <VenueCard 
-            key={venue._id || venue.id || idx} 
+            key={venue._key} 
             venue={venue} 
             onCardClick={onCardClick}
           />
@@ -253,17 +229,21 @@ const VenueCollection = () => {
 
   const [venues, setVenues] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedVenueId, setSelectedVenueId] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-  // Fetch featured venues from API
+  // ✅ Fetch featured venues from API - NO FALLBACK DATA
   useEffect(() => {
     const fetchFeaturedVenues = async () => {
       try {
         setLoading(true);
-        const response = await venueApi.getFeatured();
+        setError(null);
         
-        if (response.success && response.data) {
+        const response = await venueApi.getFeatured();
+        console.log("📡 Venue API Response:", response);
+        
+        if (response?.success && response?.data) {
           let venueData = [];
           
           // Handle different response formats
@@ -275,15 +255,23 @@ const VenueCollection = () => {
             venueData = response.data.data;
           }
 
-          setVenues(venueData);
+          // ✅ Filter to only show venues with images
+          const validVenues = venueData.filter(venue => venue.image);
+          
+          if (validVenues.length > 0) {
+            setVenues(validVenues);
+          } else {
+            setError("No featured venues with images available");
+            setVenues([]);
+          }
         } else {
-          // Use fallback data if API returns empty
-          setVenues(getFallbackVenues());
+          setError("Failed to load venues. Please try again later.");
+          setVenues([]);
         }
       } catch (err) {
-        console.error("Error fetching featured venues:", err);
-        // Use fallback data if API fails
-        setVenues(getFallbackVenues());
+        console.error("❌ Error fetching featured venues:", err);
+        setError("Failed to load venues. Please try again later.");
+        setVenues([]);
       } finally {
         setLoading(false);
       }
@@ -291,92 +279,6 @@ const VenueCollection = () => {
 
     fetchFeaturedVenues();
   }, []);
-
-  // Fallback venues in case API fails
-  const getFallbackVenues = () => {
-    return [
-      {
-        _id: "1",
-        name: "Heritage Palaces",
-        subtitle: "Royal Grandeur",
-        location: "Rajasthan, India",
-        category: "Palace",
-        image: "https://images.unsplash.com/photo-1583089892943-e02e5be026b9?w=800&q=80",
-        price: "₹85,000",
-        featured: true,
-      },
-      {
-        _id: "2",
-        name: "Luxury Hotels",
-        subtitle: "Refined Hospitality",
-        location: "Various Locations",
-        category: "Luxury Hotel",
-        image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80",
-        price: "₹65,000",
-        featured: true,
-      },
-      {
-        _id: "3",
-        name: "Private Estates",
-        subtitle: "Exclusive Privacy",
-        location: "Worldwide",
-        category: "Private Estate",
-        image: "https://images.unsplash.com/photo-1613490908592-5b927361a913?w=800&q=80",
-        price: "₹95,000",
-        featured: true,
-      },
-      {
-        _id: "4",
-        name: "Beachfront Venues",
-        subtitle: "Coastal Elegance",
-        location: "Goa, India",
-        category: "Beachfront",
-        image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80",
-        price: "₹55,000",
-        featured: true,
-      },
-      {
-        _id: "5",
-        name: "Vineyards & Wineries",
-        subtitle: "Countryside Charm",
-        location: "Nashik, India",
-        category: "Vineyard",
-        image: "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=800&q=80",
-        price: "₹45,000",
-        featured: true,
-      },
-      {
-        _id: "6",
-        name: "Mountain Retreats",
-        subtitle: "Elevated Escapes",
-        location: "Himalayas, India",
-        category: "Mountain",
-        image: "https://images.unsplash.com/photo-1512100356356-de1b84283e18?w=800&q=80",
-        price: "₹50,000",
-        featured: true,
-      },
-      {
-        _id: "7",
-        name: "Desert Camps",
-        subtitle: "Golden Serenity",
-        location: "Rajasthan, India",
-        category: "Desert",
-        image: "https://images.unsplash.com/photo-1526761122248-b31c93f8b2f9?w=800&q=80",
-        price: "₹40,000",
-        featured: true,
-      },
-      {
-        _id: "8",
-        name: "Yachts & Cruises",
-        subtitle: "Celebrations at Sea",
-        location: "Maldives",
-        category: "Yacht",
-        image: "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=800&q=80",
-        price: "₹120,000",
-        featured: true,
-      },
-    ];
-  };
 
   // Handle card click to open popup
   const handleCardClick = (venueId) => {
@@ -425,12 +327,57 @@ const VenueCollection = () => {
     return () => ctx.revert();
   }, [loading]);
 
+  // ✅ Loading State
   if (loading) {
     return (
       <section className="relative w-full bg-[#FAF8F0] py-24 flex items-center justify-center">
         <div className="flex flex-col items-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#C58B48] mb-4"></div>
           <p className="text-gray-500 font-inter text-sm">Loading venues...</p>
+        </div>
+      </section>
+    );
+  }
+
+  // ✅ Error State - Show error message with retry button
+  if (error) {
+    return (
+      <section className="relative w-full bg-[#FAF8F0] py-24 flex items-center justify-center">
+        <div className="flex flex-col items-center text-center px-6 max-w-md">
+          <div className="text-4xl mb-4">🏛️</div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">No Venues Available</h3>
+          <p className="text-gray-500 font-inter text-sm mb-6">{error}</p>
+          <Button
+            onClick={() => window.location.reload()}
+            variant="secondary"
+            shape="pill"
+            size="md"
+          >
+            Retry
+          </Button>
+        </div>
+      </section>
+    );
+  }
+
+  // ✅ No Data State - Show message when no venues
+  if (venues.length === 0) {
+    return (
+      <section className="relative w-full bg-[#FAF8F0] py-24 flex items-center justify-center">
+        <div className="flex flex-col items-center text-center px-6 max-w-md">
+          <div className="text-4xl mb-4">🏛️</div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">No Venues Found</h3>
+          <p className="text-gray-500 font-inter text-sm mb-6">
+            We couldn't find any featured venues at the moment. Please check back later.
+          </p>
+          <Button
+            onClick={() => navigate("/venues")}
+            variant="secondary"
+            shape="pill"
+            size="md"
+          >
+            View All Venues
+          </Button>
         </div>
       </section>
     );
@@ -549,20 +496,14 @@ const VenueCollection = () => {
       {/* ==========================================
           BOTTOM SECTION: INFINITE MARQUEE
           ========================================== */}
-      {venues.length > 0 ? (
-        <div className="gallery-wrapper relative z-20 w-full overflow-hidden flex flex-col gap-2">
-          <MarqueeRow 
-            items={venues} 
-            direction="left" 
-            speed={60} 
-            onCardClick={handleCardClick}
-          />
-        </div>
-      ) : (
-        <div className="text-center py-20">
-          <p className="text-gray-500 font-inter">No featured venues available</p>
-        </div>
-      )}
+      <div className="gallery-wrapper relative z-20 w-full overflow-hidden flex flex-col gap-2">
+        <MarqueeRow 
+          items={venues} 
+          direction="left" 
+          speed={60} 
+          onCardClick={handleCardClick}
+        />
+      </div>
 
       {/* Venue Popup */}
       <VenuePopup

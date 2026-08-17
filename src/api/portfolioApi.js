@@ -1,8 +1,7 @@
 // src/api/portfolioApi.js
 import axios from "axios";
 
-const API_BASE_URL =
-  import.meta.env.REACT_APP_API_URL || "https://violin-server.onrender.com/api";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -12,14 +11,13 @@ const apiClient = axios.create({
 });
 
 export const portfolioApi = {
+  // ✅ Get all portfolio items with pagination
   getAll: async (filters = {}) => {
     try {
-      // Try both endpoints
       try {
         const response = await apiClient.get("/portfolio", { params: filters });
         return response.data;
       } catch (err) {
-        // If /portfolio fails, try /portfolios
         const response = await apiClient.get("/portfolios", {
           params: filters,
         });
@@ -31,6 +29,7 @@ export const portfolioApi = {
     }
   },
 
+  // ✅ Get ALL featured items (no limit)
   getFeatured: async () => {
     try {
       try {
@@ -61,13 +60,14 @@ export const portfolioApi = {
     }
   },
 
-   getVideos: async () => {
+  // ✅ Get videos with pagination
+  getVideos: async (params = {}) => {
     try {
       try {
-        const response = await apiClient.get("/portfolio/videos");
+        const response = await apiClient.get("/portfolio/videos", { params });
         return response.data;
       } catch (err) {
-        const response = await apiClient.get("/portfolios/videos");
+        const response = await apiClient.get("/portfolios/videos", { params });
         return response.data;
       }
     } catch (error) {

@@ -16,7 +16,7 @@ const Dropdown = ({ isOpen, onClose, items = [], align = "left" }) => {
           exit={{ opacity: 0, y: 8, scale: 0.97 }}
           transition={{ duration: 0.18, ease: "easeOut" }}
           onMouseLeave={onClose}
-          className={`absolute top-full mt-2 w-56 bg-dark-900/95 backdrop-blur-lg border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 ${
+          className={`absolute top-full mt-2 w-56 bg-[#FAF9F5]/95 backdrop-blur-lg border border-amber-900/10 rounded-xl shadow-2xl overflow-hidden z-50 ${
             align === "right" ? "right-0" : "left-0"
           }`}
         >
@@ -29,8 +29,8 @@ const Dropdown = ({ isOpen, onClose, items = [], align = "left" }) => {
                 className={({ isActive }) =>
                   `block px-4 py-2.5 text-sm font-medium transition-colors duration-200 ${
                     isActive
-                      ? "text-gold-500 bg-white/5"
-                      : "text-white hover:text-gold-400 hover:bg-white/5"
+                      ? "text-amber-800 bg-amber-50/10"
+                      : "text-neutral-700 hover:text-amber-700 hover:bg-amber-50/10"
                   }`
                 }
               >

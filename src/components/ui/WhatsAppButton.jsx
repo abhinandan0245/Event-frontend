@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 const WhatsAppButton = () => {
   // Yahan apna actual business WhatsApp number daalein
   // Format: Country code ke sath, bina '+' ya '0' ke. (e.g., India ke liye 91 lagayein)
-  const phoneNumber = "919876543210";
+  const phoneNumber = "919928000990";
 
   // Ye wo default message hai jo user jab click karega toh uske chat box me pehle se type ho jayega
   const message = "Hello Violin Events! I would like to plan a celebration.";

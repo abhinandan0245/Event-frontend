@@ -1,6 +1,3 @@
-
-
-
 import { useState, useEffect, useRef } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -55,13 +52,17 @@ const Header = () => {
     { path: "/portfolio", label: "PORTFOLIO" },
   ];
 
+  // ✅ Updated moreLinks with Artist
   const moreLinks = [
     { path: "/plan-your-celebration", label: "Plan Your Celebration" },
     { path: "/journal", label: "Journal" },
     { path: "/about", label: "About" },
+    { path: "/artist-categories", label: "Artists" }, // ✅ Added Artists
   ];
 
   const specialLink = { path: "/contact", label: "CONTACT US", special: true };
+
+  // ✅ Updated mobileLinks to include all links
   const mobileLinks = [...mainLinks, ...moreLinks, specialLink];
 
   return (

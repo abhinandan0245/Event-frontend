@@ -17,6 +17,11 @@ const PlanYourCelebration = lazy(() => import("../pages/PlanYourCelebration"));
 const Journal = lazy(() => import("../pages/Journal"));
 const About = lazy(() => import("../pages/About"));
 const Contact = lazy(() => import("../pages/Contact"));
+        // Add these imports
+const ArtistCategories = React.lazy(() => import("../pages/ArtistCategories"));
+const ArtistsByCategory = React.lazy(() => import("../pages/ArtistsByCategory"));
+const AllArtists = React.lazy(() => import("../pages/AllArtists"));
+const ArtistDetail = React.lazy(() => import("../pages/ArtistDetail"));
 
 const AppRoutes = () => {
   return (
@@ -37,6 +42,13 @@ const AppRoutes = () => {
           <Route path="journal" element={<Journal />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="artist-categories" element={<ArtistCategories />} />
+          <Route path="artists" element={<AllArtists />} />
+          <Route
+            path="artists/category/:categoryId"
+            element={<ArtistsByCategory />}
+          />
+          <Route path="artists/:id" element={<ArtistDetail />} />
         </Route>
       </Routes>
     </Suspense>

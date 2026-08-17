@@ -25,6 +25,8 @@ import {
   Info,
   ChevronLeft,
   ChevronRight,
+  Play,
+  Video,
 } from "lucide-react";
 import Button from "./Button";
 import { venueApi } from "../../api/venueApi";
@@ -67,6 +69,7 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
   const [error, setError] = useState(null);
   const [activeImage, setActiveImage] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
   const popupRef = useRef(null);
   const slideInterval = useRef(null);
 
@@ -74,16 +77,17 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
   useEffect(() => {
     if (isOpen && venueId) {
       fetchVenueDetails();
+      setShowVideo(false);
     }
   }, [isOpen, venueId]);
 
   // Auto-slide functionality
   useEffect(() => {
     const images = getImages();
-    if (isOpen && images.length > 1 && !isPaused) {
+    if (isOpen && images.length > 1 && !isPaused && !showVideo) {
       slideInterval.current = setInterval(() => {
         setActiveImage((prev) => (prev + 1) % images.length);
-      }, 3000); // Change every 3 seconds
+      }, 3000);
     }
 
     return () => {
@@ -91,7 +95,7 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
         clearInterval(slideInterval.current);
       }
     };
-  }, [isOpen, isPaused, venue]);
+  }, [isOpen, isPaused, venue, showVideo]);
 
   // Handle escape key
   useEffect(() => {
@@ -158,11 +162,39 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
     return images.length > 0 ? images : [FALLBACK_IMAGE];
   };
 
+  // Extract YouTube video ID
+  const getYouTubeEmbedUrl = (url) => {
+    if (!url) return null;
+    
+    const patterns = [
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/,
+      /youtube\.com\/embed\/([^&\n?#]+)/,
+      /youtube\.com\/shorts\/([^&\n?#]+)/,
+    ];
+
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match) {
+        return `https://www.youtube.com/embed/${match[1]}?autoplay=1&rel=0&modestbranding=1`;
+      }
+    }
+    
+    if (url.includes('youtube.com/embed')) {
+      return url.includes('?') ? `${url}&autoplay=1` : `${url}?autoplay=1`;
+    }
+    
+    return null;
+  };
+
+  // Check if video URL is valid
+  const hasVideo = venue?.videoUrl && venue.videoUrl.trim() !== '';
+  const videoEmbedUrl = hasVideo ? getYouTubeEmbedUrl(venue.videoUrl) : null;
+
   // Navigate to next image
   const nextImage = (e) => {
     e?.stopPropagation();
     const images = getImages();
-    if (images.length > 1) {
+    if (images.length > 1 && !showVideo) {
       setActiveImage((prev) => (prev + 1) % images.length);
       resetTimer();
     }
@@ -172,7 +204,7 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
   const prevImage = (e) => {
     e?.stopPropagation();
     const images = getImages();
-    if (images.length > 1) {
+    if (images.length > 1 && !showVideo) {
       setActiveImage((prev) => (prev - 1 + images.length) % images.length);
       resetTimer();
     }
@@ -183,7 +215,7 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
     if (slideInterval.current) {
       clearInterval(slideInterval.current);
       const images = getImages();
-      if (images.length > 1 && !isPaused) {
+      if (images.length > 1 && !isPaused && !showVideo) {
         slideInterval.current = setInterval(() => {
           setActiveImage((prev) => (prev + 1) % images.length);
         }, 3000);
@@ -194,7 +226,19 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
   // Go to specific image
   const goToImage = (index) => {
     setActiveImage(index);
+    setShowVideo(false);
     resetTimer();
+  };
+
+  // Toggle video
+  const toggleVideo = () => {
+    setShowVideo(!showVideo);
+    if (!showVideo) {
+      // Pause auto-slide when video is shown
+      setIsPaused(true);
+    } else {
+      setIsPaused(false);
+    }
   };
 
   // Get amenity icon
@@ -207,6 +251,7 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
 
   const images = getImages();
   const hasMultipleImages = images.length > 1;
+  const canShowVideo = hasVideo && videoEmbedUrl;
 
   return (
     <AnimatePresence>
@@ -250,41 +295,90 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
               </div>
             ) : (
               <div className="bg-white">
-                {/* Image Gallery with Auto-Slide */}
+                {/* Image/Video Gallery with Auto-Slide */}
                 <div
                   className="relative h-[300px] md:h-[400px] bg-gray-900"
                   onMouseEnter={() => setIsPaused(true)}
                   onMouseLeave={() => setIsPaused(false)}
                 >
-                  {/* Main Image with Animation */}
-                  <AnimatePresence mode="wait">
-                    <motion.img
-                      key={activeImage}
-                      src={images[activeImage]}
-                      alt={venue.name}
-                      className="w-full h-full object-cover"
-                      initial={{ opacity: 0, scale: 1.05 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ duration: 0.5 }}
-                      onError={(e) => {
-                        e.target.src = FALLBACK_IMAGE;
-                      }}
-                    />
-                  </AnimatePresence>
+                  {/* Video Player */}
+                  {showVideo && canShowVideo ? (
+                    <div className="w-full h-full">
+                      <iframe
+                        src={videoEmbedUrl}
+                        className="w-full h-full"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        title={`${venue.name} Video`}
+                      />
+                    </div>
+                  ) : (
+                    /* Main Image with Animation */
+                    <AnimatePresence mode="wait">
+                      <motion.img
+                        key={activeImage}
+                        src={images[activeImage]}
+                        alt={venue.name}
+                        className="w-full h-full object-cover"
+                        initial={{ opacity: 0, scale: 1.05 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.5 }}
+                        onError={(e) => {
+                          e.target.src = FALLBACK_IMAGE;
+                        }}
+                      />
+                    </AnimatePresence>
+                  )}
 
                   {/* Gradient Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
+                  {/* Video Toggle Button */}
+                  {canShowVideo && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleVideo();
+                      }}
+                      className={`absolute top-4 right-16 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                        showVideo
+                          ? "bg-[#C58B48] text-white hover:bg-[#b07a3f]"
+                          : "bg-black/50 text-white hover:bg-black/70 backdrop-blur-sm"
+                      }`}
+                    >
+                      {showVideo ? (
+                        <>
+                          <X size={14} />
+                          Close Video
+                        </>
+                      ) : (
+                        <>
+                          <Play size={14} />
+                          Watch Video
+                        </>
+                      )}
+                    </button>
+                  )}
+
                   {/* Image Counter */}
-                  {hasMultipleImages && (
+                  {!showVideo && hasMultipleImages && (
                     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white px-3 py-1.5 rounded-full text-xs backdrop-blur-sm z-10">
                       {activeImage + 1} / {images.length}
                     </div>
                   )}
 
-                  {/* Navigation Arrows */}
-                  {hasMultipleImages && (
+                  {/* Video Indicator when showing video */}
+                  {showVideo && (
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white px-3 py-1.5 rounded-full text-xs backdrop-blur-sm z-10 flex items-center gap-1.5">
+                      <Video size={14} />
+                      Now Playing
+                    </div>
+                  )}
+
+                  {/* Navigation Arrows (only for images) */}
+                  {!showVideo && hasMultipleImages && (
                     <>
                       <button
                         onClick={prevImage}
@@ -302,7 +396,7 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
                   )}
 
                   {/* Pause/Play Indicator */}
-                  {hasMultipleImages && (
+                  {!showVideo && hasMultipleImages && (
                     <div className="absolute top-4 right-4 bg-black/50 text-white/80 text-[8px] px-2 py-1 rounded-full backdrop-blur-sm z-10">
                       {isPaused ? "⏸" : "▶"}
                     </div>
@@ -316,8 +410,8 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
                     </div>
                   )}
 
-                  {/* Thumbnail Strip */}
-                  {hasMultipleImages && (
+                  {/* Thumbnail Strip (only for images) */}
+                  {!showVideo && hasMultipleImages && (
                     <div className="absolute bottom-14 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
                       {images.map((_, index) => (
                         <button
@@ -368,7 +462,7 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
                             <p className="text-sm font-semibold text-gray-900 font-inter">
                               {venue.capacity}
                             </p>
-                            <p className="text-xs text-gray-500">Rooms</p>
+                            <p className="text-xs text-gray-500">Capacity</p>
                           </div>
                         </div>
                       )}
@@ -380,6 +474,17 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
                               Featured
                             </p>
                             <p className="text-xs text-gray-500">Status</p>
+                          </div>
+                        </div>
+                      )}
+                      {canShowVideo && (
+                        <div className="flex items-center gap-3">
+                          <Video className="w-5 h-5 text-[#C58B48]" />
+                          <div>
+                            <p className="text-sm font-semibold text-gray-900 font-inter">
+                              Has Video
+                            </p>
+                            <p className="text-xs text-gray-500">Watch Tour</p>
                           </div>
                         </div>
                       )}
@@ -421,10 +526,18 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
                     </div>
                   )}
 
-                 
-
                   {/* Action Buttons */}
                   <div className="flex flex-col sm:flex-row gap-3">
+                    {canShowVideo && !showVideo && (
+                      <Button
+                        variant="champagne"
+                        className="flex-1 font-inter flex items-center gap-2"
+                        onClick={toggleVideo}
+                      >
+                        <Play size={16} />
+                        Watch Video Tour
+                      </Button>
+                    )}
                     <Button
                       variant="primary"
                       className="flex-1 font-inter"

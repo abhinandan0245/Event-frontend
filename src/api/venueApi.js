@@ -1,8 +1,7 @@
 import axios from "axios";
 
 // Define your backend base URL
-const API_BASE_URL =
-  import.meta.env.REACT_APP_API_URL || "https://violin-server.onrender.com/api";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 // Create an Axios instance
 const apiClient = axios.create({

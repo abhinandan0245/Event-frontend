@@ -73,7 +73,7 @@ const Contact = () => {
     {
       icon: Phone,
       title: "CALL US",
-      details: ["+91 98765 43210"],
+      details: ["+91 9928000990"],
     },
     {
       icon: Mail,
@@ -83,12 +83,14 @@ const Contact = () => {
     {
       icon: MapPin,
       title: "VISIT US",
-      details: ["Violin Events LLP", "Worli, Mumbai - 400018", "Maharashtra, India"],
+      details: [
+        "2nd Floor, 393, Dhruv Marg, opp. KMS Hospital, Tilak Nagar, Jaipur, Rajasthan 302004",
+      ],
     },
     {
       icon: MessageCircle,
       title: "WHATSAPP",
-      details: ["+91 98765 43210", "Chat with our team"],
+      details: ["+91 9928000990", "Chat with our team"],
     },
     {
       icon: Clock,

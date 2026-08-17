@@ -1,5 +1,5 @@
 // src/components/sections/BlogSection.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
   ArrowRight,
   X,
@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
 import { journalApi } from "../../api/journalApi";
 import Button from "../ui/Button";
 
-// ================= STORY POPUP (Copied from Journal.jsx) =================
+// ================= STORY POPUP =================
 const StoryPopup = ({ isOpen, onClose, story }) => {
   if (!story) return null;
 
@@ -30,7 +30,6 @@ const StoryPopup = ({ isOpen, onClose, story }) => {
         className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close Button */}
         <button
           onClick={onClose}
           className="absolute z-50 top-4 right-4 p-2.5 bg-black/50 hover:bg-black/70 backdrop-blur-sm rounded-full text-white transition-all duration-300 hover:scale-110 border border-white/20"
@@ -38,7 +37,6 @@ const StoryPopup = ({ isOpen, onClose, story }) => {
           <X size={20} />
         </button>
 
-        {/* Image */}
         <div className="relative h-[280px] md:h-[320px] w-full overflow-hidden rounded-t-2xl">
           <img
             src={story.image}
@@ -65,13 +63,11 @@ const StoryPopup = ({ isOpen, onClose, story }) => {
           </div>
         </div>
 
-        {/* Content */}
         <div className="p-6 md:p-8">
           <h2 className="font-cormorant text-3xl md:text-4xl text-[#1F2937] leading-[1.2] mb-3">
             {story.title}
           </h2>
 
-          {/* Meta */}
           <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-6 pb-6 border-b border-gray-100">
             <span className="flex items-center gap-1.5">
               <User size={16} className="text-[#C58B48]" />
@@ -91,14 +87,12 @@ const StoryPopup = ({ isOpen, onClose, story }) => {
             </span>
           </div>
 
-          {/* Excerpt */}
           <div className="mb-6 bg-[#FDFBF7] p-4 rounded-xl border border-[#EBE3D5]">
             <p className="text-gray-600 font-inter text-sm leading-relaxed italic">
               "{story.excerpt || story.desc}"
             </p>
           </div>
 
-          {/* Content */}
           <div className="mb-6">
             <h3 className="font-semibold text-gray-700 mb-3 flex items-center gap-2">
               <BookOpen size={18} className="text-[#C58B48]" />
@@ -109,7 +103,6 @@ const StoryPopup = ({ isOpen, onClose, story }) => {
             </div>
           </div>
 
-          {/* Tags */}
           {story.tags && story.tags.length > 0 && (
             <div className="mb-6">
               <h3 className="font-semibold text-gray-700 mb-3 flex items-center gap-2">
@@ -129,7 +122,6 @@ const StoryPopup = ({ isOpen, onClose, story }) => {
             </div>
           )}
 
-          {/* Gallery */}
           {story.images && story.images.length > 0 && (
             <div className="mb-6">
               <h3 className="font-semibold text-gray-700 mb-3">Gallery</h3>
@@ -154,7 +146,6 @@ const StoryPopup = ({ isOpen, onClose, story }) => {
             </div>
           )}
 
-          {/* Close Button */}
           <Button
             variant="champagne"
             className="w-full font-montserrat text-sm"
@@ -168,96 +159,85 @@ const StoryPopup = ({ isOpen, onClose, story }) => {
   );
 };
 
-// === FALLBACK DATA ===
-const fallbackPosts = [
-  {
-    date: { day: "21", month: "MAY", year: "2024" },
-    category: "REAL WEDDINGS",
-    title: "A Royal Wedding Celebration in Udaipur",
-    desc: "Step inside an unforgettable palace wedding where timeless traditions met contemporary luxury.",
-    image:
-      "https://images.unsplash.com/photo-1583089892943-e02e5be026b9?w=800&q=80",
-  },
-  {
-    date: { day: "14", month: "MAY", year: "2024" },
-    category: "PLANNING GUIDES",
-    title: "How to Choose the Perfect Wedding Venue",
-    desc: "Essential considerations for selecting a venue that reflects your vision and elevates the guest experience.",
-    image:
-      "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=80",
-  },
-  {
-    date: { day: "07", month: "MAY", year: "2024" },
-    category: "WEDDING TRENDS",
-    title: "Luxury Decor Trends Defining Modern Celebrations",
-    desc: "Explore the design elements, floral concepts, and styling approaches shaping today's most elegant weddings.",
-    image:
-      "https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=800&q=80",
-  },
-  {
-    date: { day: "30", month: "APR", year: "2024" },
-    category: "DESTINATIONS",
-    title: "Why Goa Remains a Dream Wedding Destination",
-    desc: "From oceanfront ceremonies to luxury resorts, discover why couples continue choosing Goa for their celebrations.",
-    image:
-      "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80",
-  },
-];
-
+// ================= MAIN COMPONENT =================
 const BlogSection = () => {
   const [blogPosts, setBlogPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
 
-  // Popup state
   const [selectedStory, setSelectedStory] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-  // Fetch journal items from API
+  // ✅ Fetch journal items from API
   useEffect(() => {
     const fetchBlogPosts = async () => {
       try {
         setLoading(true);
-        const response = await journalApi.getAll({ limit: 12 });
+        setError(null);
 
-        if (response.success && response.data?.items) {
+        const response = await journalApi.getAll({ limit: 12 });
+        console.log("📡 Journal API Response:", response);
+
+        if (response?.success && response?.data?.items) {
           const items = response.data.items;
 
-          const formattedPosts = items.map((item) => {
-            const date = item.date ? new Date(item.date) : new Date();
+          const validItems = items.filter((item) => item.image);
+
+          if (validItems.length === 0) {
+            setError("No blog posts with images available");
+            setBlogPosts([]);
+            setLoading(false);
+            return;
+          }
+
+          const formattedPosts = validItems.map((item) => {
+            let formattedDate = "Recent";
+            if (item.date) {
+              try {
+                const date = new Date(item.date);
+                if (!isNaN(date.getTime())) {
+                  formattedDate = date.toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  });
+                }
+              } catch (e) {
+                formattedDate = "Recent";
+              }
+            }
+
             return {
-              date: {
-                day: date.getDate().toString().padStart(2, "0"),
-                month: date
-                  .toLocaleString("en-US", { month: "short" })
-                  .toUpperCase(),
-                year: date.getFullYear().toString(),
-              },
+              id: item._id,
+              title: item.title || "Untitled",
               category: item.category || "FEATURED",
-              title: item.title,
               desc: item.excerpt || item.content?.substring(0, 120) + "...",
               excerpt: item.excerpt || item.content?.substring(0, 120) + "...",
               image: item.image,
-              _id: item._id,
-              slug: item.slug,
-              author: item.author,
-              readTime: item.readTime,
-              views: item.views,
-              content: item.content,
-              tags: item.tags,
-              featured: item.featured,
-              isActive: item.isActive,
+              date: formattedDate,
+              author: item.author || "Violin Events",
+              readTime: item.readTime || "5 min read",
+              views: item.views || 0,
+              content: item.content || item.desc || "",
+              tags: item.tags || [],
+              featured: item.featured || false,
+              isActive: item.isActive !== false,
               images: item.images || [],
+              slug: item.slug,
+              _id: item._id,
             };
           });
 
           setBlogPosts(formattedPosts);
         } else {
-          setBlogPosts(fallbackPosts);
+          setError("No blog posts found");
+          setBlogPosts([]);
         }
       } catch (error) {
-        console.error("Error fetching blog posts:", error);
-        setBlogPosts(fallbackPosts);
+        console.error("❌ Error fetching blog posts:", error);
+        setError("Failed to load blog posts. Please try again later.");
+        setBlogPosts([]);
       } finally {
         setLoading(false);
       }
@@ -266,22 +246,30 @@ const BlogSection = () => {
     fetchBlogPosts();
   }, []);
 
-  // ✅ NO DUPLICATES - Show each post only once
-  const marqueeBlogs = blogPosts.length > 0 ? blogPosts : fallbackPosts;
-
-  // Handle story click - open popup
-  const handleStoryClick = (story) => {
+  const handleStoryClick = useCallback((story) => {
     setSelectedStory(story);
     setIsPopupOpen(true);
-  };
+  }, []);
 
-  // Close popup
-  const handleClosePopup = () => {
+  const handleClosePopup = useCallback(() => {
     setIsPopupOpen(false);
     setSelectedStory(null);
-  };
+  }, []);
 
-  // Show loading state
+  // ✅ CORRECT: Only ONE copy in JSX - CSS handles the infinite scroll
+  // The key is using unique IDs for each item
+  const marqueeItems = useMemo(() => {
+    if (blogPosts.length === 0) return [];
+
+    // We only need ONE copy in the JSX
+    // The CSS animation with translateX(-50%) will create the infinite effect
+    return blogPosts.map((post, index) => ({
+      ...post,
+      // Use a simple unique key
+      _key: post.id || post._id || index,
+    }));
+  }, [blogPosts]);
+
   if (loading) {
     return (
       <section className="relative w-full min-h-screen bg-[#FDFBF7] font-sans overflow-hidden py-16 lg:py-24 flex flex-col items-center justify-center">
@@ -293,15 +281,57 @@ const BlogSection = () => {
     );
   }
 
+  if (error) {
+    return (
+      <section className="relative w-full min-h-screen bg-[#FDFBF7] font-sans overflow-hidden py-16 lg:py-24 flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center text-center px-6 max-w-md">
+          <div className="text-4xl mb-4">📖</div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+            No Stories Available
+          </h3>
+          <p className="text-gray-500 font-inter text-sm mb-6">{error}</p>
+          <Button
+            onClick={() => window.location.reload()}
+            variant="secondary"
+            shape="pill"
+            size="md"
+          >
+            Retry
+          </Button>
+        </div>
+      </section>
+    );
+  }
+
+  if (blogPosts.length === 0) {
+    return (
+      <section className="relative w-full min-h-screen bg-[#FDFBF7] font-sans overflow-hidden py-16 lg:py-24 flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center text-center px-6 max-w-md">
+          <div className="text-4xl mb-4">📖</div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+            No Stories Yet
+          </h3>
+          <p className="text-gray-500 font-inter text-sm mb-6">
+            We're curating beautiful stories for you. Check back soon!
+          </p>
+          <Link to="/journal">
+            <Button variant="secondary" shape="pill" size="md">
+              Explore Journal
+            </Button>
+          </Link>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <>
       <section className="relative w-full min-h-screen bg-[#FDFBF7] font-sans overflow-hidden py-16 lg:py-24 flex flex-col items-center">
-        {/* === CUSTOM MARQUEE ANIMATION === */}
         <style>
           {`
             @keyframes smooth-scroll {
               0% { transform: translateX(0%); }
-              100% { transform: translateX(-50%); }
+              100% { transform: translateX(-100%); }
             }
             .animate-smooth-scroll {
               animation: smooth-scroll 30s linear infinite;
@@ -312,7 +342,7 @@ const BlogSection = () => {
           `}
         </style>
 
-        {/* === BACKGROUND DECORATIVE ELEMENTS === */}
+        {/* Background Elements */}
         <div className="absolute top-10 left-0 w-[200px] md:w-[350px] opacity-70 pointer-events-none z-0">
           <img
             src="https://images.unsplash.com/photo-1526761122248-b31c93f8b2f9?w=600&q=80"
@@ -335,7 +365,6 @@ const BlogSection = () => {
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-[radial-gradient(circle_at_bottom_left,#E5D9C5_0%,transparent_70%)] opacity-40 pointer-events-none" />
         <div className="absolute bottom-0 right-0 w-64 h-64 bg-[radial-gradient(circle_at_bottom_right,#E5D9C5_0%,transparent_70%)] opacity-40 pointer-events-none" />
 
-        {/* === MAIN CONTENT WRAPPER === */}
         <div className="relative z-10 w-full flex flex-col items-center">
           {/* HEADER */}
           <div className="text-center max-w-3xl px-4 mb-8">
@@ -380,7 +409,7 @@ const BlogSection = () => {
             ))}
           </div>
 
-          {/* === LUXURY AUTO-SLIDER (MARQUEE) - NO DUPLICATES === */}
+          {/* === MARQUEE - ONLY ONE COPY IN JSX === */}
           <div
             className="w-full overflow-hidden py-8 group/slider"
             onMouseEnter={() => setIsHovered(true)}
@@ -390,13 +419,12 @@ const BlogSection = () => {
               className="flex w-max animate-smooth-scroll items-center gap-6 md:gap-8 px-4"
               style={{ animationPlayState: isHovered ? "paused" : "running" }}
             >
-              {marqueeBlogs.map((blog, idx) => (
+              {marqueeItems.map((blog) => (
                 <div
-                  key={idx}
+                  key={blog._key}
                   onClick={() => handleStoryClick(blog)}
                   className="flex-shrink-0 w-[280px] md:w-[340px] lg:w-[380px] bg-white rounded-sm shadow-[0_10px_30px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col transition-all duration-500 group-hover/slider:opacity-50 hover:!opacity-100 hover:scale-[1.03] hover:shadow-[0_15px_40px_rgba(0,0,0,0.1)] cursor-pointer"
                 >
-                  {/* Image & Date Badge */}
                   <div className="relative w-full h-[220px] overflow-hidden">
                     <img
                       src={
@@ -411,21 +439,23 @@ const BlogSection = () => {
                       }}
                     />
 
-                    {/* Date Badge */}
                     <div className="absolute top-0 left-0 bg-white/95 backdrop-blur-sm px-4 py-3 flex flex-col items-center justify-center border-b border-r border-gray-100 shadow-sm">
                       <span className="font-cormorant text-xl text-[#222222] leading-none mb-1">
-                        {blog.date?.day || "01"}
+                        {blog.date
+                          ? blog.date.split(" ")[1]?.replace(",", "") || "01"
+                          : "01"}
                       </span>
                       <span className="font-montserrat text-[8px] font-bold tracking-widest text-gray-500 uppercase leading-none mb-0.5">
-                        {blog.date?.month || "JAN"}
+                        {blog.date
+                          ? blog.date.split(" ")[0]?.toUpperCase() || "JAN"
+                          : "JAN"}
                       </span>
                       <span className="font-inter text-[9px] text-gray-400 leading-none">
-                        {blog.date?.year || "2024"}
+                        {blog.date ? blog.date.split(" ")[2] || "2024" : "2024"}
                       </span>
                     </div>
                   </div>
 
-                  {/* Content */}
                   <div className="p-6 md:p-8 flex flex-col flex-grow">
                     <span className="font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.2em] uppercase mb-3 block">
                       {blog.category || "FEATURED"}
@@ -456,7 +486,6 @@ const BlogSection = () => {
             </div>
           </div>
 
-          {/* BOTTOM LINK */}
           <Link
             to="/journal"
             className="mt-12 flex items-center justify-center gap-2 text-[#C58B48] text-[10px] font-montserrat font-bold tracking-[0.25em] uppercase cursor-pointer hover:text-amber-900 transition-colors group"
@@ -471,7 +500,6 @@ const BlogSection = () => {
         </div>
       </section>
 
-      {/* ================= STORY POPUP ================= */}
       <StoryPopup
         isOpen={isPopupOpen}
         onClose={handleClosePopup}

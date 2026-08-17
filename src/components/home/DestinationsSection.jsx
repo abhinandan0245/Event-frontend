@@ -38,23 +38,9 @@ const features = [
   },
 ];
 
-// Fallback images in case API doesn't return images
-const FALLBACK_IMAGES = {
-  default:
-    "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&q=80",
-  india:
-    "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=800&q=80",
-  thailand:
-    "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=800&q=80",
-  uae: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80",
-  italy:
-    "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=800&q=80",
-  maldives:
-    "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&q=80",
-  france:
-    "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&q=80",
-  bali: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&q=80",
-};
+// ✅ Only keep this for image load error fallback
+const FALLBACK_IMAGE =
+  "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&q=80";
 
 const DestinationsSection = () => {
   const sectionRef = useRef(null);
@@ -66,14 +52,17 @@ const DestinationsSection = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // Fetch featured destinations from API
+  // Fetch featured destinations from API - NO FALLBACK DATA
   useEffect(() => {
     const fetchFeaturedDestinations = async () => {
       try {
         setLoading(true);
+        setError(null);
+        
         const response = await destinationApi.getFeatured();
+        console.log("📡 Destinations API Response:", response);
 
-        if (response.success && response.data) {
+        if (response?.success && response?.data) {
           let featuredData = [];
 
           // Handle different response formats
@@ -85,14 +74,14 @@ const DestinationsSection = () => {
             featuredData = response.data.data;
           }
 
-          // Map API data to match the component's expected format
+          // ✅ Map API data to match the component's expected format
           const formattedDestinations = featuredData.map((dest) => ({
             name: dest.city || dest.state || dest.country || "Destination",
             subtitle: dest.country || "Exclusive Destination",
             description:
               dest.description ||
               "Experience luxury and elegance at this stunning destination.",
-            image: dest.image || getFallbackImage(dest.country),
+            image: dest.image || FALLBACK_IMAGE,
             country: dest.country,
             state: dest.state,
             city: dest.city,
@@ -105,14 +94,12 @@ const DestinationsSection = () => {
           setDestinations(formattedDestinations);
         } else {
           setError("No featured destinations found");
-          // Use fallback data if API returns empty
-          setDestinations(getFallbackDestinations());
+          setDestinations([]);
         }
       } catch (err) {
-        console.error("Error fetching featured destinations:", err);
-        setError("Failed to load destinations");
-        // Use fallback data if API fails
-        setDestinations(getFallbackDestinations());
+        console.error("❌ Error fetching featured destinations:", err);
+        setError("Failed to load destinations. Please try again later.");
+        setDestinations([]);
       } finally {
         setLoading(false);
       }
@@ -120,61 +107,6 @@ const DestinationsSection = () => {
 
     fetchFeaturedDestinations();
   }, []);
-
-  // Fallback destinations in case API fails
-  const getFallbackDestinations = () => {
-    return [
-      {
-        name: "BALI",
-        subtitle: "Sacred Escapes",
-        description:
-          "Private villas, oceanfront ceremonies, and timeless island elegance.",
-        image: FALLBACK_IMAGES.bali,
-      },
-      {
-        name: "THAILAND",
-        subtitle: "Tropical Sophistication",
-        description:
-          "Luxury resorts, hidden beaches, and unforgettable celebrations.",
-        image: FALLBACK_IMAGES.thailand,
-      },
-      {
-        name: "UAE",
-        subtitle: "Modern Grandeur",
-        description:
-          "Skyline weddings, iconic architecture, and world-class hospitality.",
-        image: FALLBACK_IMAGES.uae,
-      },
-      {
-        name: "ITALY",
-        subtitle: "Romantic Heritage",
-        description:
-          "Historic villas, rolling vineyards, and Mediterranean charm.",
-        image: FALLBACK_IMAGES.italy,
-      },
-      {
-        name: "MALDIVES",
-        subtitle: "Oceanic Opulence",
-        description:
-          "Overwater bungalows, crystal waters, and intimate seclusion.",
-        image: FALLBACK_IMAGES.maldives,
-      },
-      {
-        name: "FRANCE",
-        subtitle: "Classic Elegance",
-        description:
-          "Grand châteaux, Parisian romance, and exquisite culinary arts.",
-        image: FALLBACK_IMAGES.france,
-      },
-    ];
-  };
-
-  // Get fallback image based on country
-  const getFallbackImage = (country) => {
-    if (!country) return FALLBACK_IMAGES.default;
-    const key = country.toLowerCase();
-    return FALLBACK_IMAGES[key] || FALLBACK_IMAGES.default;
-  };
 
   // Auto-Carousel Logic
   useEffect(() => {
@@ -188,6 +120,8 @@ const DestinationsSection = () => {
 
   // GSAP Scroll Animations
   useEffect(() => {
+    if (loading) return;
+
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -219,7 +153,7 @@ const DestinationsSection = () => {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [loading]);
 
   // 3D Card Positioning
   const getCardStyle = (index) => {
@@ -287,6 +221,48 @@ const DestinationsSection = () => {
     );
   }
 
+  // ✅ Error State
+  if (error) {
+    return (
+      <section className="relative w-full bg-[#FAF9F5] px-6 py-20 lg:px-12">
+        <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
+          <div className="text-4xl mb-4">🌍</div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">No Destinations Available</h3>
+          <p className="text-gray-500 font-manrope text-sm max-w-md mb-6">{error}</p>
+          <Button
+            onClick={() => window.location.reload()}
+            variant="primary"
+            shape="shield"
+          >
+            Retry
+          </Button>
+        </div>
+      </section>
+    );
+  }
+
+  // ✅ No Data State
+  if (destinations.length === 0) {
+    return (
+      <section className="relative w-full bg-[#FAF9F5] px-6 py-20 lg:px-12">
+        <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
+          <div className="text-4xl mb-4">🌍</div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">No Destinations Found</h3>
+          <p className="text-gray-500 font-manrope text-sm max-w-md mb-6">
+            We couldn't find any featured destinations at the moment. Please check back later.
+          </p>
+          <Button
+            onClick={() => navigate("/destinations")}
+            variant="primary"
+            shape="shield"
+          >
+            Explore All Destinations
+          </Button>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section
       ref={sectionRef}
@@ -344,71 +320,65 @@ const DestinationsSection = () => {
           {/* RIGHT: 3D DESTINATION CAROUSEL */}
           <div className="relative flex h-[380px] sm:h-[420px] lg:h-[480px] 2xl:h-[550px] justify-center lg:col-span-7 overflow-visible mt-6 lg:mt-0">
             <div className="relative w-full h-full">
-              {destinations.length > 0 ? (
-                destinations.map((dest, index) => (
-                  <div
-                    key={dest.id || dest.name + index}
-                    className="absolute top-1/2 flex w-[220px] sm:w-[240px] lg:w-[280px] xl:w-[320px] 2xl:w-[360px] h-[320px] sm:h-[360px] lg:h-[420px] 2xl:h-[460px] -translate-y-1/2 flex-col overflow-hidden rounded-2xl md:rounded-[2rem] border-[3px] border-[#D9B17C]/60 bg-[#171717] ring-1 ring-inset ring-black/50 transition-all duration-[1000ms] ease-[0.25,1,0.5,1] cursor-pointer"
-                    style={getCardStyle(index)}
-                    onClick={() => {
-                      if (dest.id) {
-                        navigate(`/destination/${dest.id}`);
-                      }
-                    }}
-                  >
-                    {/* Background Image */}
-                    <div className="absolute inset-0">
-                      <img
-                        src={dest.image || FALLBACK_IMAGES.default}
-                        alt={dest.name}
-                        className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
-                        onError={(e) => {
-                          e.target.src = FALLBACK_IMAGES.default;
-                        }}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/95" />
-                      <div className="absolute inset-0 shadow-[inset_0_0_20px_rgba(0,0,0,0.6)] pointer-events-none" />
-                    </div>
-
-                    {/* Card Content */}
-                    <div className="relative z-10 mt-auto flex flex-col items-center p-4 text-center text-white pb-6">
-                      <div className="mb-2 flex h-8 w-8 md:h-10 md:w-10 items-center justify-center rounded-full border border-[#D9B17C] bg-black/60 shadow-[0_0_15px_rgba(0,0,0,0.5)] backdrop-blur-md">
-                        <Crown className="h-4 w-4 md:h-5 md:w-5 text-[#D9B17C]" />
-                      </div>
-
-                      <h3
-                        className="mb-1 font-serif text-xl md:text-2xl lg:text-3xl font-medium tracking-wide lg:font-canela"
-                        style={{ textShadow: "0 4px 10px rgba(0,0,0,0.8)" }}
-                      >
-                        {dest.name.toUpperCase()}
-                      </h3>
-                      <h4
-                        className="mb-2 font-cormorant text-sm md:text-base lg:text-lg font-medium italic text-[#D9B17C]"
-                        style={{ textShadow: "0 2px 5px rgba(0,0,0,0.8)" }}
-                      >
-                        {dest.subtitle}
-                      </h4>
-                      <p className="font-manrope text-[10px] md:text-xs font-normal leading-[1.5] text-[#E8E8E8] max-w-[95%] line-clamp-2">
-                        {dest.description}
-                      </p>
-
-                      {/* Location indicator */}
-                      {dest.city && dest.country && (
-                        <div className="mt-2 flex items-center gap-1 text-[8px] md:text-[10px] text-[#D9B17C]/80 font-manrope">
-                          <MapPin className="w-3 h-3" />
-                          <span>
-                            {dest.city}, {dest.country}
-                          </span>
-                        </div>
-                      )}
-                    </div>
+              {destinations.map((dest, index) => (
+                <div
+                  key={dest.id || dest.name + index}
+                  className="absolute top-1/2 flex w-[220px] sm:w-[240px] lg:w-[280px] xl:w-[320px] 2xl:w-[360px] h-[320px] sm:h-[360px] lg:h-[420px] 2xl:h-[460px] -translate-y-1/2 flex-col overflow-hidden rounded-2xl md:rounded-[2rem] border-[3px] border-[#D9B17C]/60 bg-[#171717] ring-1 ring-inset ring-black/50 transition-all duration-[1000ms] ease-[0.25,1,0.5,1] cursor-pointer"
+                  style={getCardStyle(index)}
+                  onClick={() => {
+                    if (dest.id) {
+                      navigate(`/destination/${dest.id}`);
+                    }
+                  }}
+                >
+                  {/* Background Image */}
+                  <div className="absolute inset-0">
+                    <img
+                      src={dest.image || FALLBACK_IMAGE}
+                      alt={dest.name}
+                      className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+                      onError={(e) => {
+                        e.target.src = FALLBACK_IMAGE;
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/95" />
+                    <div className="absolute inset-0 shadow-[inset_0_0_20px_rgba(0,0,0,0.6)] pointer-events-none" />
                   </div>
-                ))
-              ) : (
-                <div className="flex items-center justify-center h-full text-gray-500">
-                  <p>No featured destinations available</p>
+
+                  {/* Card Content */}
+                  <div className="relative z-10 mt-auto flex flex-col items-center p-4 text-center text-white pb-6">
+                    <div className="mb-2 flex h-8 w-8 md:h-10 md:w-10 items-center justify-center rounded-full border border-[#D9B17C] bg-black/60 shadow-[0_0_15px_rgba(0,0,0,0.5)] backdrop-blur-md">
+                      <Crown className="h-4 w-4 md:h-5 md:w-5 text-[#D9B17C]" />
+                    </div>
+
+                    <h3
+                      className="mb-1 font-serif text-xl md:text-2xl lg:text-3xl font-medium tracking-wide lg:font-canela"
+                      style={{ textShadow: "0 4px 10px rgba(0,0,0,0.8)" }}
+                    >
+                      {dest.name.toUpperCase()}
+                    </h3>
+                    <h4
+                      className="mb-2 font-cormorant text-sm md:text-base lg:text-lg font-medium italic text-[#D9B17C]"
+                      style={{ textShadow: "0 2px 5px rgba(0,0,0,0.8)" }}
+                    >
+                      {dest.subtitle}
+                    </h4>
+                    <p className="font-manrope text-[10px] md:text-xs font-normal leading-[1.5] text-[#E8E8E8] max-w-[95%] line-clamp-2">
+                      {dest.description}
+                    </p>
+
+                    {/* Location indicator */}
+                    {dest.city && dest.country && (
+                      <div className="mt-2 flex items-center gap-1 text-[8px] md:text-[10px] text-[#D9B17C]/80 font-manrope">
+                        <MapPin className="w-3 h-3" />
+                        <span>
+                          {dest.city}, {dest.country}
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              )}
+              ))}
             </div>
           </div>
         </div>

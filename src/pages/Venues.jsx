@@ -13,7 +13,9 @@ import {
   HeartHandshake,
   ConciergeBell,
   ChevronRight,
-  Crown
+  Crown,
+  Video,
+  X
 } from "lucide-react";
 import Button from "../components/ui/Button";
 import { venueApi } from "../api/venueApi";
@@ -83,6 +85,104 @@ const Premium3DCard = ({ children, className, onMouseEnter, onMouseLeave, onClic
   );
 };
 
+// ================= VIDEO THUMBNAIL WITH PLAYER =================
+const VideoThumbnail = ({ videoUrl, title, image, onPlay }) => {
+  const [showVideo, setShowVideo] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+
+  // Extract YouTube video ID
+  const getYouTubeEmbedUrl = (url) => {
+    if (!url) return null;
+    
+    const patterns = [
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/,
+      /youtube\.com\/embed\/([^&\n?#]+)/,
+      /youtube\.com\/shorts\/([^&\n?#]+)/,
+    ];
+
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match) {
+        return `https://www.youtube.com/embed/${match[1]}?autoplay=1&rel=0&modestbranding=1`;
+      }
+    }
+    
+    if (url.includes('youtube.com/embed')) {
+      return url.includes('?') ? `${url}&autoplay=1` : `${url}?autoplay=1`;
+    }
+    
+    return null;
+  };
+
+  const embedUrl = videoUrl ? getYouTubeEmbedUrl(videoUrl) : null;
+  const hasValidVideo = embedUrl !== null;
+
+  const handlePlayClick = (e) => {
+    e.stopPropagation();
+    if (hasValidVideo) {
+      setShowVideo(true);
+      if (onPlay) onPlay();
+    }
+  };
+
+  if (showVideo && hasValidVideo) {
+    return (
+      <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-black">
+        <iframe
+          src={embedUrl}
+          className="w-full h-full"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          title={`${title} Video`}
+        />
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowVideo(false);
+          }}
+          className="absolute top-2 right-2 z-10 bg-black/70 hover:bg-black/90 text-white p-1.5 rounded-full transition-all"
+        >
+          <X size={16} />
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div 
+      className="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-sm border border-[#EBE3D5] cursor-pointer group"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={handlePlayClick}
+    >
+      <img
+        src={image}
+        alt={title}
+        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+        onError={(e) => {
+          e.target.src = "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=600&q=80";
+        }}
+      />
+      
+      {hasValidVideo && (
+        <>
+          <div className="absolute inset-0 bg-black/10 group-hover:bg-black/40 transition-colors duration-500" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-14 h-14 bg-white/95 rounded-full flex items-center justify-center shadow-2xl transform scale-90 opacity-0 group-hover:scale-110 group-hover:opacity-100 transition-all duration-300 ease-out">
+              <Play className="w-6 h-6 text-[#C58B48] fill-[#C58B48] ml-1" />
+            </div>
+          </div>
+          <div className="absolute bottom-2 right-2 bg-black/60 text-white/80 text-[8px] px-2 py-0.5 rounded-full backdrop-blur-sm flex items-center gap-1">
+            <Video size={10} />
+            Watch Video
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
 // ================= MAIN COMPONENT =================
 const Venues = () => {
   const compRef = useRef(null);
@@ -101,6 +201,7 @@ const Venues = () => {
   // Popup state
   const [selectedVenueId, setSelectedVenueId] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  
   // Handle venue card click
   const handleVenueClick = (venueId) => {
     if (venueId) {
@@ -137,13 +238,11 @@ const Venues = () => {
       try {
         setLoading(true);
         
-        // Fetch all venues
         const response = await venueApi.getAll();
         
         if (response.success && response.data) {
           let venueData = [];
 
-          // Handle different response formats
           if (Array.isArray(response.data)) {
             venueData = response.data;
           } else if (response.data.venues) {
@@ -155,7 +254,6 @@ const Venues = () => {
           setVenues(venueData);
           setFilteredVenues(venueData);
 
-          // Extract unique categories for filter
           const uniqueCategories = [
             "ALL VENUES",
             ...new Set(venueData.map((v) => v.category).filter(Boolean)),
@@ -176,7 +274,6 @@ const Venues = () => {
       }
     };
 
-    // Fetch featured venues for bottom section
     const fetchFeaturedVenues = async () => {
       try {
         setFeaturedLoading(true);
@@ -219,9 +316,9 @@ const Venues = () => {
         category: "Palace",
         image: "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=800&q=80",
         capacity: "300 - 800",
-        price: "₹55,000",
         description: "Luxury palace venue with stunning lake views.",
-        featured: true
+        featured: true,
+        videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
       },
       {
         _id: "2",
@@ -230,7 +327,6 @@ const Venues = () => {
         category: "Beachfront Resort",
         image: "https://images.unsplash.com/photo-1512343879784-9602d5de7a10?w=800&q=80",
         capacity: "150 - 500",
-        price: "₹45,000",
         description: "Beachfront luxury resort with world-class amenities.",
         featured: true
       },
@@ -241,7 +337,6 @@ const Venues = () => {
         category: "Heritage Palace",
         image: "https://images.unsplash.com/photo-1590582007337-f5d55ec5aaf0?w=800&q=80",
         capacity: "200 - 600",
-        price: "₹65,000",
         description: "Majestic heritage palace with royal architecture.",
         featured: true
       },
@@ -252,7 +347,6 @@ const Venues = () => {
         category: "Cliffside Resort",
         image: "https://images.unsplash.com/photo-1593693397690-362cb9666fc2?w=800&q=80",
         capacity: "100 - 300",
-        price: "₹50,000",
         description: "Cliffside luxury villas with ocean views.",
         featured: true
       },
@@ -263,7 +357,6 @@ const Venues = () => {
         category: "Luxury Hotel",
         image: "https://images.unsplash.com/photo-1564507592333-c60657eea523?w=800&q=80",
         capacity: "100 - 400",
-        price: "₹90,000",
         description: "Luxury hotel with Taj Mahal views.",
         featured: true
       },
@@ -291,6 +384,7 @@ const Venues = () => {
         title: venue.name,
         location: venue.location || venue.city || "",
         image: venue.image || "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=600&q=80",
+        videoUrl: venue.videoUrl || null,
         id: venue._id || venue.id
       }))
     : [
@@ -298,24 +392,28 @@ const Venues = () => {
           title: "Royal Palace Wedding",
           location: "Udaipur, Rajasthan",
           image: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80",
+          videoUrl: null,
           id: "1"
         },
         {
           title: "Beachside Celebration",
           location: "Phuket, Thailand",
           image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&q=80",
+          videoUrl: null,
           id: "2"
         },
         {
           title: "Heritage Fort Wedding",
           location: "Jaipur, Rajasthan",
           image: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&q=80",
+          videoUrl: null,
           id: "3"
         },
         {
           title: "Luxury Resort Wedding",
           location: "Bali, Indonesia",
           image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=600&q=80",
+          videoUrl: null,
           id: "4"
         },
       ];
@@ -336,7 +434,6 @@ const Venues = () => {
         delay: 0.2,
       });
 
-      
       gsap.from(".why-card", {
         y: 50,
         opacity: 0,
@@ -411,20 +508,20 @@ const Venues = () => {
           </div>
 
           <div className="filter-container flex flex-wrap items-center justify-center gap-3 lg:gap-4 mb-16">
-  {categories.map((category) => (
-    <button
-      key={category}
-      onClick={() => setSelectedCategory(category)}
-      className={`filter-btn px-5 lg:px-6 py-2.5 rounded-full font-montserrat text-[9px] font-bold tracking-[0.15em] transition-all duration-300 ${
-        selectedCategory === category
-          ? "border border-[#C58B48] text-[#1F2937] !bg-[#C58B48] shadow-sm"
-          : "border border-[#EBE3D5] text-gray-500 hover:text-[#C58B48] hover:border-[#C58B48]/40"
-      }`}
-    >
-      {category}
-    </button>
-  ))}
-</div>
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className={`filter-btn px-5 lg:px-6 py-2.5 rounded-full font-montserrat text-[9px] font-bold tracking-[0.15em] transition-all duration-300 ${
+                  selectedCategory === category
+                    ? "border border-[#C58B48] text-[#1F2937] !bg-[#C58B48] shadow-sm"
+                    : "border border-[#EBE3D5] text-gray-500 hover:text-[#C58B48] hover:border-[#C58B48]/40"
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12" style={{ perspective: 1500 }}>
             <AnimatePresence mode="popLayout">
@@ -548,7 +645,7 @@ const Venues = () => {
         </Premium3DCard>
       </section>
 
-      {/* ================= FEATURED VENUE EXPERIENCES (FROM API) ================= */}
+      {/* ================= FEATURED VENUE EXPERIENCES WITH VIDEO ================= */}
       <section className="py-16 lg:py-24 relative z-10">
         <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16 text-center">
           <span className="font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-3 block">FEATURED VENUE EXPERIENCES</span>
@@ -568,28 +665,28 @@ const Venues = () => {
                   onClick={() => handleVenueClick(exp.id)}
                 >
                   <div className="flex flex-col group cursor-pointer h-full">
-                    <div className="relative aspect-[4/3] rounded-xl overflow-hidden mb-5 shadow-sm border border-[#EBE3D5]">
-                      <img
-                        src={exp.image}
-                        alt={exp.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                        onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=600&q=80"; }}
-                      />
-                      <div className="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-colors duration-500" />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-12 h-12 bg-white/95 rounded-full flex items-center justify-center shadow-lg transform scale-90 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-300 ease-out">
-                          <Play className="w-4 h-4 text-[#C58B48] fill-[#C58B48] ml-1" />
-                        </div>
-                      </div>
-                      {exp.featured && (
-                        <div className="absolute top-3 left-3 bg-[#C58B48] text-white text-[8px] px-2 py-0.5 rounded-full font-semibold tracking-wider">
-                          <Crown className="w-3 h-3 inline mr-1" />
-                          Featured
+                    {/* ✅ Video Thumbnail with Play Button */}
+                    <VideoThumbnail
+                      videoUrl={exp.videoUrl}
+                      title={exp.title}
+                      image={exp.image}
+                      onPlay={() => handleCursorState("default")}
+                    />
+                    
+                    <div className="mt-3 text-center">
+                      <h3 className="font-montserrat text-[#1F2937] text-[11px] font-bold tracking-widest uppercase mb-1">
+                        {exp.title}
+                      </h3>
+                      <p className="font-inter text-xs text-gray-500">
+                        {exp.location}
+                      </p>
+                      {exp.videoUrl && (
+                        <div className="mt-1.5 inline-flex items-center gap-1 text-[8px] text-[#C58B48] font-medium">
+                          <Video size={10} />
+                          Video Available
                         </div>
                       )}
                     </div>
-                    <h3 className="font-montserrat text-[#1F2937] text-[11px] font-bold tracking-widest uppercase mb-1">{exp.title}</h3>
-                    <p className="font-inter text-xs text-gray-500">{exp.location}</p>
                   </div>
                 </Premium3DCard>
               ))}
@@ -617,12 +714,6 @@ const Venues = () => {
                 <Button onClick={() => navigate("/contact")} variant="champagne" size="md" className="font-montserrat text-[10px] w-full sm:w-auto shadow-none hover:scale-105 transition-transform" onMouseEnter={() => handleCursorState("default")} onClick={() => navigate("/contact")}>
                   PLAN YOUR CELEBRATION <ArrowRight size={14} className="ml-2" />
                 </Button>
-                {/* <button onMouseEnter={() => handleCursorState("view", "PLAY")} onMouseLeave={() => handleCursorState("default")} className="flex items-center gap-3 font-montserrat text-[10px] font-bold tracking-widest text-[#1F2937] hover:text-[#C58B48] transition-colors group/btn">
-                  <div className="w-8 h-8 rounded-full border border-[#1F2937] group-hover/btn:border-[#C58B48] flex items-center justify-center transition-colors">
-                    <Play className="w-3 h-3 ml-0.5 fill-current" />
-                  </div>
-                  WATCH SHOWREEL
-                </button> */}
               </div>
             </div>
 
