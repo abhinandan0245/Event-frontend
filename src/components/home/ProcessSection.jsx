@@ -8,7 +8,6 @@ gsap.registerPlugin(ScrollTrigger);
 // ─── DATA ARRAY ───
 const steps = [
   {
-    num: "01",
     title: "DISCOVER",
     sub: "We begin with you.",
     desc: "Understanding your story, aspirations and dreams to create a vision that's uniquely yours.",
@@ -16,7 +15,6 @@ const steps = [
       "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&q=80",
   },
   {
-    num: "02",
     title: "DESIGN",
     sub: "Conceptualizing beauty.",
     desc: "Bespoke designs and concepts meticulously crafted to reflect your personality and the essence of celebration.",
@@ -24,7 +22,6 @@ const steps = [
       "https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=800&q=80",
   },
   {
-    num: "03",
     title: "CURATE",
     sub: "Bringing it to life.",
     desc: "Handpicking the finest elements, artisans, and experiences to bring every detail to life.",
@@ -32,7 +29,6 @@ const steps = [
       "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&q=80",
   },
   {
-    num: "04",
     title: "EXECUTE",
     sub: "Flawless in every moment.",
     desc: "Seamless coordination and precision execution where every element comes together to create magic beyond expectations.",
@@ -40,7 +36,6 @@ const steps = [
       "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=80",
   },
   {
-    num: "05",
     title: "CELEBRATE",
     sub: "Memories that last forever.",
     desc: "You enjoy every moment. We create memories that you and your guests will cherish for a lifetime and beyond.",

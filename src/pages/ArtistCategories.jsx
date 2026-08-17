@@ -3,35 +3,10 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Search,
-  Sparkles,
-  Users,
-  Music,
-  Mic,
-  Guitar,
-  Headphones,
-  Crown
+  ArrowRight,
+  Play,
 } from "lucide-react";
 import { artistPublicApi } from "../api/artistPublicApi";
-
-// Category Icon Mapping
-const getCategoryIcon = (name) => {
-  const iconMap = {
-    "Bollywood Celebrities": Crown,
-    "Singers & Vocalists": Mic,
-    "Dance & Electronic Arts": Music,
-    "Artistes & Hosts": Users,
-    "Live Bands": Guitar,
-    "Sufi & Qawwali Artists": Music,
-    "Wedding Entertainment": Sparkles,
-    "Dance Performers": Users,
-    "Folk & Cultural Artists": Music,
-    "Special Acts & Stage Shows": Sparkles,
-    "Instrumental Artists": Guitar,
-    "International Talent": Headphones,
-    "Corporate & Luxury Entertainment": Crown,
-  };
-  return iconMap[name] || Sparkles;
-};
 
 // Fallback image for categories
 const FALLBACK_IMAGE =
@@ -110,114 +85,192 @@ const ArtistCategories = () => {
   }
 
   return (
-    <section className="min-h-screen bg-[#FAF8F0] py-16 px-4 md:px-8 lg:px-16">
-      <div className="max-w-[1400px] mx-auto">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-12 h-[1px] bg-[#C58B48]/50" />
-            <span className="font-montserrat text-[#C58B48] text-xs font-semibold tracking-[0.25em] uppercase">
-              Explore Artist Categories
-            </span>
-            <div className="w-12 h-[1px] bg-[#C58B48]/50" />
-          </div>
-          <h1 className="font-serif text-4xl md:text-5xl text-[#1F2937] mb-4">
-            Browse Artist <span className="italic text-[#C58B48]">Categories</span>
-          </h1>
-          <p className="text-gray-500 max-w-xl mx-auto text-sm md:text-base">
-            Choose from our wide range of artist categories and find the perfect match for your event.
-          </p>
+    <>
+      {/* ====== HERO SECTION ====== */}
+      <section
+        className="relative w-full min-h-[60vh] flex items-center pt-32 pb-20 overflow-hidden bg-[#FAF8F0]"
+        style={{ perspective: 1200 }}
+      >
+        {/* Background Image */}
+        <div className="absolute top-0 right-0 w-full lg:w-[65%] h-full z-0">
+          <img
+            src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1600&q=80"
+            alt="Artists Stage"
+            className="absolute inset-0 w-full h-full object-cover object-center"
+          />
+          <div className="absolute inset-y-0 left-0 w-[40%] lg:w-[50%] bg-gradient-to-r from-[#FAF8F0] via-[#FAF8F0]/90 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-[30%] bg-gradient-to-t from-[#FAF8F0] via-[#FAF8F0]/80 to-transparent" />
+          <div className="absolute inset-x-0 top-0 h-[15%] bg-gradient-to-b from-[#FAF8F0] to-transparent" />
+        </div>
 
-          {/* Search Bar */}
-          <div className="max-w-2xl mx-auto mt-8">
-            <div className="relative">
-              <Search
-                className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400"
-                size={20}
-              />
-              <input
-                type="text"
-                placeholder="Search for artists, categories or events..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-14 pr-6 py-4 bg-white border border-[#EBE3D5] rounded-full focus:outline-none focus:ring-2 focus:ring-[#C58B48]/50 focus:border-transparent shadow-sm text-sm"
-              />
+        {/* Hero Content */}
+        <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 lg:px-16">
+          <div className="w-full lg:w-[50%]">
+            <span className="font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-4 block">
+              EXTRAORDINARY TALENT
+            </span>
+            <h1 className="font-serif text-4xl md:text-5xl lg:text-[64px] text-[#1F2937] leading-[1.1] mb-4">
+              For Unforgettable <br />
+              <span className="italic text-[#C58B48]">Events</span>
+            </h1>
+            <p className="font-inter text-gray-600 text-sm leading-[1.8] max-w-[480px] mb-8">
+              From global icons to rising stars, we connect you with the perfect
+              artist for your extraordinary celebration.
+            </p>
+
+            {/* Search Bar */}
+            <div className="max-w-xl">
+              <div className="relative">
+                <Search
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                  size={20}
+                />
+                <input
+                  type="text"
+                  placeholder="Search for artists, categories or events..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#C58B48] focus:border-transparent shadow-sm text-sm"
+                />
+              </div>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* Categories Grid */}
-        {filteredCategories.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500">
-              No categories found matching your search.
+      {/* ====== CATEGORIES SECTION ====== */}
+      <section className="bg-[#FAF8F0] py-16 px-4 md:px-8 lg:px-16">
+        <div className="max-w-[1400px] mx-auto">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="w-12 h-[1px] bg-[#C58B48]/50" />
+              <span className="font-montserrat text-[#C58B48] text-xs font-semibold tracking-[0.25em] uppercase">
+                Browse Artist Categories
+              </span>
+              <div className="w-12 h-[1px] bg-[#C58B48]/50" />
+            </div>
+            <h2 className="font-serif text-3xl md:text-4xl text-[#1F2937] mb-2">
+              Find Your Perfect <span className="italic text-[#C58B48]">Match</span>
+            </h2>
+            <p className="text-gray-500 max-w-xl mx-auto text-sm">
+              Choose from our wide range of artist categories and find the perfect
+              match for your event.
             </p>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-            {filteredCategories.map((category, index) => {
-              const Icon = getCategoryIcon(category.name);
-              const number = String(index + 1).padStart(2, "0");
-              const imageUrl = category.image || FALLBACK_IMAGE;
 
-              return (
-                <Link
-                  key={category._id || index}
-                  to={`/artists/category/${category._id}`}
-                  className="group relative overflow-hidden bg-[#FFFDF9] rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-[#F0EBE1] hover:border-[#C58B48]/40 hover:-translate-y-1 h-[360px] flex flex-col p-6"
-                >
-                  {/* Right-aligned Background Image with Gradient Mask */}
-                  <div className="absolute top-0 right-0 bottom-0 w-[65%] z-0">
-                    <img
-                      src={imageUrl}
-                      alt={category.name}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      onError={(e) => {
-                        e.target.style.display = "none";
-                      }}
-                    />
-                    {/* Horizontal fade to blend image into background */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#FFFDF9] via-[#FFFDF9]/80 to-transparent" />
-                    {/* Subtle bottom fade for text legibility */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#FFFDF9]/50 via-transparent to-transparent" />
-                  </div>
+          {/* Categories Grid */}
+          {filteredCategories.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500">
+                No categories found matching your search.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+              {filteredCategories.map((category, index) => {
+                const imageUrl = category.image || FALLBACK_IMAGE;
 
-                  {/* Card Content Overlay */}
-                  <div className="relative z-10 flex flex-col h-full w-[85%]">
-                    {/* Top: Number & Icon */}
-                    <div className="flex items-center gap-3 mb-6">
-                      <span className="font-serif text-2xl text-[#C58B48] leading-none opacity-80">
-                        {number}
-                      </span>
-                      <Icon size={18} className="text-[#C58B48] opacity-80" strokeWidth={1.5} />
+                return (
+                  <Link
+                    key={category._id || index}
+                    to={`/artists/category/${category._id}`}
+                    className="group relative overflow-hidden bg-[#FFFDF9] rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-[#F0EBE1] hover:-translate-y-1 h-[360px] flex flex-col p-6"
+                  >
+                    {/* Right-aligned Background Image with Gradient Mask */}
+                    <div className="absolute top-0 right-0 bottom-0 w-[65%] z-0">
+                      <img
+                        src={imageUrl}
+                        alt={category.name}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                        }}
+                      />
+                      {/* Horizontal fade to blend image into background */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-[#FFFDF9] via-[#FFFDF9]/80 to-transparent" />
+                      {/* Subtle bottom fade for text legibility */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#FFFDF9]/50 via-transparent to-transparent" />
                     </div>
 
-                    {/* Bottom: Text Content */}
-                    <div className="mt-auto mb-5">
-                      <h3 className="font-serif text-[1.35rem] leading-tight font-medium text-[#1F2937] mb-3 group-hover:text-[#C58B48] transition-colors pr-2">
-                        {category.name}
-                      </h3>
-                      <p className="text-xs text-gray-500 leading-relaxed line-clamp-3 pr-4">
-                        {category.description ||
-                          "Explore our specialized collection of talent for your events."}
-                      </p>
-                    </div>
+                    {/* Card Content Overlay */}
+                    <div className="relative z-10 flex flex-col h-full w-[85%]">
+                      {/* Bottom: Text Content */}
+                      <div className="mt-auto mb-5">
+                        <h3 className="font-serif text-[1.35rem] leading-tight font-medium text-[#1F2937] mb-3 group-hover:text-[#C58B48] transition-colors pr-2">
+                          {category.name}
+                        </h3>
+                        <p className="text-xs text-gray-500 leading-relaxed line-clamp-3 pr-4">
+                          {category.description ||
+                            "Explore our specialized collection of talent for your events."}
+                        </p>
+                      </div>
 
-                    {/* Link */}
-                    <div className="flex items-center text-[#C58B48] text-xs font-medium transition-all">
-                      <span>View Artists</span>
-                      <span className="ml-2 transition-transform group-hover:translate-x-1">
-                        →
-                      </span>
+                      {/* Link - No underline/hover line */}
+                      <div className="flex items-center text-[#C58B48] text-xs font-medium transition-all">
+                        <span>View Artists</span>
+                        <span className="ml-2 transition-transform group-hover:translate-x-1">
+                          →
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              );
-            })}
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ====== CTA SECTION ====== */}
+      <section className="relative w-full py-20 px-4 md:px-8 lg:px-16 bg-[#1F2937] overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <img
+            src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1600&q=80"
+            alt=""
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#1F2937]/95 via-[#1F2937]/80 to-[#1F2937]/60" />
+
+        <div className="relative z-10 max-w-[1400px] mx-auto text-center">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="w-12 h-[1px] bg-[#C58B48]/50" />
+            <span className="font-montserrat text-[#C58B48] text-xs font-semibold tracking-[0.25em] uppercase">
+              Need Help Finding the Right Artist?
+            </span>
+            <div className="w-12 h-[1px] bg-[#C58B48]/50" />
           </div>
-        )}
-      </div>
-    </section>
+
+          <h2 className="font-serif text-3xl md:text-4xl lg:text-[48px] text-white leading-[1.2] mb-4">
+            We'll Help You Find the <br />
+            <span className="italic text-[#C58B48]">Perfect Artist</span>
+          </h2>
+
+          <p className="text-gray-400 max-w-xl mx-auto text-sm md:text-base mb-8">
+            Let our experts guide you to the perfect artist for your celebration.
+            From booking to performance, we handle everything.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              to="/contact"
+              className="px-8 py-3.5 bg-[#C58B48] text-white rounded-full font-semibold hover:bg-[#B07A3A] transition-colors flex items-center gap-2"
+            >
+              Book Your Artist
+              <ArrowRight size={18} />
+            </Link>
+            <Link
+              to="/artists"
+              className="px-8 py-3.5 border border-white/30 text-white rounded-full font-semibold hover:bg-white/10 transition-colors flex items-center gap-2"
+            >
+              <Play size={18} />
+              Explore All Artists
+            </Link>
+          </div>
+        </div>
+      </section>
+    </>
   );
 };
 

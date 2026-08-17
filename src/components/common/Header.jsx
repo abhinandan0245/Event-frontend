@@ -48,15 +48,15 @@ const Header = () => {
     { path: "/", label: "HOME" },
     { path: "/destinations", label: "DESTINATIONS", hasDropdown: true },
     { path: "/venues", label: "VENUES" },
-    { path: "/services", label: "SERVICES" },
+    { path: "/artist-categories", label: "ARTISTS" },
     { path: "/portfolio", label: "PORTFOLIO" },
   ];
-
+  
   const moreLinks = [
-    { path: "/plan-your-celebration", label: "Plan Your Celebration" },
-    { path: "/journal", label: "Journal" },
-    { path: "/about", label: "About" },
-    { path: "/artist-categories", label: "Artists" },
+    { path: "/plan-your-celebration", label: "PLAN YOUR CELEBRATION" },
+    { path: "/journal", label: "JOURNAL" },
+    { path: "/services", label: "SERVICES" },
+    { path: "/about", label: "ABOUT" },
   ];
 
   const specialLink = { path: "/contact", label: "CONTACT US", special: true };
@@ -69,14 +69,14 @@ const Header = () => {
       }`}
     >
       <div className="max-w-7xl mx-auto px-6">
-        {/* Logo and Navigation Row */}
+        {/* Logo and Navigation Row - Added items-center for vertical alignment */}
         <div className="flex items-center justify-between">
           {/* Logo */}
           <motion.div
             initial={{ opacity: 0, x: -15 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
-            className="flex items-center shrink-0 bg-[#FAF9F5]/75 backdrop-blur-xl border border-amber-900/10 px-4 py-2.5 rounded-full shadow-sm shadow-neutral-900/5 hover:border-amber-700/30 transition-colors duration-300"
+            className="flex items-center shrink-0 bg-transparent px-4 py-2.5 rounded-full"
           >
             <Link to="/" className="flex items-center gap-3 group">
               <img
@@ -84,135 +84,131 @@ const Header = () => {
                 alt="Violin Events"
                 className="h-8 w-auto md:h-10 object-contain"
               />
-              <div className="hidden sm:flex items-baseline gap-1.5">
-                <h1 className="text-lg md:text-xl font-cormorant font-medium tracking-[0.25em] text-neutral-900 transition-colors group-hover:text-amber-800">
-                  VIOLIN
-                </h1>
-                <span className="text-neutral-400 font-manrope tracking-widest font-semibold text-[9px] md:text-[10px]">
-                  EVENTS LLP
-                </span>
-              </div>
             </Link>
           </motion.div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-6 lg:space-x-8 bg-[#FAF9F5]/75 backdrop-blur-xl border border-amber-900/10 px-6 py-2 rounded-full shadow-sm shadow-neutral-900/5 relative">
-            {mainLinks.map((link, index) => (
+          {/* Desktop Navigation - Added items-center for perfect vertical alignment */}
+          <nav className="hidden md:flex items-center bg-[#FAF9F5]/75 backdrop-blur-xl border border-amber-900/10 px-6 py-2 rounded-full shadow-sm shadow-neutral-900/5 relative">
+            {/* Inner container with flex items-center for perfect alignment */}
+            <div className="flex items-center space-x-6 lg:space-x-8">
+              {mainLinks.map((link, index) => (
+                <motion.div
+                  key={link.path}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.04 }}
+                  className="relative group flex items-center py-1"
+                  onMouseEnter={link.hasDropdown ? handleMouseEnter : undefined}
+                  onMouseLeave={link.hasDropdown ? handleMouseLeave : undefined}
+                >
+                  {link.hasDropdown ? (
+                    <>
+                      <NavLink
+                        to={link.path}
+                        className={({ isActive }) =>
+                          `font-manrope text-[11px] font-semibold tracking-[0.18em] transition-colors duration-300 flex items-center gap-1 ${
+                            isActive
+                              ? "text-amber-800"
+                              : "text-neutral-700 hover:text-amber-700"
+                          }`
+                        }
+                      >
+                        {link.label}
+                        <motion.span
+                          animate={{ rotate: isDropdownOpen ? 180 : 0 }}
+                          transition={{ duration: 0.25 }}
+                          className="opacity-60"
+                        >
+                          <ChevronDown className="w-3 h-3 stroke-[2.5]" />
+                        </motion.span>
+                      </NavLink>
+                      <span className="absolute -bottom-0.5 left-0 right-0 h-[1.5px] bg-amber-700 origin-center scale-x-0 group-hover:scale-x-75 transition-transform duration-300 ease-out" />
+                      <DropdownMenu
+                        isOpen={isDropdownOpen}
+                        onClose={() => setIsDropdownOpen(false)}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <NavLink
+                        to={link.path}
+                        className={({ isActive }) =>
+                          `text-[11px] font-semibold tracking-[0.18em] transition-colors duration-300 ${
+                            isActive
+                              ? "text-amber-800"
+                              : "text-neutral-700 hover:text-amber-700"
+                          }`
+                        }
+                      >
+                        {link.label}
+                      </NavLink>
+                      <span className="absolute -bottom-0.5 left-0 right-0 h-[1.5px] bg-amber-700 origin-center scale-x-0 group-hover:scale-x-75 transition-transform duration-300 ease-out" />
+                    </>
+                  )}
+                </motion.div>
+              ))}
+
+              {/* More Dropdown */}
               <motion.div
-                key={link.path}
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.04 }}
-                className="relative group py-1.5"
-                onMouseEnter={link.hasDropdown ? handleMouseEnter : undefined}
-                onMouseLeave={link.hasDropdown ? handleMouseLeave : undefined}
+                transition={{ duration: 0.5, delay: mainLinks.length * 0.04 }}
+                className="relative group flex items-center py-1"
+                onMouseEnter={handleMoreEnter}
+                onMouseLeave={handleMoreLeave}
               >
-                {link.hasDropdown ? (
-                  <>
-                    <NavLink
-                      to={link.path}
-                      className={({ isActive }) =>
-                        `font-manrope text-[11px] font-semibold tracking-[0.18em] transition-colors duration-300 flex items-center gap-1 ${
-                          isActive
-                            ? "text-amber-800"
-                            : "text-neutral-700 hover:text-amber-700"
-                        }`
-                      }
-                    >
-                      {link.label}
-                      <motion.span
-                        animate={{ rotate: isDropdownOpen ? 180 : 0 }}
-                        transition={{ duration: 0.25 }}
-                        className="opacity-60"
-                      >
-                        <ChevronDown className="w-3 h-3 stroke-[2.5]" />
-                      </motion.span>
-                    </NavLink>
-                    <span className="absolute -bottom-0.5 left-0 right-0 h-[1.5px] bg-amber-700 origin-center scale-x-0 group-hover:scale-x-75 transition-transform duration-300 ease-out" />
-                    <DropdownMenu
-                      isOpen={isDropdownOpen}
-                      onClose={() => setIsDropdownOpen(false)}
-                    />
-                  </>
-                ) : (
-                  <>
-                    <NavLink
-                      to={link.path}
-                      className={({ isActive }) =>
-                        `text-[11px] font-semibold tracking-[0.18em] transition-colors duration-300 ${
-                          isActive
-                            ? "text-amber-800"
-                            : "text-neutral-700 hover:text-amber-700"
-                        }`
-                      }
-                    >
-                      {link.label}
-                    </NavLink>
-                    <span className="absolute -bottom-0.5 left-0 right-0 h-[1.5px] bg-amber-700 origin-center scale-x-0 group-hover:scale-x-75 transition-transform duration-300 ease-out" />
-                  </>
-                )}
-              </motion.div>
-            ))}
-
-            {/* More Dropdown */}
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: mainLinks.length * 0.04 }}
-              className="relative group py-1.5"
-              onMouseEnter={handleMoreEnter}
-              onMouseLeave={handleMoreLeave}
-            >
-              <button
-                className={`text-[11px] font-semibold font-montserrat tracking-[0.18em] transition-colors duration-300 flex items-center gap-1 ${
-                  isMoreOpen
-                    ? "text-amber-800"
-                    : "text-neutral-700 hover:text-amber-700"
-                }`}
-              >
-                MORE
-                <motion.span
-                  animate={{ rotate: isMoreOpen ? 180 : 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="opacity-60"
-                >
-                  <ChevronDown className="w-3 h-3 stroke-[2.5]" />
-                </motion.span>
-              </button>
-              <span className="absolute -bottom-0.5 left-0 right-0 h-[1.5px] bg-amber-700 origin-center scale-x-0 group-hover:scale-x-75 transition-transform duration-300 ease-out" />
-              <Dropdown
-                isOpen={isMoreOpen}
-                onClose={() => setIsMoreOpen(false)}
-                items={moreLinks}
-              />
-            </motion.div>
-
-            {/* Contact Us Button */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{
-                duration: 0.5,
-                delay: (mainLinks.length + 1) * 0.04,
-              }}
-              className="pl-2"
-            >
-              <NavLink
-                to={specialLink.path}
-                className={({ isActive }) =>
-                  `relative px-4 py-1.5 rounded-full font-manrope font-semibold tracking-[0.18em] text-[10px] uppercase transition-all duration-500 inline-flex items-center overflow-hidden border ${
-                    isActive
-                      ? "text-white bg-neutral-900 border-neutral-900 shadow-sm"
-                      : "text-amber-800 border-neutral-300 hover:border-amber-700 hover:bg-neutral-900 hover:text-white"
+                <button
+                  className={`text-[11px] font-semibold font-montserrat tracking-[0.18em] transition-colors duration-300 flex items-center gap-1 ${
+                    isMoreOpen
+                      ? "text-amber-800"
+                      : "text-neutral-700 hover:text-amber-700"
                   }`}
+                >
+                  MORE
+                  <motion.span
+                    animate={{ rotate: isMoreOpen ? 180 : 0 }}
+                    transition={{ duration: 0.25 }}
+                    className="opacity-60"
+                  >
+                    <ChevronDown className="w-3 h-3 stroke-[2.5]" />
+                  </motion.span>
+                </button>
+                <span className="absolute -bottom-0.5 left-0 right-0 h-[1.5px] bg-amber-700 origin-center scale-x-0 group-hover:scale-x-75 transition-transform duration-300 ease-out" />
+                <Dropdown
+                  isOpen={isMoreOpen}
+                  onClose={() => setIsMoreOpen(false)}
+                  items={moreLinks}
+                />
+              </motion.div>
+
+              {/* Contact Us Button */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{
+                  duration: 0.5,
+                  delay: (mainLinks.length + 1) * 0.04,
+                }}
+                className="flex items-center"
               >
-                <span className="relative z-10 flex items-center gap-1.5 font-montserrat">
-                  <Sparkles className="w-3 h-3 stroke-[1.5]" />
-                  {specialLink.label}
-                  <ArrowRight className="w-3 h-3 stroke-[2]" />
-                </span>
-              </NavLink>
-            </motion.div>
+                <NavLink
+                  to={specialLink.path}
+                  className={({ isActive }) =>
+                    `relative px-4 py-1.5 rounded-full font-manrope font-semibold tracking-[0.18em] text-[10px] uppercase transition-all duration-500 inline-flex items-center overflow-hidden border ${
+                      isActive
+                        ? "text-white bg-neutral-900 border-neutral-900 shadow-sm"
+                        : "text-amber-800 border-neutral-300 hover:border-amber-700 hover:bg-neutral-900 hover:text-white"
+                    }`
+                  }
+                >
+                  <span className="relative z-10 flex items-center gap-1.5 font-montserrat">
+                    <Sparkles className="w-3 h-3 stroke-[1.5]" />
+                    {specialLink.label}
+                    <ArrowRight className="w-3 h-3 stroke-[2]" />
+                  </span>
+                </NavLink>
+              </motion.div>
+            </div>
           </nav>
 
           {/* Mobile Menu Toggle */}

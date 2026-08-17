@@ -9,6 +9,9 @@ import {
   Calendar,
   Music,
   Mic,
+  ArrowRight,
+  Sparkles,
+  Play,
 } from "lucide-react";
 import { artistPublicApi } from "../api/artistPublicApi";
 
@@ -97,125 +100,203 @@ const ArtistsByCategory = () => {
   }
 
   return (
-    <section className="min-h-screen bg-[#FAF8F0] py-8 px-4 md:px-8 lg:px-16">
-      <div className="max-w-7xl mx-auto">
-        {/* Back Button & Header */}
-        <div className="mb-8">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-gray-600 hover:text-[#C58B48] transition-colors mb-4"
-          >
-            <ChevronLeft size={20} />
-            <span>Back</span>
-          </button>
+    <>
+      {/* ====== HERO SECTION ====== */}
+      <section
+        className="relative w-full min-h-[50vh] flex items-center pt-32 pb-16 overflow-hidden bg-[#FAF8F0]"
+        style={{ perspective: 1200 }}
+      >
+        {/* Background Image */}
+        <div className="absolute top-0 right-0 w-full lg:w-[65%] h-full z-0">
+          <img
+            src={category?.image || "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1600&q=80"}
+            alt={category?.name || "Artists"}
+            className="absolute inset-0 w-full h-full object-cover object-center"
+          />
+          <div className="absolute inset-y-0 left-0 w-[40%] lg:w-[50%] bg-gradient-to-r from-[#FAF8F0] via-[#FAF8F0]/90 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-[30%] bg-gradient-to-t from-[#FAF8F0] via-[#FAF8F0]/80 to-transparent" />
+          <div className="absolute inset-x-0 top-0 h-[15%] bg-gradient-to-b from-[#FAF8F0] to-transparent" />
+        </div>
 
-          <div>
-            <h1 className="font-serif text-3xl md:text-4xl text-[#1F2937]">
+        {/* Hero Content */}
+        <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 lg:px-16">
+          <div className="w-full lg:w-[50%]">
+            {/* Back Button */}
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-2 text-gray-600 hover:text-[#C58B48] transition-colors mb-4"
+            >
+              <ChevronLeft size={20} />
+              <span className="text-sm font-medium">Back</span>
+            </button>
+
+            <span className="font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-3 block">
+              {category?.name || "Artists"}
+            </span>
+            <h1 className="font-serif text-4xl md:text-5xl lg:text-[56px] text-[#1F2937] leading-[1.1] mb-4">
               {category?.name || "Artists"}
             </h1>
             {category?.description && (
-              <p className="text-gray-600 mt-2">{category.description}</p>
+              <p className="font-inter text-gray-600 text-sm leading-[1.8] max-w-[480px] mb-2">
+                {category.description}
+              </p>
             )}
-            <p className="text-sm text-gray-500 mt-1">
-              {artists.length} {artists.length === 1 ? "Artist" : "Artists"}{" "}
-              available
+            <p className="text-sm text-[#C58B48] font-medium">
+              {artists.length} {artists.length === 1 ? "Artist" : "Artists"} available
             </p>
           </div>
         </div>
+      </section>
 
-        {/* Artists Grid */}
-        {artists.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-2xl shadow-sm">
-            <div className="text-6xl mb-4">🎵</div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">
-              No Artists Found
-            </h3>
-            <p className="text-gray-500">
-              No artists available in this category yet.
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {artists.map((artist) => (
-              <Link
-                key={artist._id}
-                to={`/artists/${artist._id}`}
-                className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[#C58B48]/40 hover:-translate-y-1"
-              >
-                {/* Artist Image */}
-                <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
-                  <img
-                    src={
-                      artist.image ||
-                      "https://via.placeholder.com/400x300?text=🎵"
-                    }
-                    alt={artist.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    onError={(e) => {
-                      e.target.src =
-                        "https://via.placeholder.com/400x300?text=🎵";
-                    }}
-                  />
-                  {artist.featured && (
-                    <div className="absolute top-3 left-3 bg-[#C58B48] text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
-                      <Star size={12} fill="white" />
-                      Featured
-                    </div>
-                  )}
-                  {artist.availability && (
-                    <div
-                      className={`absolute bottom-3 left-3 px-3 py-1 rounded-full text-xs font-medium ${getAvailabilityBadge(artist.availability)}`}
-                    >
-                      {artist.availability.charAt(0).toUpperCase() +
-                        artist.availability.slice(1)}
-                    </div>
-                  )}
-                </div>
-
-                {/* Artist Info */}
-                <div className="p-4">
-                  <h3 className="font-serif text-lg font-semibold text-[#1F2937] group-hover:text-[#C58B48] transition-colors">
-                    {artist.name}
-                  </h3>
-
-                  {artist.location && (
-                    <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
-                      <MapPin size={14} />
-                      {artist.location}
-                    </p>
-                  )}
-
-                  <div className="flex items-center gap-2 mt-2 flex-wrap">
-                    {artist.languages && artist.languages.length > 0 && (
-                      <span className="text-xs px-2 py-1 bg-gray-100 rounded-full text-gray-600">
-                        {artist.languages.slice(0, 2).join(", ")}
-                        {artist.languages.length > 2 &&
-                          ` +${artist.languages.length - 2}`}
-                      </span>
+      {/* ====== ARTISTS GRID SECTION ====== */}
+      <section className="bg-[#FAF8F0] py-12 px-4 md:px-8 lg:px-16">
+        <div className="max-w-7xl mx-auto">
+          {/* Artists Grid */}
+          {artists.length === 0 ? (
+            <div className="text-center py-16 bg-white rounded-2xl shadow-sm">
+              <div className="text-6xl mb-4">🎵</div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                No Artists Found
+              </h3>
+              <p className="text-gray-500">
+                No artists available in this category yet.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {artists.map((artist) => (
+                <Link
+                  key={artist._id}
+                  to={`/artists/${artist._id}`}
+                  className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[#C58B48]/40 hover:-translate-y-1"
+                >
+                  {/* Artist Image */}
+                  <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
+                    <img
+                      src={
+                        artist.image ||
+                        "https://via.placeholder.com/400x300?text=🎵"
+                      }
+                      alt={artist.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      onError={(e) => {
+                        e.target.src =
+                          "https://via.placeholder.com/400x300?text=🎵";
+                      }}
+                    />
+                    {artist.featured && (
+                      <div className="absolute top-3 left-3 bg-[#C58B48] text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
+                        <Star size={12} fill="white" />
+                        Featured
+                      </div>
                     )}
-                    {artist.experience > 0 && (
-                      <span className="text-xs px-2 py-1 bg-gray-100 rounded-full text-gray-600">
-                        {artist.experience}+ yrs
-                      </span>
+                    {artist.availability && (
+                      <div
+                        className={`absolute bottom-3 left-3 px-3 py-1 rounded-full text-xs font-medium ${getAvailabilityBadge(
+                          artist.availability
+                        )}`}
+                      >
+                        {artist.availability.charAt(0).toUpperCase() +
+                          artist.availability.slice(1)}
+                      </div>
                     )}
                   </div>
 
-                  <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
-                    <span className="font-semibold text-[#C58B48]">
-                      {formatPrice(artist.price, artist.priceUnit)}
-                    </span>
-                    <span className="text-xs text-gray-400 flex items-center gap-1">
-                      <Users size={12} />
-                      {artist.views || 0}
-                    </span>
+                  {/* Artist Info */}
+                  <div className="p-4">
+                    <h3 className="font-serif text-lg font-semibold text-[#1F2937] group-hover:text-[#C58B48] transition-colors">
+                      {artist.name}
+                    </h3>
+
+                    {artist.location && (
+                      <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+                        <MapPin size={14} />
+                        {artist.location}
+                      </p>
+                    )}
+
+                    <div className="flex items-center gap-2 mt-2 flex-wrap">
+                      {artist.languages && artist.languages.length > 0 && (
+                        <span className="text-xs px-2 py-1 bg-gray-100 rounded-full text-gray-600">
+                          {artist.languages.slice(0, 2).join(", ")}
+                          {artist.languages.length > 2 &&
+                            ` +${artist.languages.length - 2}`}
+                        </span>
+                      )}
+                      {artist.experience > 0 && (
+                        <span className="text-xs px-2 py-1 bg-gray-100 rounded-full text-gray-600">
+                          {artist.experience}+ yrs
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
+                      <span className="font-semibold text-[#C58B48]">
+                        {formatPrice(artist.price, artist.priceUnit)}
+                      </span>
+                      {/* <span className="text-xs text-gray-400 flex items-center gap-1">
+                        <Users size={12} />
+                        {artist.views || 0}
+                      </span> */}
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ====== CTA SECTION ====== */}
+      <section className="relative w-full py-20 px-4 md:px-8 lg:px-16 bg-[#1F2937] overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <img
+            src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1600&q=80"
+            alt=""
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#1F2937]/95 via-[#1F2937]/80 to-[#1F2937]/60" />
+
+        <div className="relative z-10 max-w-[1400px] mx-auto text-center">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="w-12 h-[1px] bg-[#C58B48]/50" />
+            <span className="font-montserrat text-[#C58B48] text-xs font-semibold tracking-[0.25em] uppercase">
+              Need More Options?
+            </span>
+            <div className="w-12 h-[1px] bg-[#C58B48]/50" />
           </div>
-        )}
-      </div>
-    </section>
+
+          <h2 className="font-serif text-3xl md:text-4xl lg:text-[48px] text-white leading-[1.2] mb-4">
+            Can't Find the Right <br />
+            <span className="italic text-[#C58B48]">Artist?</span>
+          </h2>
+
+          <p className="text-gray-400 max-w-xl mx-auto text-sm md:text-base mb-8">
+            We'll help you find the perfect artist for your event. Our team will
+            curate a list of talented performers tailored to your needs.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              to="/contact"
+              className="px-8 py-3.5 bg-[#C58B48] text-white rounded-full font-semibold hover:bg-[#B07A3A] transition-colors flex items-center gap-2"
+            >
+              <Sparkles size={18} />
+              Get Personalized Recommendations
+              <ArrowRight size={18} />
+            </Link>
+            <Link
+              to="/artist-categories"
+              className="px-8 py-3.5 border border-white/30 text-white rounded-full font-semibold hover:bg-white/10 transition-colors flex items-center gap-2"
+            >
+              <Play size={18} />
+              Browse All Categories
+            </Link>
+          </div>
+        </div>
+      </section>
+    </>
   );
 };
 

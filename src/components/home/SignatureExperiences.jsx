@@ -23,7 +23,6 @@ const ElegantSparkle = ({ className }) => (
 // === DATA ARRAY (Y COORDINATES SHIFTED UP) ===
 const experiences = [
   {
-    num: "01",
     title: "DESTINATION WEDDING PLANNING",
     desc: "End-to-end destination wedding planning across India's most exclusive venues. From concept, timelines and budgeting to vendor management and flawless execution — we handle it all.",
     icon: CalendarDays,
@@ -31,7 +30,6 @@ const experiences = [
     y: 12, // Moved up from 25
   },
   {
-    num: "02",
     title: "WEDDING DESIGN & LUXURY DECOR",
     desc: "Bespoke themes, exquisite décor, floral artistry and immersive design that transform your vision into a breathtaking celebration crafted with creativity and perfection.",
     icon: Flower2,
@@ -39,7 +37,6 @@ const experiences = [
     y: 16, // Moved up from 28
   },
   {
-    num: "03",
     title: "GUEST HOSPITALITY & EXPERIENCE",
     desc: "VIP guest handling, accommodation, concierge services, travel coordination and personalized hospitality that make every guest feel truly special.",
     icon: ConciergeBell,
@@ -47,7 +44,6 @@ const experiences = [
     y: 12, // Moved up from 25
   },
   {
-    num: "04",
     title: "ENTERTAINMENT & PRODUCTION",
     desc: "Celebrity artists, live performances, sound engineering, lighting design and stage production that create electrifying memories and unforgettable moments.",
     icon: Music,
@@ -55,7 +51,6 @@ const experiences = [
     y: 48, // Moved up from 65
   },
   {
-    num: "05",
     title: "LOGISTICS & TRANSPORTATION",
     desc: "Seamless transportation, airport transfers, vendor logistics and guest movement management ensuring a smooth and stress-free celebration.",
     icon: Car,
@@ -63,7 +58,6 @@ const experiences = [
     y: 52, // Moved up from 68
   },
   {
-    num: "06",
     title: "BEYOND SERVICES & SPECIAL EXPERIENCES",
     desc: "Curated experiences, surprise moments, premium gifting and bespoke services that go beyond expectations and create lifelong memories.",
     icon: Star,

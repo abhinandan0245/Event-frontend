@@ -38,18 +38,20 @@
 
 import React from "react";
 // Hooks aur UI components wahi rahenge
-// import { useSmoothScroll } from "./hooks/useSmoothScroll";
+import { useSmoothScroll } from "./hooks/useSmoothScroll";
 import LuxuryCursorEffect from "./components/ui/LuxuryCursorEffect";
 import AppRoutes from "./routes/AppRoutes";
-
+import FloatingAudioPlayer from './components/FloatingAudioPlayer';
 // Hamara naya lazy loaded routes component import karein
 
 function App() {
-  // useSmoothScroll();
+  useSmoothScroll();
 
   return (
     <>
       <LuxuryCursorEffect />
+      {/* 2. Add it outside of the Routes so it always renders */}
+      <FloatingAudioPlayer />
       {/* Saari routing logic ab is alag component me handle ho rahi hai */}
       <AppRoutes />
     </>
