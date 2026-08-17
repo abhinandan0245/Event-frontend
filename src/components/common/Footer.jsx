@@ -26,8 +26,8 @@ const Footer = () => {
     <footer
       className="relative w-full overflow-hidden text-neutral-800"
       style={{
-        backgroundColor: "#FAF9F5", // Canvas luxury alabaster white
-        borderTop: "1px solid rgba(180, 140, 80, 0.2)", // Fine golden top accent split
+        backgroundColor: "#FAF9F5",
+        borderTop: "1px solid rgba(180, 140, 80, 0.2)",
       }}
     >
       {/* Soft background ambient lighting map layer */}
@@ -42,7 +42,7 @@ const Footer = () => {
       {/* Main Content Area */}
       <div className="max-w-7xl mx-auto px-6 relative z-10 pt-20 pb-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
-          {/* Brand Presentation Deck */}
+          {/* Brand Presentation Deck with Logo */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -50,12 +50,22 @@ const Footer = () => {
             className="flex flex-col gap-5"
           >
             <Link to="/" className="inline-block">
-              <h2 className="text-2xl font-serif font-light tracking-[0.25em] text-neutral-900 uppercase">
-                VIOLIN
-                <span className="text-[10px] tracking-widest text-amber-800 font-sans font-semibold ml-2 block sm:inline">
-                  EVENTS LLP
-                </span>
-              </h2>
+              <div className="flex items-center gap-3">
+                {/* ✅ Logo Image */}
+                <img
+                  src="/violin-logo.png"
+                  alt="Violin Events"
+                  className="h-12 w-auto object-contain"
+                />
+                <div>
+                  <h2 className="text-xl font-serif font-light tracking-[0.25em] text-neutral-900 uppercase">
+                    VIOLIN
+                  </h2>
+                  <span className="text-[9px] tracking-widest text-amber-800 font-sans font-semibold block">
+                    EVENTS LLP
+                  </span>
+                </div>
+              </div>
             </Link>
 
             <p className="text-xs text-neutral-500 font-light leading-relaxed tracking-wide max-w-xs">

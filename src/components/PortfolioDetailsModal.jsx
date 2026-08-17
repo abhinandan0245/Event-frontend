@@ -70,15 +70,19 @@ const PortfolioDetailsModal = ({ isOpen, onClose, itemId }) => {
   const getAllImages = () => {
     if (!item) return [];
     const images = [];
-    
+
     if (item.image) images.push(item.image);
     if (item.images && item.images.length > 0) {
-      item.images.forEach(img => {
+      item.images.forEach((img) => {
         if (!images.includes(img)) images.push(img);
       });
     }
-    
-    return images.length > 0 ? images : ["https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80"];
+
+    return images.length > 0
+      ? images
+      : [
+          "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80",
+        ];
   };
 
   const images = getAllImages();
@@ -119,19 +123,19 @@ const PortfolioDetailsModal = ({ isOpen, onClose, itemId }) => {
   // Extract video ID from various YouTube URL formats
   const getYouTubeVideoId = (url) => {
     if (!url) return null;
-    
+
     const patterns = [
       /(?:youtube\.com\/watch\?v=)([^&]+)/,
       /(?:youtu\.be\/)([^?]+)/,
       /(?:youtube\.com\/embed\/)([^?]+)/,
       /(?:youtube\.com\/v\/)([^?]+)/,
     ];
-    
+
     for (const pattern of patterns) {
       const match = url.match(pattern);
       if (match) return match[1];
     }
-    
+
     return url;
   };
 
@@ -189,16 +193,22 @@ const PortfolioDetailsModal = ({ isOpen, onClose, itemId }) => {
               >
                 <X className="w-8 h-8" />
               </button>
-              
+
               <button
-                onClick={(e) => { e.stopPropagation(); prevLightboxImage(); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  prevLightboxImage();
+                }}
                 className="absolute left-4 text-white hover:text-gray-300 transition-colors p-2 bg-black/50 rounded-full hover:bg-black/70"
               >
                 <ChevronLeft className="w-8 h-8" />
               </button>
-              
+
               <button
-                onClick={(e) => { e.stopPropagation(); nextLightboxImage(); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  nextLightboxImage();
+                }}
                 className="absolute right-4 text-white hover:text-gray-300 transition-colors p-2 bg-black/50 rounded-full hover:bg-black/70"
               >
                 <ChevronRight className="w-8 h-8" />
@@ -211,10 +221,11 @@ const PortfolioDetailsModal = ({ isOpen, onClose, itemId }) => {
                   className="max-w-[90vw] max-h-[85vh] object-contain"
                   onClick={(e) => e.stopPropagation()}
                   onError={(e) => {
-                    e.target.src = "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80";
+                    e.target.src =
+                      "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80";
                   }}
                 />
-                
+
                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/80 text-sm bg-black/50 px-4 py-2 rounded-full">
                   {lightboxIndex + 1} / {images.length}
                 </div>
@@ -224,9 +235,14 @@ const PortfolioDetailsModal = ({ isOpen, onClose, itemId }) => {
                     {images.map((img, idx) => (
                       <button
                         key={idx}
-                        onClick={(e) => { e.stopPropagation(); setLightboxIndex(idx); }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setLightboxIndex(idx);
+                        }}
                         className={`w-12 h-12 rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${
-                          idx === lightboxIndex ? "border-white" : "border-transparent opacity-50 hover:opacity-100"
+                          idx === lightboxIndex
+                            ? "border-white"
+                            : "border-transparent opacity-50 hover:opacity-100"
                         }`}
                       >
                         <img
@@ -234,7 +250,8 @@ const PortfolioDetailsModal = ({ isOpen, onClose, itemId }) => {
                           alt={`Thumbnail ${idx + 1}`}
                           className="w-full h-full object-cover"
                           onError={(e) => {
-                            e.target.src = "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=100&q=80";
+                            e.target.src =
+                              "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=100&q=80";
                           }}
                         />
                       </button>
@@ -277,8 +294,12 @@ const PortfolioDetailsModal = ({ isOpen, onClose, itemId }) => {
                 </div>
               ) : error || !item ? (
                 <div className="flex flex-col items-center justify-center h-[400px] p-8 text-center">
-                  <p className="text-red-500 font-inter">{error || "Item not found"}</p>
-                  <Button onClick={onClose} className="mt-4">Close</Button>
+                  <p className="text-red-500 font-inter">
+                    {error || "Item not found"}
+                  </p>
+                  <Button onClick={onClose} className="mt-4">
+                    Close
+                  </Button>
                 </div>
               ) : (
                 <div>
@@ -318,7 +339,8 @@ const PortfolioDetailsModal = ({ isOpen, onClose, itemId }) => {
                               transition={{ duration: 0.5 }}
                               onClick={() => openLightbox(activeImageIndex)}
                               onError={(e) => {
-                                e.target.src = "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80";
+                                e.target.src =
+                                  "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80";
                               }}
                             />
                           </AnimatePresence>
@@ -356,13 +378,19 @@ const PortfolioDetailsModal = ({ isOpen, onClose, itemId }) => {
                           {hasMultipleImages && (
                             <>
                               <button
-                                onClick={(e) => { e.stopPropagation(); prevImage(); }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  prevImage();
+                                }}
                                 className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all hover:scale-110 z-10"
                               >
                                 <ChevronLeft size={24} />
                               </button>
                               <button
-                                onClick={(e) => { e.stopPropagation(); nextImage(); }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  nextImage();
+                                }}
                                 className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all hover:scale-110 z-10"
                               >
                                 <ChevronRight size={24} />
@@ -396,8 +424,8 @@ const PortfolioDetailsModal = ({ isOpen, onClose, itemId }) => {
                                     key={idx}
                                     onClick={() => goToImage(idx)}
                                     className={`flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border-2 transition-all ${
-                                      idx === activeImageIndex 
-                                        ? "border-white shadow-lg" 
+                                      idx === activeImageIndex
+                                        ? "border-white shadow-lg"
                                         : "border-transparent opacity-60 hover:opacity-100"
                                     }`}
                                   >
@@ -406,7 +434,8 @@ const PortfolioDetailsModal = ({ isOpen, onClose, itemId }) => {
                                       alt={`Thumbnail ${idx + 1}`}
                                       className="w-full h-full object-cover"
                                       onError={(e) => {
-                                        e.target.src = "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=100&q=80";
+                                        e.target.src =
+                                          "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=100&q=80";
                                       }}
                                     />
                                   </button>
@@ -424,10 +453,12 @@ const PortfolioDetailsModal = ({ isOpen, onClose, itemId }) => {
                     <h2 className="font-cormorant text-3xl md:text-4xl text-[#1F2937] leading-tight mb-2">
                       {item.title}
                     </h2>
-                    
+
                     <div className="flex items-center gap-2 text-gray-500 mb-4">
                       <MapPin size={16} className="text-[#C58B48]" />
-                      <span className="font-inter text-sm">{item.location}</span>
+                      <span className="font-inter text-sm">
+                        {item.location}
+                      </span>
                     </div>
 
                     {/* Info Grid */}
@@ -435,28 +466,36 @@ const PortfolioDetailsModal = ({ isOpen, onClose, itemId }) => {
                       <div className="flex items-center gap-3">
                         <Calendar size={18} className="text-[#C58B48]" />
                         <div>
-                          <p className="text-sm font-semibold text-gray-900">{item.date}</p>
+                          <p className="text-sm font-semibold text-gray-900">
+                            {item.date}
+                          </p>
                           <p className="text-xs text-gray-500">Date</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
                         <Users size={18} className="text-[#C58B48]" />
                         <div>
-                          <p className="text-sm font-semibold text-gray-900">{item.guests}</p>
+                          <p className="text-sm font-semibold text-gray-900">
+                            {item.guests}
+                          </p>
                           <p className="text-xs text-gray-500">Guests</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
                         <Tag size={18} className="text-[#C58B48]" />
                         <div>
-                          <p className="text-sm font-semibold text-gray-900">{item.category}</p>
+                          <p className="text-sm font-semibold text-gray-900">
+                            {item.category}
+                          </p>
                           <p className="text-xs text-gray-500">Category</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
                         <ImageIcon size={18} className="text-[#C58B48]" />
                         <div>
-                          <p className="text-sm font-semibold text-gray-900">{images.length}</p>
+                          <p className="text-sm font-semibold text-gray-900">
+                            {images.length}
+                          </p>
                           <p className="text-xs text-gray-500">Images</p>
                         </div>
                       </div>
@@ -475,7 +514,9 @@ const PortfolioDetailsModal = ({ isOpen, onClose, itemId }) => {
 
                     {item.description && (
                       <div className="mb-6">
-                        <h3 className="font-cormorant text-xl text-[#1F2937] mb-2">About This Celebration</h3>
+                        <h3 className="font-cormorant text-xl text-[#1F2937] mb-2">
+                          About This Celebration
+                        </h3>
                         <p className="font-inter text-gray-600 leading-relaxed text-sm">
                           {item.description}
                         </p>
@@ -484,7 +525,9 @@ const PortfolioDetailsModal = ({ isOpen, onClose, itemId }) => {
 
                     {item.highlights && item.highlights.length > 0 && (
                       <div className="mb-6">
-                        <h3 className="font-cormorant text-xl text-[#1F2937] mb-3">Highlights</h3>
+                        <h3 className="font-cormorant text-xl text-[#1F2937] mb-3">
+                          Highlights
+                        </h3>
                         <div className="flex flex-wrap gap-2">
                           {item.highlights.map((highlight, index) => (
                             <span

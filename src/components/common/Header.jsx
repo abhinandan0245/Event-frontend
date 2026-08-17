@@ -52,17 +52,14 @@ const Header = () => {
     { path: "/portfolio", label: "PORTFOLIO" },
   ];
 
-  // ✅ Updated moreLinks with Artist
   const moreLinks = [
     { path: "/plan-your-celebration", label: "Plan Your Celebration" },
     { path: "/journal", label: "Journal" },
     { path: "/about", label: "About" },
-    { path: "/artist-categories", label: "Artists" }, // ✅ Added Artists
+    { path: "/artist-categories", label: "Artists" },
   ];
 
   const specialLink = { path: "/contact", label: "CONTACT US", special: true };
-
-  // ✅ Updated mobileLinks to include all links
   const mobileLinks = [...mainLinks, ...moreLinks, specialLink];
 
   return (
@@ -72,25 +69,33 @@ const Header = () => {
       }`}
     >
       <div className="max-w-7xl mx-auto px-6">
+        {/* Logo and Navigation Row */}
         <div className="flex items-center justify-between">
-          {/* ─── CAPSULE 1: THE LOGO ISLAND ─── */}
+          {/* Logo */}
           <motion.div
             initial={{ opacity: 0, x: -15 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
-            className="flex items-center shrink-0 bg-[#FAF9F5]/75 backdrop-blur-xl border border-amber-900/10 px-5 py-2.5 rounded-full shadow-sm shadow-neutral-900/5 hover:border-amber-700/30 transition-colors duration-300"
+            className="flex items-center shrink-0 bg-[#FAF9F5]/75 backdrop-blur-xl border border-amber-900/10 px-4 py-2.5 rounded-full shadow-sm shadow-neutral-900/5 hover:border-amber-700/30 transition-colors duration-300"
           >
-            <Link to="/" className="flex items-baseline gap-1.5 group">
-              <h1 className="text-lg md:text-xl font-cormorant font-medium tracking-[0.25em] text-neutral-900 transition-colors group-hover:text-amber-800">
-                VIOLIN
-              </h1>
-              <span className="text-neutral-400 font-manrope tracking-widest font-semibold text-[9px] md:text-[10px]">
-                EVENTS LLP
-              </span>
+            <Link to="/" className="flex items-center gap-3 group">
+              <img
+                src="/violin-logo.png"
+                alt="Violin Events"
+                className="h-8 w-auto md:h-10 object-contain"
+              />
+              <div className="hidden sm:flex items-baseline gap-1.5">
+                <h1 className="text-lg md:text-xl font-cormorant font-medium tracking-[0.25em] text-neutral-900 transition-colors group-hover:text-amber-800">
+                  VIOLIN
+                </h1>
+                <span className="text-neutral-400 font-manrope tracking-widest font-semibold text-[9px] md:text-[10px]">
+                  EVENTS LLP
+                </span>
+              </div>
             </Link>
           </motion.div>
 
-          {/* ─── CAPSULE 2: THE NAVIGATION ISLAND (DESKTOP) ─── */}
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6 lg:space-x-8 bg-[#FAF9F5]/75 backdrop-blur-xl border border-amber-900/10 px-6 py-2 rounded-full shadow-sm shadow-neutral-900/5 relative">
             {mainLinks.map((link, index) => (
               <motion.div
@@ -149,7 +154,7 @@ const Header = () => {
               </motion.div>
             ))}
 
-            {/* MORE Dropdown inside navigation block */}
+            {/* More Dropdown */}
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -182,7 +187,7 @@ const Header = () => {
               />
             </motion.div>
 
-            {/* Contact Us Embedded Pill */}
+            {/* Contact Us Button */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -199,11 +204,10 @@ const Header = () => {
                     isActive
                       ? "text-white bg-neutral-900 border-neutral-900 shadow-sm"
                       : "text-amber-800 border-neutral-300 hover:border-amber-700 hover:bg-neutral-900 hover:text-white"
-                  }`
-                }
+                  }`}
               >
                 <span className="relative z-10 flex items-center gap-1.5 font-montserrat">
-                  <Sparkles className="w-3 h-3 stroke-[1.5] " />
+                  <Sparkles className="w-3 h-3 stroke-[1.5]" />
                   {specialLink.label}
                   <ArrowRight className="w-3 h-3 stroke-[2]" />
                 </span>
@@ -211,7 +215,7 @@ const Header = () => {
             </motion.div>
           </nav>
 
-          {/* ─── CAPSULE 3: MOBILE INTERACTION TRIGGER ISLAND ─── */}
+          {/* Mobile Menu Toggle */}
           <div className="md:hidden bg-[#FAF9F5]/75 backdrop-blur-xl border border-amber-900/10 w-11 h-11 rounded-full flex items-center justify-center shadow-sm z-50">
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -227,7 +231,7 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Mobile Navigation Drawer System */}
+        {/* Mobile Navigation Drawer */}
         <motion.div
           initial={false}
           animate={
@@ -236,6 +240,21 @@ const Header = () => {
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           className="md:hidden overflow-hidden bg-[#FAF9F5]/95 backdrop-blur-2xl rounded-2xl mt-3 border border-neutral-200/40"
         >
+          {/* Mobile Logo */}
+          <div className="flex items-center justify-center py-4 border-b border-neutral-100">
+            <Link to="/" onClick={() => setIsOpen(false)} className="flex items-center gap-2">
+              <img
+                src="/violin-logo.png"
+                alt="Violin Events"
+                className="h-10 w-auto object-contain"
+              />
+              <span className="font-cormorant text-xl font-medium tracking-[0.25em] text-neutral-900">
+                VIOLIN
+              </span>
+            </Link>
+          </div>
+
+          {/* Mobile Navigation Links */}
           <nav className="flex flex-col py-4 px-2">
             {mobileLinks.map((link) =>
               link.hasDropdown ? (
@@ -297,7 +316,7 @@ const Header = () => {
                     link.label
                   )}
                 </NavLink>
-              ),
+              )
             )}
           </nav>
         </motion.div>

@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  useMemo,
+} from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowUpRight, ArrowRight } from "lucide-react";
@@ -14,7 +20,10 @@ gsap.registerPlugin(ScrollTrigger);
 // ==========================================
 const PortfolioCard = React.memo(({ item, isWider, onCardClick }) => {
   const imageUrl = useMemo(() => {
-    return item?.image || "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80";
+    return (
+      item?.image ||
+      "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80"
+    );
   }, [item?.image]);
 
   const handleClick = useCallback(() => {
@@ -44,7 +53,8 @@ const PortfolioCard = React.memo(({ item, isWider, onCardClick }) => {
         className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 hover:scale-110"
         loading="lazy"
         onError={(e) => {
-          e.target.src = "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80";
+          e.target.src =
+            "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80";
         }}
       />
 
@@ -62,79 +72,75 @@ PortfolioCard.displayName = "PortfolioCard";
 // ==========================================
 // 2. SCROLLING MARQUEE ROW - FIXED KEYS
 // ==========================================
-const MarqueeRow = React.memo(({
-  items,
-  direction = "left",
-  speed = 40,
-  isWider = false,
-  onCardClick,
-}) => {
-  const rowRef = useRef(null);
-  const tweenRef = useRef(null);
+const MarqueeRow = React.memo(
+  ({ items, direction = "left", speed = 40, isWider = false, onCardClick }) => {
+    const rowRef = useRef(null);
+    const tweenRef = useRef(null);
 
-  // ✅ Create unique keys for doubled items
-  const doubledItems = useMemo(() => {
-    if (!items || items.length === 0) return [];
-    
-    const result = [];
-    items.forEach((item, idx) => {
-      const baseKey = item?._id || item?.id || `item-${idx}`;
-      // First copy - add '-first' suffix
-      result.push({
-        ...item,
-        _key: `${baseKey}-first-${idx}`
+    // ✅ Create unique keys for doubled items
+    const doubledItems = useMemo(() => {
+      if (!items || items.length === 0) return [];
+
+      const result = [];
+      items.forEach((item, idx) => {
+        const baseKey = item?._id || item?.id || `item-${idx}`;
+        // First copy - add '-first' suffix
+        result.push({
+          ...item,
+          _key: `${baseKey}-first-${idx}`,
+        });
+        // Second copy - add '-second' suffix
+        result.push({
+          ...item,
+          _key: `${baseKey}-second-${idx}`,
+        });
       });
-      // Second copy - add '-second' suffix
-      result.push({
-        ...item,
-        _key: `${baseKey}-second-${idx}`
+      return result;
+    }, [items]);
+
+    useEffect(() => {
+      const row = rowRef.current;
+      if (!row || !items || items.length === 0) return;
+
+      const distance = direction === "left" ? -50 : 0;
+      const startPos = direction === "left" ? 0 : -50;
+
+      gsap.set(row, { xPercent: startPos });
+
+      tweenRef.current = gsap.to(row, {
+        xPercent: distance,
+        repeat: -1,
+        duration: speed,
+        ease: "none",
       });
-    });
-    return result;
-  }, [items]);
 
-  useEffect(() => {
-    const row = rowRef.current;
-    if (!row || !items || items.length === 0) return;
+      return () => {
+        if (tweenRef.current) tweenRef.current.kill();
+      };
+    }, [direction, speed, items?.length]);
 
-    const distance = direction === "left" ? -50 : 0;
-    const startPos = direction === "left" ? 0 : -50;
+    if (!items || items.length === 0) return null;
 
-    gsap.set(row, { xPercent: startPos });
-
-    tweenRef.current = gsap.to(row, {
-      xPercent: distance,
-      repeat: -1,
-      duration: speed,
-      ease: "none",
-    });
-
-    return () => {
-      if (tweenRef.current) tweenRef.current.kill();
-    };
-  }, [direction, speed, items?.length]);
-
-  if (!items || items.length === 0) return null;
-
-  return (
-    <div
-      className="flex w-max"
-      onMouseEnter={() => tweenRef.current?.pause()}
-      onMouseLeave={() => tweenRef.current?.play()}
-    >
-      <div ref={rowRef} className="flex gap-0">
-        {doubledItems.map((item) => (
-          <PortfolioCard
-            key={item._key}  // ✅ Unique key
-            item={item}
-            isWider={isWider}
-            onCardClick={onCardClick}
-          />
-        ))}
+    return (
+      <div
+        className="flex w-max"
+        onMouseEnter={() => tweenRef.current?.pause()}
+        onMouseLeave={() => tweenRef.current?.play()}
+      >
+        <div ref={rowRef} className="flex gap-0">
+          {doubledItems.map((item) => (
+            <PortfolioCard
+              key={item._key} // ✅ Unique key
+              item={item}
+              isWider={isWider}
+              onCardClick={onCardClick}
+            />
+          ))}
+        </div>
       </div>
-    </div>
-  );
-});
+    );
+  },
+);
 
 MarqueeRow.displayName = "MarqueeRow";
 
@@ -146,7 +152,11 @@ const PortfolioGallery = () => {
   const headerRef = useRef(null);
   const navigate = useNavigate();
 
-  const [portfolioItems, setPortfolioItems] = useState({ row1: [], row2: [], row3: [] });
+  const [portfolioItems, setPortfolioItems] = useState({
+    row1: [],
+    row2: [],
+    row3: [],
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
@@ -159,7 +169,7 @@ const PortfolioGallery = () => {
       try {
         setLoading(true);
         setError(null);
-        
+
         const response = await portfolioApi.getAll({
           page: 1,
           limit: 20,
@@ -179,8 +189,8 @@ const PortfolioGallery = () => {
           }
 
           // Filter out items without images
-          const validItems = items.filter(item => item?.image);
-          
+          const validItems = items.filter((item) => item?.image);
+
           if (validItems.length === 0) {
             setError("No portfolio items with images found");
             setPortfolioItems({ row1: [], row2: [], row3: [] });
@@ -219,7 +229,7 @@ const PortfolioGallery = () => {
     const images = [];
     if (item.image) images.push(item.image);
     if (item.images && Array.isArray(item.images)) {
-      item.images.forEach(img => {
+      item.images.forEach((img) => {
         if (img && !images.includes(img)) {
           images.push(img);
         }
@@ -227,7 +237,9 @@ const PortfolioGallery = () => {
     }
 
     if (images.length === 0) {
-      images.push("https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80");
+      images.push(
+        "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80",
+      );
     }
 
     setGalleryImages(images);
@@ -260,7 +272,7 @@ const PortfolioGallery = () => {
               trigger: sectionRef.current,
               start: "top 80%",
             },
-          }
+          },
         );
       }
     }, sectionRef);
@@ -303,7 +315,9 @@ const PortfolioGallery = () => {
     return (
       <section className="relative w-full bg-[#FAF8F0] py-20 flex items-center justify-center min-h-[400px]">
         <div className="flex flex-col items-center text-center px-6">
-          <p className="text-gray-500 font-inter text-sm mb-4">No portfolio items available</p>
+          <p className="text-gray-500 font-inter text-sm mb-4">
+            No portfolio items available
+          </p>
           <Button
             onClick={() => navigate("/portfolio")}
             variant="secondary"
@@ -343,7 +357,8 @@ const PortfolioGallery = () => {
         </h2>
 
         <p className="font-sans text-xs lg:text-sm font-medium leading-[1.7] text-gray-600 max-w-[500px] mb-8">
-          A curated showcase of extraordinary celebrations we have designed & delivered across the world.
+          A curated showcase of extraordinary celebrations we have designed &
+          delivered across the world.
         </p>
 
         <Button
