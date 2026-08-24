@@ -15,7 +15,8 @@ import {
   ChevronRight,
   Crown,
   Video,
-  X
+  X,
+  Bed
 } from "lucide-react";
 import Button from "../components/ui/Button";
 import { venueApi } from "../api/venueApi";
@@ -90,7 +91,6 @@ const VideoThumbnail = ({ videoUrl, title, image, onPlay }) => {
   const [showVideo, setShowVideo] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
-  // Extract YouTube video ID
   const getYouTubeEmbedUrl = (url) => {
     if (!url) return null;
     
@@ -198,11 +198,9 @@ const Venues = () => {
   const [error, setError] = useState(null);
   const [categories, setCategories] = useState(["ALL VENUES"]);
   
-  // Popup state
   const [selectedVenueId, setSelectedVenueId] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   
-  // Handle venue card click
   const handleVenueClick = (venueId) => {
     if (venueId) {
       setSelectedVenueId(venueId);
@@ -215,7 +213,6 @@ const Venues = () => {
     setCursorText(text);
   };
 
-  // Hero Parallax State
   const globalX = useMotionValue(0);
   const globalY = useMotionValue(0);
   const heroX = useTransform(globalX, [0, window.innerWidth], [15, -15]);
@@ -232,7 +229,6 @@ const Venues = () => {
     return () => window.removeEventListener("mousemove", handleGlobalMouse);
   }, [globalX, globalY]);
 
-  // Fetch all venues and featured venues from API
   useEffect(() => {
     const fetchVenues = async () => {
       try {
@@ -306,7 +302,6 @@ const Venues = () => {
     fetchFeaturedVenues();
   }, []);
 
-  // Fallback venues in case API fails
   const getFallbackVenues = () => {
     return [
       {
@@ -315,7 +310,7 @@ const Venues = () => {
         location: "Udaipur, Rajasthan",
         category: "Palace",
         image: "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=800&q=80",
-        capacity: "300 - 800",
+        rooms: "200",
         description: "Luxury palace venue with stunning lake views.",
         featured: true,
         videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
@@ -326,7 +321,7 @@ const Venues = () => {
         location: "Goa",
         category: "Beachfront Resort",
         image: "https://images.unsplash.com/photo-1512343879784-9602d5de7a10?w=800&q=80",
-        capacity: "150 - 500",
+        rooms: "150",
         description: "Beachfront luxury resort with world-class amenities.",
         featured: true
       },
@@ -336,7 +331,7 @@ const Venues = () => {
         location: "Jodhpur, Rajasthan",
         category: "Heritage Palace",
         image: "https://images.unsplash.com/photo-1590582007337-f5d55ec5aaf0?w=800&q=80",
-        capacity: "200 - 600",
+        rooms: "180",
         description: "Majestic heritage palace with royal architecture.",
         featured: true
       },
@@ -346,7 +341,7 @@ const Venues = () => {
         location: "Bali, Indonesia",
         category: "Cliffside Resort",
         image: "https://images.unsplash.com/photo-1593693397690-362cb9666fc2?w=800&q=80",
-        capacity: "100 - 300",
+        rooms: "100",
         description: "Cliffside luxury villas with ocean views.",
         featured: true
       },
@@ -356,14 +351,13 @@ const Venues = () => {
         location: "Agra, India",
         category: "Luxury Hotel",
         image: "https://images.unsplash.com/photo-1564507592333-c60657eea523?w=800&q=80",
-        capacity: "100 - 400",
+        rooms: "120",
         description: "Luxury hotel with Taj Mahal views.",
         featured: true
       },
     ];
   };
 
-  // Filter venues by category
   useEffect(() => {
     if (selectedCategory === "ALL VENUES") {
       setFilteredVenues(venues);
@@ -378,7 +372,6 @@ const Venues = () => {
     }
   }, [selectedCategory, venues]);
 
-  // Featured experiences from featured venues
   const displayExperiences = featuredVenues.length > 0 
     ? featuredVenues.slice(0, 4).map((venue) => ({
         title: venue.name,
@@ -418,7 +411,6 @@ const Venues = () => {
         },
       ];
 
-  // GSAP Animations
   useLayoutEffect(() => {
     if (loading) return;
 
@@ -446,7 +438,6 @@ const Venues = () => {
     return () => ctx.revert();
   }, [loading]);
 
-  // Show loading state
   if (loading) {
     return (
       <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center">
@@ -462,8 +453,8 @@ const Venues = () => {
     <div ref={compRef} className="min-h-screen bg-[#FDFBF7] font-sans selection:bg-[#C58B48] selection:text-white pb-20 overflow-hidden md:cursor-none">
       
       {/* ================= HERO SECTION ================= */}
-      <section className="relative w-full min-h-[90vh] flex items-center pt-24 lg:pt-32 pb-32" style={{ perspective: 1200 }}>
-        <motion.div style={{ x: bgX, y: bgY }} className="absolute top-0 right-[-5%] w-full lg:w-[70%] h-[110vh] z-0 pointer-events-none">
+      <section className="relative w-full min-h-[90vh] flex items-center pt-24 lg:pt-32 pb-16 lg:pb-20 overflow-hidden" style={{ perspective: 1200 }}>
+        <motion.div style={{ x: bgX, y: bgY }} className="absolute top-0 right-[-5%] w-full lg:w-[70%] h-full z-0 pointer-events-none">
           <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1600&auto=format&fit=crop" alt="Extraordinary Venues" className="w-full h-full object-cover opacity-95 scale-110" style={{ maskImage: "linear-gradient(to right, transparent 0%, black 35%)", WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 35%)" }} />
           <div className="absolute inset-0 bg-gradient-to-t from-[#FDFBF7] via-transparent to-transparent" />
         </motion.div>
@@ -471,24 +462,24 @@ const Venues = () => {
         <div className="absolute top-0 right-0 w-full lg:w-[60%] h-full z-10" onMouseEnter={() => handleCursorState("explore", "EXPLORE")} onMouseLeave={() => handleCursorState("default")} />
 
         <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 lg:px-16 flex flex-col justify-center h-full">
-          <motion.div style={{ x: heroX, y: heroY }} className="w-full lg:w-[45%] pt-10 pl-0 md:pl-10">
-            <span className="hero-element font-montserrat text-[#C58B48] text-[9px] md:text-[10px] font-bold tracking-[0.25em] uppercase block mb-6">EXTRAORDINARY VENUES</span>
-            <h1 className="hero-element font-cormorant text-6xl lg:text-[80px] text-[#1F2937] leading-[1.1] mb-2 uppercase tracking-wide">Iconic Venues</h1>
-            <p className="hero-element font-cormorant text-3xl lg:text-[40px] text-[#C58B48] italic mb-8">Unforgettable Celebrations.</p>
+          <motion.div style={{ x: heroX, y: heroY }} className="w-full lg:w-[45%] pt-6 lg:pt-10 pl-0 md:pl-10">
+            <span className="hero-element font-montserrat text-[#C58B48] text-[10px] md:text-[11px] font-bold tracking-[0.3em] uppercase block mb-4">EXTRAORDINARY VENUES</span>
+            <h1 className="hero-element font-cormorant text-5xl lg:text-[72px] text-[#1F2937] leading-[1.1] mb-4">
+              A Setting Worth <br />
+              <span className="italic text-[#C58B48]">Remembering Forever</span>
+            </h1>
 
-            <div className="hero-element flex items-center justify-start mb-6">
-              <div className="w-4 h-4 rounded-full border border-[#C58B48]/50 flex items-center justify-center p-0.5">
-                <div className="w-full h-full bg-[#C58B48] rounded-full opacity-30"></div>
-              </div>
-            </div>
-
-            <p className="hero-element font-inter text-gray-600 text-xs md:text-sm leading-[1.8] max-w-sm mb-10">
-              From royal palaces and heritage forts to luxury resorts and modern marvels, we bring you a handpicked collection of venues that set the stage for your most precious moments.
+            <p className="hero-element font-inter text-gray-600 text-sm leading-[1.8] max-w-[460px] mb-8">
+              Some celebrations are defined by the people, others by the place that brings them to life. Violin Events LLP brings you remarkable venues where architecture, landscape, culture and luxury come together to create unforgettable moments.
+              <br /><br />
+              From grand heritage palaces and private islands to breathtaking beachfront resorts and refined luxury hotels across Dubai, India, Sri Lanka, Malaysia, Thailand and Vietnam, discover a setting worthy of your most extraordinary celebration.
             </p>
 
-            <Button variant="champagne" size="md" className="hero-element font-montserrat text-[9px] tracking-[0.2em] shadow-none w-full sm:w-auto hover:scale-105 transition-transform" onClick={() => navigate("/destinations")}>
-              EXPLORE DESTINATIONS <ArrowRight size={14} className="ml-1" />
-            </Button>
+            <div className="hero-element flex flex-col sm:flex-row items-center gap-4">
+              <Button variant="champagne" size="md" className="font-montserrat text-[9px] tracking-[0.2em] shadow-none w-full sm:w-auto hover:scale-105 transition-transform" onClick={() => navigate("/destinations")}>
+                DISCOVER THE VENUES <ArrowRight size={14} className="ml-1" />
+              </Button>
+            </div>
           </motion.div>
         </div>
       </section>
@@ -503,18 +494,18 @@ const Venues = () => {
               <div className="w-1.5 h-1.5 rotate-45 border border-[#C58B48]" />
               <div className="w-10 h-[1px] bg-[#C58B48]/40" />
             </div>
-            <h2 className="font-cormorant text-4xl lg:text-[42px] text-[#1F2937]">Discover Our Exclusive Venues</h2>
+            <h2 className="font-cormorant text-3xl md:text-4xl lg:text-[42px] text-[#1F2937]">Discover Our Extraordinary Venues</h2>
             <p className="font-inter text-sm text-gray-500 mt-2">{venues.length} venues available</p>
           </div>
 
-          <div className="filter-container flex flex-wrap items-center justify-center gap-3 lg:gap-4 mb-16">
+          <div className="filter-container flex flex-wrap items-center justify-center gap-2 lg:gap-3 mb-12">
             {categories.map((category) => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`filter-btn px-5 lg:px-6 py-2.5 rounded-full font-montserrat text-[9px] font-bold tracking-[0.15em] transition-all duration-300 ${
+                className={`filter-btn px-4 lg:px-5 py-2 rounded-full font-montserrat text-[8px] lg:text-[9px] font-bold tracking-[0.15em] transition-all duration-300 ${
                   selectedCategory === category
-                    ? "border border-[#C58B48] text-[#1F2937] !bg-[#C58B48] shadow-sm"
+                    ? "border border-[#C58B48] text-white !bg-[#C58B48] shadow-sm"
                     : "border border-[#EBE3D5] text-gray-500 hover:text-[#C58B48] hover:border-[#C58B48]/40"
                 }`}
               >
@@ -542,7 +533,7 @@ const Venues = () => {
                       onClick={() => handleVenueClick(venue._id || venue.id)}
                     >
                       <div className="bg-white rounded-xl p-3 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#EBE3D5] flex flex-col group h-full hover:border-[#C58B48]/40 transition-colors">
-                        <div className="relative overflow-hidden aspect-[4/3] rounded-lg mb-5">
+                        <div className="relative overflow-hidden aspect-[4/3] rounded-lg mb-4">
                           <img
                             src={venue.image || "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=80"}
                             alt={venue.name}
@@ -550,7 +541,7 @@ const Venues = () => {
                             onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=80"; }}
                           />
                           {venue.featured && (
-                            <div className="absolute top-3 left-3 bg-[#C58B48] text-white text-xs px-2 py-1 rounded-full font-medium">
+                            <div className="absolute top-3 left-3 bg-[#C58B48] text-white text-[8px] px-2 py-1 rounded-full font-medium">
                               <Crown className="w-3 h-3 inline mr-1" />
                               Featured
                             </div>
@@ -560,23 +551,23 @@ const Venues = () => {
                           </button>
                         </div>
 
-                        <div className="px-2 pb-2 flex flex-col flex-grow bg-white relative z-10">
-                          <h3 className="font-cormorant text-2xl text-[#1F2937] mb-1 leading-tight">{venue.name}</h3>
-                          <p className="font-inter text-[11px] text-gray-400 mb-1 flex items-center gap-1">
+                        <div className="px-1 pb-1 flex flex-col flex-grow bg-white relative z-10">
+                          <h3 className="font-cormorant text-xl text-[#1F2937] mb-1 leading-tight">{venue.name}</h3>
+                          <p className="font-inter text-[10px] text-gray-400 mb-1 flex items-center gap-1">
                             <MapPin size={10} className="text-[#C58B48]" /> {venue.location}
                           </p>
-                          <p className="font-inter text-[11px] text-[#C58B48] mb-5 font-medium">{venue.category}</p>
+                          <p className="font-inter text-[10px] text-[#C58B48] mb-4 font-medium">{venue.category}</p>
 
                           <div className="mt-auto">
-                            <div className="flex items-center gap-2 mb-5 font-montserrat text-[9px] font-bold tracking-widest text-[#1F2937] uppercase">
-                              <Users size={14} className="text-[#C58B48]" strokeWidth={1.5} />
-                              {venue.capacity || "100 - 500"} Guests
+                            <div className="flex items-center gap-2 mb-4 font-montserrat text-[8px] font-bold tracking-widest text-[#1F2937] uppercase">
+                              <Bed size={14} className="text-[#C58B48]" strokeWidth={1.5} />
+                              {venue.rooms || venue.capacity || "100 - 500"} Rooms
                             </div>
 
                             <Button
                               variant="outline"
                               size="md"
-                              className="w-full font-montserrat text-[9px] border-[#EBE3D5] text-[#1F2937] hover:bg-[#FDFBF7] hover:border-[#C58B48] group/btn"
+                              className="w-full font-montserrat text-[8px] border-[#EBE3D5] text-[#1F2937] hover:bg-[#FDFBF7] hover:border-[#C58B48] group/btn py-2 h-auto"
                               onMouseEnter={(e) => { e.stopPropagation(); handleCursorState("default"); }}
                               onMouseLeave={(e) => { e.stopPropagation(); handleCursorState("view", "VIEW"); }}
                               onClick={() => handleVenueClick(venue._id || venue.id)}
@@ -665,7 +656,6 @@ const Venues = () => {
                   onClick={() => handleVenueClick(exp.id)}
                 >
                   <div className="flex flex-col group cursor-pointer h-full">
-                    {/* ✅ Video Thumbnail with Play Button */}
                     <VideoThumbnail
                       videoUrl={exp.videoUrl}
                       title={exp.title}
@@ -711,7 +701,7 @@ const Venues = () => {
               <p className="font-inter text-sm text-gray-600 leading-relaxed mb-10 max-w-md">From the first conversation to the final celebration, we make every detail seamless and spectacular.</p>
 
               <div className="flex flex-col sm:flex-row items-center gap-6">
-                <Button onClick={() => navigate("/contact")} variant="champagne" size="md" className="font-montserrat text-[10px] w-full sm:w-auto shadow-none hover:scale-105 transition-transform" onMouseEnter={() => handleCursorState("default")} onClick={() => navigate("/contact")}>
+                <Button variant="champagne" size="md" className="font-montserrat text-[10px] w-full sm:w-auto shadow-none hover:scale-105 transition-transform" onClick={() => navigate("/contact")}>
                   PLAN YOUR CELEBRATION <ArrowRight size={14} className="ml-2" />
                 </Button>
               </div>

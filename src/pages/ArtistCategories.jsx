@@ -1,11 +1,7 @@
 // src/pages/artist/ArtistCategories.jsx
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import {
-  Search,
-  ArrowRight,
-  Play,
-} from "lucide-react";
+import { Search, ArrowRight, Play } from "lucide-react";
 import { artistPublicApi } from "../api/artistPublicApi";
 
 // Fallback image for categories
@@ -107,15 +103,26 @@ const ArtistCategories = () => {
         <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 lg:px-16">
           <div className="w-full lg:w-[50%]">
             <span className="font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-4 block">
-              EXTRAORDINARY TALENT
+              EXTRAORDINARY TALENT • DESTINATION EVENTS
             </span>
             <h1 className="font-serif text-4xl md:text-5xl lg:text-[64px] text-[#1F2937] leading-[1.1] mb-4">
               For Unforgettable <br />
-              <span className="italic text-[#C58B48]">Events</span>
+              <span className="italic text-[#C58B48]">
+                Events Across the World
+              </span>
             </h1>
             <p className="font-inter text-gray-600 text-sm leading-[1.8] max-w-[480px] mb-8">
-              From global icons to rising stars, we connect you with the perfect
-              artist for your extraordinary celebration.
+              From the glamour of Dubai to the tropical celebrations of Sri
+              Lanka, Malaysia, Thailand and Vietnam, and unforgettable occasions
+              across India, Violin Events LLP connects you with exceptional
+              artists and entertainment for weddings, corporate events, private
+              celebrations and destination experiences.
+              <br />
+              <br />
+              Discover extraordinary talent from Bollywood artists,
+              international musicians and live bands to DJs, dancers, celebrity
+              performers and event hosts, curated to make every celebration
+              truly unforgettable.
             </p>
 
             {/* Search Bar */}
@@ -127,7 +134,7 @@ const ArtistCategories = () => {
                 />
                 <input
                   type="text"
-                  placeholder="Search for artists, categories or events..."
+                  placeholder="Search artists, performers, categories or events..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#C58B48] focus:border-transparent shadow-sm text-sm"
@@ -151,11 +158,12 @@ const ArtistCategories = () => {
               <div className="w-12 h-[1px] bg-[#C58B48]/50" />
             </div>
             <h2 className="font-serif text-3xl md:text-4xl text-[#1F2937] mb-2">
-              Find Your Perfect <span className="italic text-[#C58B48]">Match</span>
+              Find Your Perfect{" "}
+              <span className="italic text-[#C58B48]">Match</span>
             </h2>
             <p className="text-gray-500 max-w-xl mx-auto text-sm">
-              Choose from our wide range of artist categories and find the perfect
-              match for your event.
+              Choose from our wide range of artist categories and find the
+              perfect match for your event.
             </p>
           </div>
 
@@ -167,7 +175,7 @@ const ArtistCategories = () => {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredCategories.map((category, index) => {
                 const imageUrl = category.image || FALLBACK_IMAGE;
 
@@ -248,8 +256,8 @@ const ArtistCategories = () => {
           </h2>
 
           <p className="text-gray-400 max-w-xl mx-auto text-sm md:text-base mb-8">
-            Let our experts guide you to the perfect artist for your celebration.
-            From booking to performance, we handle everything.
+            Let our experts guide you to the perfect artist for your
+            celebration. From booking to performance, we handle everything.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

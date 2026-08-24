@@ -1,23 +1,62 @@
 // src/components/FloatingAudioPlayer.jsx
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Volume2, VolumeX } from "lucide-react";
 
 const FloatingAudioPlayer = () => {
-  // State to track if music is playing
-  const [isPlaying, setIsPlaying] = useState(false);
+  // State to track if music is playing - default to true
+  const [isPlaying, setIsPlaying] = useState(true);
   
   // Ref to directly access the hidden HTML audio element
   const audioRef = useRef(null);
 
+  // Auto-play on component mount
+  useEffect(() => {
+    const audio = audioRef.current;
+    
+    if (audio) {
+      // Try to play the audio
+      const playPromise = audio.play();
+      
+      // Handle play promise (browsers may block autoplay)
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            // Auto-play succeeded
+            setIsPlaying(true);
+          })
+          .catch(() => {
+            // Auto-play was blocked by browser
+            setIsPlaying(false);
+            console.log("Autoplay was blocked by the browser. User interaction required.");
+          });
+      }
+    }
+  }, []);
+
   // Function to handle the play/pause logic
   const togglePlay = () => {
+    const audio = audioRef.current;
+    
+    if (!audio) return;
+
     if (isPlaying) {
-      audioRef.current.pause(); // Pause the music
+      audio.pause();
+      setIsPlaying(false);
     } else {
-      audioRef.current.play();  // Play the music
+      // Try to play when user clicks
+      const playPromise = audio.play();
+      
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch((error) => {
+            console.log("Playback failed:", error);
+            setIsPlaying(false);
+          });
+      }
     }
-    // Flip the state to the opposite of what it currently is
-    setIsPlaying(!isPlaying);
   };
 
   return (
@@ -31,6 +70,7 @@ const FloatingAudioPlayer = () => {
         ref={audioRef}
         src="/audio/event-music.mpeg" 
         loop // This makes the music start over when it finishes
+        preload="auto"
       />
 
       {/* The visible toggle button */}

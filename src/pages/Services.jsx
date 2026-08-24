@@ -1,23 +1,20 @@
 import React, { useLayoutEffect, useRef, useState, useEffect } from "react";
-import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   CalendarDays,
   CheckCircle,
   ArrowRight,
-  Play,
   Search,
   PenTool,
   GlassWater,
   ArrowDown
 } from "lucide-react";
-import Button from "../components/ui/Button";
+import Button from "../components/ui/Button"; // Ensure this path matches your project structure
 
 // Register GSAP ScrollTrigger
 gsap.registerPlugin(ScrollTrigger);
-
-
 
 // ================= ENHANCED PREMIUM 3D CARD WITH GLARE =================
 const Premium3DCard = ({ children, className, onMouseEnter, onMouseLeave, borderRadiusClass = "rounded-xl" }) => {
@@ -60,7 +57,7 @@ const Premium3DCard = ({ children, className, onMouseEnter, onMouseLeave, border
         if (onMouseLeave) onMouseLeave(e);
       }}
       style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-      className={`relative ${className}`}
+      className={`relative h-full ${className}`}
     >
       <div style={{ transform: "translateZ(30px)" }} className={`w-full h-full relative ${borderRadiusClass} overflow-hidden group`}>
         {children}
@@ -110,7 +107,7 @@ const Services = () => {
   // GSAP Animations
   useLayoutEffect(() => {
     let ctx = gsap.context(() => {
-      // Hero Elements
+      // Hero Elements Animation
       gsap.from(".hero-element", {
         y: 60,
         opacity: 0,
@@ -122,19 +119,33 @@ const Services = () => {
         delay: 0.2,
       });
 
-      // Arched Services Grid
-      gsap.from(".service-card-wrapper", {
-        y: 100,
+      // Intro Text Animation
+      gsap.from(".intro-text", {
+        y: 40,
         opacity: 0,
-        rotationY: 15,
-        transformPerspective: 1000,
-        duration: 1.2,
-        stagger: 0.15,
-        ease: "back.out(1.4)",
+        duration: 1,
+        stagger: 0.2,
+        ease: "power2.out",
         scrollTrigger: {
-          trigger: ".services-grid",
+          trigger: ".intro-section",
           start: "top 80%",
-        },
+        }
+      });
+
+      // Grid Cards Animation - Batched for better performance with 25 items
+      gsap.utils.toArray(".service-card-wrapper").forEach((card, i) => {
+        gsap.from(card, {
+          y: 80,
+          opacity: 0,
+          rotationY: 10,
+          transformPerspective: 1000,
+          duration: 1,
+          ease: "back.out(1.2)",
+          scrollTrigger: {
+            trigger: card,
+            start: "top 90%", // Trigger slightly earlier as you scroll down
+          },
+        });
       });
 
       // Process Timeline
@@ -155,38 +166,45 @@ const Services = () => {
     return () => ctx.revert();
   }, []);
 
-  // === DATA ARRAYS ===
+  // Array of premium fallback images to cycle through
+  const fallbackImages = [
+    "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80", // Wedding Setup
+    "https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=600&q=80", // Floral Decor
+    "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&q=80", // Hospitality/Food
+    "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&q=80", // Entertainment/Concert
+    "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&q=80", // Travel/Logistics
+    "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=600&q=80", // Event Details
+    "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?w=600&q=80", // Corporate/Venue
+    "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&q=80", // Stage/Production
+  ];
+
+  // === UPDATED DATA ARRAYS WITH ALL 25 SERVICES ===
   const servicesList = [
-    {
-      title: "PLANNING &\nMANAGEMENT",
-      desc: "Strategic planning, timelines and flawless execution — handled with perfection.",
-      img: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80",
-    },
-    {
-      title: "DESIGN &\nDÉCOR",
-      desc: "Bespoke themes, stunning décor and immersive designs that bring your story to life.",
-      img: "https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=600&q=80",
-    },
-    {
-      title: "HOSPITALITY &\nGUEST EXPERIENCE",
-      desc: "Curated hospitality and guest experiences that make your loved ones feel special.",
-      img: "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&q=80",
-    },
-    {
-      title: "ENTERTAINMENT &\nPRODUCTION",
-      desc: "World-class entertainment and production for unforgettable celebrations.",
-      img: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&q=80",
-    },
-    {
-      title: "LOGISTICS &\nTRAVEL",
-      desc: "Seamless travel, logistics and on-ground support, anywhere in the world.",
-      img: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&q=80",
-    },
-    {
-      title: "BESPOKE SERVICES &\nCONCIERGE",
-      desc: "Personalized services and thoughtful touches that go beyond expectations.",
-      img: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=600&q=80",
-    },
+    { title: "Wedding Planning & Management", desc: "End-to-end wedding planning covering concepts, budgets, vendors, timelines, guest management and flawless execution from beginning to celebration." },
+    { title: "Destination Weddings", desc: "Complete destination wedding management including venue selection, hospitality, transportation, décor, entertainment, guest experiences and on-ground coordination." },
+    { title: "Corporate Events", desc: "Professional planning for conferences, seminars, launches, award ceremonies, annual events, exhibitions, networking meets and corporate celebrations." },
+    { title: "Social & Private Events", desc: "Creating memorable birthdays, anniversaries, engagements, cocktail parties, reunions and private celebrations with personalized planning and execution." },
+    { title: "Event Concept & Creative Design", desc: "Developing distinctive event concepts, themes and creative experiences that bring your vision to life through thoughtful design and storytelling." },
+    { title: "Décor & Venue Styling", desc: "Transforming venues through customized décor, floral installations, furniture, lighting, stage design and thematic elements tailored to every occasion." },
+    { title: "Event Production", desc: "Managing complete technical production including stages, structures, sound, lighting, LED screens, power, rigging and professional event equipment." },
+    { title: "Artist & Entertainment", desc: "Curating and managing singers, DJs, bands, dancers, celebrity performers, anchors, comedians and specialty artists for unforgettable entertainment experiences." },
+    { title: "Hospitality & Guest Management", desc: "Delivering seamless guest experiences through welcome desks, hospitality teams, accommodation assistance, guest communication and personalized on-ground support." },
+    { title: "Venue & Hotel Management", desc: "Sourcing, negotiating and coordinating hotels, resorts, banquet halls, convention centres and unique venues according to event requirements." },
+    { title: "Food & Beverage Management", desc: "Planning menus, catering services, beverage counters, live stations and dining experiences while coordinating quality, presentation and service standards." },
+    { title: "Event Logistics & Transportation", desc: "Coordinating vehicles, airport transfers, guest movements, equipment transportation, vendor schedules and logistics to keep every event running smoothly." },
+    { title: "Budget & Vendor Management", desc: "Planning budgets, negotiating with vendors, tracking expenses and coordinating multiple partners to deliver exceptional experiences within planned investments." },
+    { title: "Invitations & Event Collaterals", desc: "Creating bespoke invitations, stationery, signage, itineraries, welcome kits, menus, hampers and branded materials that complement your event identity." },
+    { title: "RSVP & Guest Communication", desc: "Managing invitations, confirmations, guest databases, reminders and communication to ensure accurate attendance information and smooth guest coordination." },
+    { title: "Photography & Cinematography", desc: "Coordinating professional photography and cinematography teams to capture genuine emotions, important details and unforgettable moments throughout your event." },
+    { title: "Branding & Corporate Identity", desc: "Creating event branding through creative themes, stage graphics, signage, digital assets, installations and visual elements aligned with your identity." },
+    { title: "Exhibitions & Experiential Events", desc: "Planning exhibitions, stalls, brand activations and experiential spaces designed to attract audiences, communicate messages and create meaningful brand interactions." },
+    { title: "Special Effects & Fireworks", desc: "Creating spectacular moments through fireworks, cold sparks, confetti, atmospheric effects, pyrotechnic experiences and customized visual productions." },
+    { title: "Stage & Show Management", desc: "Managing stage programming, rehearsals, artist coordination, show flow, backstage operations and technical teams for professionally executed live experiences." },
+    { title: "Celebrity & VIP Management", desc: "Coordinating celebrity appearances, VIP movements, hospitality, security requirements, green rooms and personalized experiences for distinguished guests." },
+    { title: "Brand Activations", desc: "Designing interactive brand experiences, promotional events, launches and consumer engagements that connect brands with audiences in memorable ways." },
+    { title: "Conferences & MICE Events", desc: "Managing meetings, incentives, conferences and exhibitions with professional planning, delegate management, production, hospitality and destination coordination." },
+    { title: "Event Staffing & Manpower", desc: "Providing trained event professionals including coordinators, hospitality teams, registration staff, ushers, promoters and on-ground support personnel." },
+    { title: "Complete Event Execution", desc: "Bringing every element together through centralized coordination, professional teams and detailed execution to deliver seamless events." },
   ];
 
   const processSteps = [
@@ -199,8 +217,6 @@ const Services = () => {
 
   return (
     <div ref={compRef} className="min-h-screen bg-[#FDFBF7] font-sans selection:bg-[#C58B48] selection:text-white pb-20 overflow-hidden md:cursor-none">
-
-     
 
       {/* ================= HERO SECTION ================= */}
       <section className="relative w-full min-h-screen flex items-center pt-24 lg:pt-32 pb-16" style={{ perspective: 1200 }}>
@@ -230,20 +246,13 @@ const Services = () => {
 
         <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 lg:px-16 flex flex-col justify-center h-full">
           
-          {/* Side Indicator */}
-          <div className="absolute left-6 lg:left-8 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2 opacity-30 hidden md:flex">
-             <span className="font-montserrat text-[8px] font-bold tracking-widest text-[#1F2937]">01</span>
-             <div className="w-[1px] h-8 bg-[#1F2937]"></div>
-             <span className="font-montserrat text-[8px] font-bold tracking-widest text-[#1F2937]">07</span>
-          </div>
-
-          <motion.div style={{ x: heroX, y: heroY }} className="w-full lg:w-[50%] pt-10 pl-0 md:pl-10">
+          <motion.div style={{ x: heroX, y: heroY }} className="w-full lg:w-[65%] pt-10 pl-0 md:pl-10">
             <span className="hero-element font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-4 block">
               OUR SERVICES
             </span>
             <h1 className="hero-element font-cormorant text-5xl lg:text-[72px] text-[#1F2937] leading-[1.1] mb-6">
-              End-to-End Wedding <br />
-              <span className="italic text-[#C58B48]">& Celebration Solutions</span>
+              Creating Experiences. <br />
+              <span className="italic text-[#C58B48]">Managing Every Detail.</span>
             </h1>
             
             <div className="hero-element flex items-center gap-2 mb-6 opacity-60">
@@ -252,8 +261,11 @@ const Services = () => {
                <div className="w-6 h-[1px] bg-[#C58B48]" />
             </div>
 
-            <p className="hero-element font-inter text-gray-600 text-sm leading-[1.8] max-w-[400px] mb-10">
-              At Violin Events, we take care of every detail so you can celebrate every moment. From the first idea to the final farewell, we create experiences that are seamless, stunning and unforgettable.
+            <p className="hero-element font-inter text-gray-600 text-sm leading-[1.8] max-w-[600px] mb-6">
+              Violin Events LLP is a full-service event management company specializing in weddings, destination weddings, corporate events, social celebrations and large-scale events. From creative event planning and décor to entertainment, hospitality, logistics and complete event execution, we bring every element together under one roof.
+            </p>
+            <p className="hero-element font-inter text-gray-600 text-sm leading-[1.8] max-w-[600px] mb-10">
+              Whether you are planning an elegant wedding, a destination celebration, corporate conference, brand activation or private event, our team handles every detail with creativity, precision and seamless coordination.
             </p>
 
             <Button 
@@ -261,6 +273,9 @@ const Services = () => {
               size="md" 
               className="hero-element font-montserrat tracking-[0.2em] shadow-none hover:scale-105 transition-transform group"
               onMouseEnter={() => handleCursorState("default")}
+              onClick={() => {
+                document.getElementById('services-grid').scrollIntoView({ behavior: 'smooth' });
+              }}
             >
               EXPLORE OUR SERVICES <ArrowRight size={14} className="ml-1 group-hover:translate-x-1 transition-transform" />
             </Button>
@@ -279,18 +294,24 @@ const Services = () => {
         </motion.div>
       </section>
 
+      {/* ================= INTRODUCTORY CONTENT ================= */}
+      <section className="intro-section pt-16 pb-10 px-6 lg:px-16 w-full max-w-[1000px] mx-auto text-center z-10 relative">
+        <h2 className="intro-text font-cormorant text-3xl lg:text-[40px] text-[#1F2937] mb-6">
+          Complete Event Management Services
+        </h2>
+        <p className="intro-text font-inter text-gray-600 text-sm leading-[1.8] mb-6">
+          At Violin Events LLP, our services span everything from wedding planning, destination management, and corporate events to production, styling, and entertainment. With a focus on creativity, professionalism and flawless execution, we transform ideas into memorable experiences while ensuring every event is planned, managed and delivered seamlessly.
+        </p>
+        <p className="intro-text font-inter text-gray-600 text-sm leading-[1.8]">
+          <strong>From Concept to Celebration:</strong> Whether it is an intimate gathering or a large-scale production, we provide end-to-end event management services that combine creative planning, trusted partnerships and experienced execution to create events that leave a lasting impression.
+        </p>
+      </section>
+
       {/* ================= WHAT WE OFFER (ARCHED GRID 3D) ================= */}
-      <section className="py-20 lg:py-32 relative z-10">
+      <section id="services-grid" className="py-16 lg:py-24 relative z-10">
         <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16 text-center">
           
-          {/* Section Header */}
           <div className="mb-16">
-            <span className="font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-3 block">
-              WHAT WE OFFER
-            </span>
-            <h2 className="font-cormorant text-4xl lg:text-[42px] text-[#1F2937] mb-4">
-              Comprehensive Services for Extraordinary Celebrations
-            </h2>
             <div className="flex items-center justify-center gap-2">
                <div className="w-12 h-[1px] bg-[#C58B48]/30" />
                <div className="w-1.5 h-1.5 rotate-45 border border-[#C58B48] bg-[#FDFBF7]" />
@@ -298,10 +319,10 @@ const Services = () => {
             </div>
           </div>
 
-          {/* 3D Arched Cards Grid */}
-          <div className="services-grid grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-6" style={{ perspective: 1500 }}>
+          {/* 3D Arched Cards Grid - Updated to 4/5 columns to fit 25 items better */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 lg:gap-6" style={{ perspective: 1500 }}>
             {servicesList.map((service, index) => (
-              <div key={index} className="service-card-wrapper">
+              <div key={index} className="service-card-wrapper h-full">
                 <Premium3DCard 
                   borderRadiusClass="rounded-t-full rounded-b-xl"
                   onMouseEnter={() => handleCursorState("view", "VIEW")}
@@ -309,30 +330,33 @@ const Services = () => {
                 >
                   <div className="flex flex-col items-center text-center group cursor-pointer h-full bg-white border border-[#EBE3D5] rounded-t-full rounded-b-xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] p-2 hover:border-[#C58B48]/40 transition-colors">
                     {/* Image Arch Container */}
-                    <div className="w-full pt-[140%] relative rounded-t-full overflow-hidden mb-6 bg-gray-100 border border-[#EBE3D5]">
+                    <div className="w-full pt-[120%] relative rounded-t-full overflow-hidden mb-6 bg-gray-100 border border-[#EBE3D5] flex-shrink-0">
                       <div className="absolute inset-0 rounded-t-full overflow-hidden">
                         <img 
-                          src={service.img} 
+                          src={fallbackImages[index % fallbackImages.length]} 
                           alt={service.title} 
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" 
                         />
-                        <div className="absolute inset-0 bg-[#FDFBF7]/20 mix-blend-overlay group-hover:bg-transparent transition-colors duration-500" />
+                        <div className="absolute inset-0 bg-[#FDFBF7]/30 mix-blend-overlay group-hover:bg-transparent transition-colors duration-500" />
+                        
+                        {/* Service Number Badge Overlay */}
+                        <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full border border-white/50 shadow-sm z-10">
+                           <span className="font-montserrat text-[9px] font-bold tracking-widest text-[#C58B48]">{String(index + 1).padStart(2, '0')}</span>
+                        </div>
                       </div>
                     </div>
 
-                    {/* Text Content */}
-                    <h3 className="font-montserrat text-[10px] lg:text-[11px] font-bold tracking-[0.15em] text-[#1F2937] mb-3 uppercase leading-relaxed whitespace-pre-line h-8 flex items-center justify-center z-10">
-                      {service.title}
-                    </h3>
-                    <p className="font-inter text-[10px] lg:text-[11px] text-gray-500 leading-relaxed mb-4 px-2 h-16 z-10">
-                      {service.desc}
-                    </p>
-                    
-                    <div className="w-1.5 h-1.5 rotate-45 border border-[#C58B48]/50 mb-4 group-hover:bg-[#C58B48] transition-colors z-10" />
-                    
-                    <button className="font-montserrat text-[9px] font-bold tracking-[0.2em] text-[#C58B48] group-hover:text-amber-900 transition-colors flex items-center gap-1 uppercase pb-4 z-10">
-                      LEARN MORE <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
-                    </button>
+                    {/* Text Content - Flex-grow ensures buttons align at the bottom */}
+                    <div className="flex flex-col flex-grow w-full items-center">
+                      <h3 className="font-montserrat text-[10px] lg:text-[11px] font-bold tracking-[0.1em] text-[#1F2937] mb-3 uppercase leading-relaxed h-10 flex items-center justify-center z-10 px-1">
+                        {service.title}
+                      </h3>
+                      <p className="font-inter text-[10px] lg:text-[11px] text-gray-500 leading-relaxed mb-4 px-2 flex-grow z-10">
+                        {service.desc}
+                      </p>
+                      
+                      <div className="w-1.5 h-1.5 rotate-45 border border-[#C58B48]/50 mb-4 group-hover:bg-[#C58B48] transition-colors z-10 mt-auto" />
+                    </div>
                   </div>
                 </Premium3DCard>
               </div>
@@ -407,31 +431,19 @@ const Services = () => {
                   variant="champagne" 
                   size="md" 
                   className="font-montserrat text-[10px] w-full sm:w-max shadow-none hover:scale-105 transition-transform"
-                  // onMouseEnter={() => handleCursorState("default")}
                   onClick={() => window.location.href = "/contact"}
                 >
                   SCHEDULE A CONSULTATION <ArrowRight size={14} className="ml-2" />
                 </Button>
-                
-                {/* <button 
-                  onMouseEnter={() => handleCursorState("view", "PLAY")}
-                  onMouseLeave={() => handleCursorState("default")}
-                  className="flex items-center gap-3 font-montserrat text-[10px] font-bold tracking-widest text-[#1F2937] hover:text-[#C58B48] transition-colors group/btn"
-                >
-                  <div className="w-8 h-8 rounded-full border border-[#1F2937] group-hover/btn:border-[#C58B48] flex items-center justify-center transition-colors">
-                     <Play className="w-3 h-3 ml-0.5 fill-current" />
-                  </div>
-                  WATCH SHOWREEL
-                </button> */}
               </div>
             </div>
 
             {/* Right Image */}
             <div className="w-full lg:w-1/2 h-[300px] lg:h-auto relative z-10 overflow-hidden">
                <img 
-                  src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1000&auto=format&fit=crop" 
-                  alt="Luxury Palace Celebration" 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+                 src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1000&auto=format&fit=crop" 
+                 alt="Luxury Palace Celebration" 
+                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
                />
                <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-[#F5EFE6] hidden lg:block" />
                

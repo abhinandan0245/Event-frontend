@@ -49,14 +49,14 @@ const Header = () => {
     { path: "/destinations", label: "DESTINATIONS", hasDropdown: true },
     { path: "/venues", label: "VENUES" },
     { path: "/artist-categories", label: "ARTISTS" },
+    { path: "/services", label: "SERVICES" },
     { path: "/portfolio", label: "PORTFOLIO" },
   ];
   
   const moreLinks = [
-    { path: "/plan-your-celebration", label: "PLAN YOUR CELEBRATION" },
-    { path: "/journal", label: "JOURNAL" },
-    { path: "/services", label: "SERVICES" },
     { path: "/about", label: "ABOUT" },
+    { path: "/journal", label: "JOURNAL" },
+    { path: "/plan-your-celebration", label: "PLAN YOUR CELEBRATION" },
   ];
 
   const specialLink = { path: "/contact", label: "CONTACT US", special: true };
@@ -82,7 +82,7 @@ const Header = () => {
               <img
                 src="/violin-logo.png"
                 alt="Violin Events"
-                className="h-8 w-auto md:h-10 object-contain"
+                className="h-8 w-auto md:h-14 object-contain"
               />
             </Link>
           </motion.div>

@@ -1,5 +1,12 @@
 // src/pages/Portfolio.jsx
-import React, { useLayoutEffect, useRef, useState, useEffect, useCallback, useMemo } from "react";
+import React, {
+  useLayoutEffect,
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
 import {
   motion,
   useMotionValue,
@@ -30,6 +37,20 @@ import {
   Quote,
   Video,
   Image as ImageIcon,
+  Briefcase,
+  Palette,
+  PartyPopper,
+  Mic,
+  Coffee,
+  Utensils,
+  Film,
+  Palette as DesignPalette,
+  Star,
+  Crown,
+  Gift,
+  Plane,
+  Shield,
+  Globe,
 } from "lucide-react";
 import Button from "../components/ui/Button";
 import { portfolioApi } from "../api/portfolioApi";
@@ -61,30 +82,39 @@ const Premium3DCard = ({
   const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["8deg", "-8deg"]);
   const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-8deg", "8deg"]);
 
-  const handleMouseMove = useCallback((e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
+  const handleMouseMove = useCallback(
+    (e) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const width = rect.width;
+      const height = rect.height;
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
 
-    x.set(mouseX / width - 0.5);
-    y.set(mouseY / height - 0.5);
-    glareX.set((mouseX / width) * 100);
-    glareY.set((mouseY / height) * 100);
-  }, [x, y, glareX, glareY]);
+      x.set(mouseX / width - 0.5);
+      y.set(mouseY / height - 0.5);
+      glareX.set((mouseX / width) * 100);
+      glareY.set((mouseY / height) * 100);
+    },
+    [x, y, glareX, glareY],
+  );
 
-  const handleMouseEnter = useCallback((e) => {
-    glareOpacity.set(1);
-    if (onMouseEnter) onMouseEnter(e);
-  }, [glareOpacity, onMouseEnter]);
+  const handleMouseEnter = useCallback(
+    (e) => {
+      glareOpacity.set(1);
+      if (onMouseEnter) onMouseEnter(e);
+    },
+    [glareOpacity, onMouseEnter],
+  );
 
-  const handleMouseLeave = useCallback((e) => {
-    x.set(0);
-    y.set(0);
-    glareOpacity.set(0);
-    if (onMouseLeave) onMouseLeave(e);
-  }, [x, y, glareOpacity, onMouseLeave]);
+  const handleMouseLeave = useCallback(
+    (e) => {
+      x.set(0);
+      y.set(0);
+      glareOpacity.set(0);
+      if (onMouseLeave) onMouseLeave(e);
+    },
+    [x, y, glareOpacity, onMouseLeave],
+  );
 
   return (
     <motion.div
@@ -118,11 +148,9 @@ const Premium3DCard = ({
 };
 
 // ================= AUTO MARQUEE GALLERY =================
-// ================= AUTO MARQUEE GALLERY =================
 const AutoMarqueeGallery = ({ images }) => {
   if (!images || images.length === 0) return null;
 
-  // Double the images for seamless scrolling
   const displayImages = [...images, ...images];
 
   return (
@@ -142,7 +170,6 @@ const AutoMarqueeGallery = ({ images }) => {
       </div>
 
       <div className="relative overflow-hidden">
-        {/* Gradient overlays for smooth fade effect */}
         <div className="absolute left-0 top-0 bottom-0 w-20 lg:w-40 z-10 bg-gradient-to-r from-[#FDFBF7] to-transparent pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-20 lg:w-40 z-10 bg-gradient-to-l from-[#FDFBF7] to-transparent pointer-events-none" />
 
@@ -157,7 +184,8 @@ const AutoMarqueeGallery = ({ images }) => {
                 alt={`Gallery ${index + 1}`}
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 onError={(e) => {
-                  e.target.src = "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=400&q=80";
+                  e.target.src =
+                    "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=400&q=80";
                 }}
               />
             </div>
@@ -168,398 +196,152 @@ const AutoMarqueeGallery = ({ images }) => {
   );
 };
 
-// ================= FEATURED CELEBRATIONS =================
-const FeaturedCelebrations = ({ featuredItems, handleCursorState, navigate }) => {
+// ================= FEATURED CELEBRATIONS - SHOW ALL DATA =================
+const FeaturedCelebrations = ({
+  featuredItems,
+  handleCursorState,
+  navigate,
+}) => {
   if (!featuredItems || featuredItems.length === 0) return null;
 
   return (
     <section className="py-20 lg:py-32 relative z-10">
       <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16">
+        <div className="text-center mb-12">
+          <span className="font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-3 block">
+            FEATURED CELEBRATIONS
+          </span>
+          <h2 className="font-cormorant text-4xl lg:text-[42px] text-[#1F2937]">
+            Timeless Moments Across the Globe
+          </h2>
+        </div>
+
         <div
-          className="portfolio-grid grid grid-cols-1 lg:grid-cols-4 gap-12"
-          style={{ perspective: 1500 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+          style={{ perspective: 1200 }}
         >
-          <div className="lg:col-span-1 flex flex-col pt-10 relative">
-            <span className="font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-4 block">
-              FEATURED CELEBRATIONS
-            </span>
-            <h2 className="font-cormorant text-4xl lg:text-[42px] text-[#1F2937] leading-[1.1] mb-12">
-              Timeless Moments <br /> Across the Globe
-            </h2>
-
-            <div className="absolute top-32 -left-10 w-64 h-64 opacity-20 pointer-events-none mix-blend-multiply grayscale">
-              <img
-                src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=400&q=80"
-                alt="Floral"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-
-          <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6 relative">
-            {featuredItems.map((project, index) => (
-              <div
-                key={project._id || project.id || index}
-                className="portfolio-card h-full"
+          {featuredItems.map((project, index) => (
+            <div key={project._id || project.id || index} className="h-full">
+              <Premium3DCard
+                onMouseEnter={() => handleCursorState("view", "VIEW")}
+                onMouseLeave={() => handleCursorState("default")}
+                className="h-full"
               >
-                <Premium3DCard
-                  onMouseEnter={() => handleCursorState("view", "VIEW")}
-                  onMouseLeave={() => handleCursorState("default")}
-                  className="h-full"
-                >
-                  <div className="group bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#EBE3D5] flex flex-col h-full hover:border-[#C58B48]/40 transition-colors">
-                    <div className="relative overflow-hidden aspect-[3/4] rounded-lg mb-4 m-2">
-                      <img
-                        src={project.image}
-                        alt={project.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
-                        onError={(e) => {
-                          e.target.style.display = "none";
-                        }}
-                      />
-                      <div className="absolute top-4 left-4 bg-[#C58B48] text-white px-3 py-1 rounded-full text-[10px] font-semibold">
-                        Featured
-                      </div>
-                      <button className="absolute top-4 right-4 text-white/80 hover:text-white transition-colors z-20">
-                        <Heart
-                          className="w-5 h-5 drop-shadow-md"
-                          strokeWidth={1.5}
-                        />
-                      </button>
-                    </div>
-
-                    <div className="px-5 pb-5 flex items-center justify-between mt-auto bg-white z-10">
-                      <div>
-                        <h3 className="font-cormorant text-2xl text-[#1F2937] mb-1">
+                <div className="group bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#EBE3D5] flex flex-col h-full hover:border-[#C58B48]/40 transition-colors relative">
+                  <div className="relative overflow-hidden aspect-[4/5]">
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                      }}
+                    />
+                    {/* Overlay with content - shown on hover */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
+                      <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                        <h3 className="font-cormorant text-2xl text-white mb-1">
                           {project.title}
                         </h3>
-                        <p className="font-inter text-[11px] text-gray-400 flex items-center gap-1">
+                        <p className="font-inter text-sm text-white/80 flex items-center gap-1">
                           <MapPin className="w-3 h-3" />
                           {project.location}
                         </p>
                         {project.category && (
-                          <p className="font-inter text-[10px] text-[#C58B48] mt-0.5">
+                          <p className="font-inter text-xs text-[#C58B48] mt-1">
                             {project.category}
                           </p>
                         )}
-                      </div>
-                      <div className="w-8 h-8 rounded-full border border-[#EBE3D5] flex items-center justify-center text-gray-400 group-hover:border-[#C58B48] group-hover:text-[#C58B48] transition-colors shrink-0">
-                        <ArrowRight size={14} />
+                        <div className="mt-3 inline-flex items-center gap-2 text-white text-xs font-medium">
+                          <span>View Story</span>
+                          <ArrowRight size={14} />
+                        </div>
                       </div>
                     </div>
                   </div>
-                </Premium3DCard>
-              </div>
-            ))}
-          </div>
+                </div>
+              </Premium3DCard>
+            </div>
+          ))}
         </div>
       </div>
     </section>
   );
 };
 
-// ================= CELEBRATION SECTION =================
-const CelebrationSection = ({ celebrationImages, handleCursorState }) => {
-  const hasCelebrationImages = celebrationImages.leftImage ||
-    celebrationImages.rightImage1 ||
-    celebrationImages.rightImage2 ||
-    celebrationImages.rightImage3;
+// ================= CINEMATIC STORYTELLING - SHOW ALL VIDEOS =================
+const CinematicStorytelling = ({
+  videoItems,
+  handleVideoClick,
+  handleCursorState,
+}) => {
+  const [hoveredIndex, setHoveredIndex] = useState(null);
 
-  if (!hasCelebrationImages) return null;
+  if (!videoItems || videoItems.length === 0) return null;
 
   return (
-    <section className="py-8 lg:py-16" style={{ perspective: 1500 }}>
+    <section className="py-16 lg:py-24 relative z-10 bg-[#FAF8F0]">
       <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16">
-        <Premium3DCard>
-          <div className="bg-[#FDFBF7] border border-[#EBE3D5] rounded-xl overflow-hidden p-4 lg:p-6 shadow-[0_15px_40px_rgba(0,0,0,0.04)] relative z-10">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center bg-[#FDFBF7]">
-              <div
-                className="lg:col-span-5 h-[400px] lg:h-[500px] relative rounded-lg overflow-hidden group cursor-none"
-                onMouseEnter={() => handleCursorState("view", "PLAY")}
-                onMouseLeave={() => handleCursorState("default")}
-              >
-                {celebrationImages.leftImage ? (
+        <div className="text-center mb-12">
+          <span className="font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-3 block">
+            CINEMATIC VIDEOS
+          </span>
+          <h2 className="font-cormorant text-4xl lg:text-[42px] text-[#1F2937]">
+            Cinematic Storytelling Through Our Lenses
+          </h2>
+        </div>
+
+        <div
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          style={{ perspective: 1200 }}
+        >
+          {videoItems.map((video, idx) => (
+            <div
+              key={video._id || video.id || idx}
+              className="relative rounded-xl overflow-hidden aspect-video bg-black cursor-pointer"
+              onMouseEnter={() => setHoveredIndex(idx)}
+              onMouseLeave={() => setHoveredIndex(null)}
+              onClick={() => handleVideoClick(video)}
+            >
+              {/* Video Thumbnail with hover effect */}
+              <div className="relative w-full h-full">
+                {video.image ? (
                   <img
-                    src={celebrationImages.leftImage}
-                    alt="Celebration"
-                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                    src={video.image}
+                    alt={video.title}
+                    className="w-full h-full object-cover"
                     onError={(e) => {
-                      e.target.style.display = "none";
+                      e.target.src =
+                        "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80";
                     }}
                   />
                 ) : (
-                  <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400">
-                    No Image
+                  <div className="w-full h-full bg-gray-800 flex items-center justify-center text-white/30">
+                    <Video size={48} />
                   </div>
                 )}
-                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors" />
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 md:hidden">
-                  <div className="w-14 h-14 bg-white/95 rounded-full flex items-center justify-center shadow-lg">
-                    <Play className="w-5 h-5 text-[#C58B48] fill-[#C58B48] ml-1" />
+
+                {/* Play button overlay */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-2xl transform transition-all duration-300 hover:scale-110">
+                    <Play className="w-6 h-6 text-[#C58B48] fill-[#C58B48] ml-1" />
                   </div>
                 </div>
               </div>
 
-              <div className="lg:col-span-4 flex flex-col justify-center px-4 lg:px-10 text-center lg:text-left py-10 lg:py-0">
-                <h2 className="font-cormorant text-4xl lg:text-[46px] text-[#1F2937] leading-[1.1] mb-6">
-                  A Celebration to <br />
-                  <span className="italic text-[#C58B48]">Remember</span>
-                </h2>
-                <div className="w-10 h-[1px] bg-[#C58B48]/50 mx-auto lg:mx-0 mb-6" />
-                <p className="font-inter text-xs text-gray-500 leading-relaxed mb-8">
-                  Every love story is unique. We bring your dreams to life
-                  with creativity, flawless execution and heartfelt moments.
-                </p>
-              </div>
-
+              {/* Title overlay - only visible on hover */}
               <div
-                className="lg:col-span-3 flex flex-col gap-4 h-[400px] lg:h-[500px]"
-                onMouseEnter={() => handleCursorState("view", "VIEW")}
-                onMouseLeave={() => handleCursorState("default")}
+                className={`absolute inset-0 bg-black/50 flex items-center justify-center transition-opacity duration-500 ${
+                  hoveredIndex === idx ? "opacity-100" : "opacity-0"
+                }`}
               >
-                <div className="h-1/3 rounded-lg overflow-hidden relative group cursor-none">
-                  {celebrationImages.rightImage1 ? (
-                    <img
-                      src={celebrationImages.rightImage1}
-                      alt="Moment 1"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                      onError={(e) => {
-                        e.target.style.display = "none";
-                      }}
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 text-xs">
-                      No Image
-                    </div>
-                  )}
-                </div>
-                <div className="h-1/3 rounded-lg overflow-hidden relative group cursor-none">
-                  {celebrationImages.rightImage2 ? (
-                    <img
-                      src={celebrationImages.rightImage2}
-                      alt="Moment 2"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                      onError={(e) => {
-                        e.target.style.display = "none";
-                      }}
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 text-xs">
-                      No Image
-                    </div>
-                  )}
-                </div>
-                <div className="h-1/3 rounded-lg overflow-hidden relative group cursor-none">
-                  {celebrationImages.rightImage3 ? (
-                    <img
-                      src={celebrationImages.rightImage3}
-                      alt="Moment 3"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                      onError={(e) => {
-                        e.target.style.display = "none";
-                      }}
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 text-xs">
-                      No Image
-                    </div>
-                  )}
-                </div>
+                <h3 className="font-cormorant text-2xl md:text-3xl text-white text-center px-4">
+                  {video.title || "Royal Wedding in Udaipur"}
+                </h3>
               </div>
             </div>
-          </div>
-        </Premium3DCard>
-      </div>
-    </section>
-  );
-};
-
-// ================= VIDEO SECTION WITH PAGINATION =================
-const VideoSection = ({ 
-  videoItems, 
-  videosLoading, 
-  handleVideoClick, 
-  handleCursorState,
-  videoPage,
-  videoTotalPages,
-  onVideoPageChange,
-  videoTotalItems,
-  videoLimit
-}) => {
-  if (!videoItems || videoItems.length === 0) return null;
-
-  const renderVideoPagination = () => {
-    if (videoTotalPages <= 1) return null;
-
-    const pageNumbers = [];
-    const maxVisible = 5;
-    let startPage = Math.max(1, videoPage - Math.floor(maxVisible / 2));
-    let endPage = Math.min(videoTotalPages, startPage + maxVisible - 1);
-
-    if (endPage - startPage < maxVisible - 1) {
-      startPage = Math.max(1, endPage - maxVisible + 1);
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      pageNumbers.push(i);
-    }
-
-    return (
-      <div className="flex items-center justify-center gap-2 mt-8">
-        <button
-          onClick={() => onVideoPageChange(videoPage - 1)}
-          disabled={videoPage === 1}
-          className="px-3 py-2 rounded-lg border border-gray-200 text-gray-600 hover:border-[#C58B48] hover:text-[#C58B48] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <ChevronLeft size={18} />
-        </button>
-
-        {startPage > 1 && (
-          <>
-            <button
-              onClick={() => onVideoPageChange(1)}
-              className="px-3.5 py-2 rounded-lg border border-gray-200 text-gray-600 hover:border-[#C58B48] hover:text-[#C58B48] transition-colors"
-            >
-              1
-            </button>
-            {startPage > 2 && <span className="px-2 text-gray-400">...</span>}
-          </>
-        )}
-
-        {pageNumbers.map((page) => (
-          <button
-            key={page}
-            onClick={() => onVideoPageChange(page)}
-            className={`px-3.5 py-2 rounded-lg border transition-colors ${
-              videoPage === page
-                ? "bg-[#C58B48] text-white border-[#C58B48]"
-                : "border-gray-200 text-gray-600 hover:border-[#C58B48] hover:text-[#C58B48]"
-            }`}
-          >
-            {page}
-          </button>
-        ))}
-
-        {endPage < videoTotalPages && (
-          <>
-            {endPage < videoTotalPages - 1 && (
-              <span className="px-2 text-gray-400">...</span>
-            )}
-            <button
-              onClick={() => onVideoPageChange(videoTotalPages)}
-              className="px-3.5 py-2 rounded-lg border border-gray-200 text-gray-600 hover:border-[#C58B48] hover:text-[#C58B48] transition-colors"
-            >
-              {videoTotalPages}
-            </button>
-          </>
-        )}
-
-        <button
-          onClick={() => onVideoPageChange(videoPage + 1)}
-          disabled={videoPage === videoTotalPages}
-          className="px-3 py-2 rounded-lg border border-gray-200 text-gray-600 hover:border-[#C58B48] hover:text-[#C58B48] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <ChevronRight size={18} />
-        </button>
-      </div>
-    );
-  };
-
-  return (
-    <section className="py-16 relative z-10 bg-[#FAF8F0]">
-      <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
-          <div>
-            <span className="font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-3 block">
-              FEATURED VIDEOS
-            </span>
-            <h2 className="font-cormorant text-4xl lg:text-[42px] text-[#1F2937]">
-              Cinematic Storytelling
-            </h2>
-            <p className="font-inter text-sm text-gray-500 mt-2">
-              Showing {videoItems.length} of {videoTotalItems} videos
-            </p>
-          </div>
+          ))}
         </div>
-
-        {videosLoading ? (
-          <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#C58B48]"></div>
-          </div>
-        ) : (
-          <>
-            <div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-              style={{ perspective: 1200 }}
-            >
-              {videoItems.map((video, idx) => (
-                <div key={video._id || video.id || idx} className="video-card">
-                  <Premium3DCard
-                    onMouseEnter={() => handleCursorState("view", "PLAY")}
-                    onMouseLeave={() => handleCursorState("default")}
-                    onClick={() => handleVideoClick(video)}
-                  >
-                    <div className="group bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#EBE3D5] hover:border-[#C58B48]/40 transition-all cursor-pointer">
-                      <div className="relative aspect-video overflow-hidden">
-                        <img
-                          src={
-                            video.image ||
-                            "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80"
-                          }
-                          alt={video.title}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                          onError={(e) => {
-                            e.target.src =
-                              "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80";
-                          }}
-                        />
-                        <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition-colors duration-500" />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="w-16 h-16 bg-white/95 rounded-full flex items-center justify-center shadow-2xl transform scale-90 opacity-80 group-hover:scale-110 group-hover:opacity-100 transition-all duration-300 ease-out">
-                            <Play className="w-6 h-6 text-[#C58B48] fill-[#C58B48] ml-1" />
-                          </div>
-                        </div>
-                        {video.featured && (
-                          <div className="absolute top-3 left-3 bg-[#C58B48] text-white text-[8px] px-2 py-0.5 rounded-full font-semibold tracking-wider">
-                            Featured
-                          </div>
-                        )}
-                      </div>
-                      <div className="p-4">
-                        <h3 className="font-cormorant text-xl text-[#1F2937] mb-1">
-                          {video.title}
-                        </h3>
-                        <div className="flex items-center gap-4 text-sm text-gray-500">
-                          <span className="flex items-center gap-1">
-                            <MapPin size={14} />
-                            {video.location}
-                          </span>
-                          {video.date && (
-                            <span className="flex items-center gap-1">
-                              <Calendar size={14} />
-                              {video.date}
-                            </span>
-                          )}
-                        </div>
-                        {video.category && (
-                          <span className="inline-block mt-2 text-xs text-[#C58B48] font-medium">
-                            {video.category}
-                          </span>
-                        )}
-                        <div className="mt-3 flex items-center gap-2 text-[#C58B48] hover:text-[#1F2937] transition-colors font-inter text-sm font-medium">
-                          <span>Watch Video</span>
-                          <Play size={14} />
-                        </div>
-                      </div>
-                    </div>
-                  </Premium3DCard>
-                </div>
-              ))}
-            </div>
-            
-            {renderVideoPagination()}
-          </>
-        )}
       </div>
     </section>
   );
@@ -576,17 +358,16 @@ const FinalCTA = ({ pageImages, navigate, handleCursorState }) => {
         <div className="w-full bg-[#F5EFE6] rounded-2xl overflow-hidden flex flex-col lg:flex-row shadow-[0_20px_50px_rgba(0,0,0,0.06)] border border-white/50 relative z-10 group">
           <div className="w-full lg:w-1/2 p-10 lg:p-16 flex flex-col justify-center relative z-20 bg-[#F5EFE6]">
             <span className="font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-4 block">
-              READY TO BEGIN YOUR JOURNEY?
+              YOUR STORY BEGINS HERE
             </span>
             <h2 className="font-cormorant text-4xl lg:text-[48px] text-[#1F2937] leading-[1.1] mb-6">
-              Let's Create Your <br />
-              <span className="italic text-[#C58B48]">
-                Unforgettable Story
-              </span>
+              Let's Create Something <br />
+              <span className="italic text-[#C58B48]">Truly Unforgettable</span>
             </h2>
             <p className="font-inter text-sm text-gray-600 leading-relaxed mb-10 max-w-md">
-              Share your vision with us and let our experts craft a
-              celebration that reflects your style and story.
+              From the first idea to the final celebration, we bring your vision
+              to life with thoughtful planning, beautiful details, and
+              experiences made entirely for you.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center gap-6">
@@ -596,8 +377,7 @@ const FinalCTA = ({ pageImages, navigate, handleCursorState }) => {
                 className="font-montserrat text-[10px] w-full sm:w-auto shadow-none hover:scale-105 transition-transform"
                 onClick={() => navigate("/contact")}
               >
-                SCHEDULE A CONSULTATION{" "}
-                <ArrowRight size={14} className="ml-2" />
+                BEGIN YOUR JOURNEY <ArrowRight size={14} className="ml-2" />
               </Button>
             </div>
           </div>
@@ -623,9 +403,7 @@ const FinalCTA = ({ pageImages, navigate, handleCursorState }) => {
               whileHover={{ scale: 1.1, rotate: 10 }}
               className="absolute top-10 right-10 w-28 h-28 rounded-full border border-[#D4AF37]/40 flex items-center justify-center opacity-80 backdrop-blur-md hidden md:flex cursor-pointer bg-white/10"
             >
-              <span className="font-cormorant text-4xl text-[#D4AF37]">
-                V
-              </span>
+              <span className="font-cormorant text-4xl text-[#D4AF37]">V</span>
               <svg
                 viewBox="0 0 100 100"
                 className="absolute inset-0 w-full h-full animate-[spin_20s_linear_infinite]"
@@ -765,16 +543,16 @@ const ProjectModal = ({ selectedProject, setSelectedProject }) => {
 // ================= MAIN PORTFOLIO COMPONENT =================
 const Portfolio = () => {
   // ========== ALL HOOKS IN CONSISTENT ORDER ==========
-  
+
   // Refs
   const compRef = useRef(null);
-  const windowSizeRef = useRef({ 
-    width: typeof window !== 'undefined' ? window.innerWidth : 0, 
-    height: typeof window !== 'undefined' ? window.innerHeight : 0 
+  const windowSizeRef = useRef({
+    width: typeof window !== "undefined" ? window.innerWidth : 0,
+    height: typeof window !== "undefined" ? window.innerHeight : 0,
   });
 
   // State hooks
-  const [activeFilter, setActiveFilter] = useState("All Celebrations");
+  const [activeFilter, setActiveFilter] = useState("All");
   const [selectedProject, setSelectedProject] = useState(null);
   const [portfolioItems, setPortfolioItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
@@ -783,19 +561,19 @@ const Portfolio = () => {
   const [loading, setLoading] = useState(true);
   const [videosLoading, setVideosLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   // Portfolio pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const itemsPerPage = 9;
-  
+
   // Video pagination
   const [videoPage, setVideoPage] = useState(1);
   const [videoTotalPages, setVideoTotalPages] = useState(1);
   const [videoTotalItems, setVideoTotalItems] = useState(0);
-  const videoLimit = 3;
-  
+  const videoLimit = 100; // Set to large number to show all videos
+
   const [selectedItemId, setSelectedItemId] = useState(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
@@ -817,16 +595,55 @@ const Portfolio = () => {
   // Motion values
   const globalX = useMotionValue(0);
   const globalY = useMotionValue(0);
-  
-  const heroX = useTransform(globalX, [0, windowSizeRef.current.width], [15, -15]);
-  const heroY = useTransform(globalY, [0, windowSizeRef.current.height], [15, -15]);
-  const bgX = useTransform(globalX, [0, windowSizeRef.current.width], [-15, 15]);
-  const bgY = useTransform(globalY, [0, windowSizeRef.current.height], [-15, 15]);
+
+  const heroX = useTransform(
+    globalX,
+    [0, windowSizeRef.current.width],
+    [15, -15],
+  );
+  const heroY = useTransform(
+    globalY,
+    [0, windowSizeRef.current.height],
+    [15, -15],
+  );
+  const bgX = useTransform(
+    globalX,
+    [0, windowSizeRef.current.width],
+    [-15, 15],
+  );
+  const bgY = useTransform(
+    globalY,
+    [0, windowSizeRef.current.height],
+    [-15, 15],
+  );
 
   const navigate = useNavigate();
 
+  // ========== FILTERS CONFIGURATION ==========
+  const filterConfig = [
+    { name: "All", icon: Sparkles },
+    { name: "Weddings", icon: Heart },
+    { name: "Destination", icon: Plane },
+    { name: "Corporate", icon: Building2 },
+    { name: "Private Events", icon: Users },
+    { name: "Creative Design", icon: Palette },
+    { name: "Décor & Styling", icon: Flower2 },
+    { name: "Production", icon: Film },
+    { name: "Entertainment", icon: Music },
+    { name: "Hospitality", icon: Coffee },
+    { name: "Food & Beverage", icon: Utensils },
+    { name: "Photography & Films", icon: Camera },
+    { name: "Exhibitions", icon: Gift },
+    { name: "Special Effects", icon: Sparkles },
+    { name: "Stage & Shows", icon: Mic },
+    { name: "Celebrity & VIP", icon: Crown },
+    { name: "Brand Activations", icon: Star },
+    { name: "MICE", icon: Shield },
+    { name: "Event Execution", icon: Globe },
+  ];
+
   // ========== useCallback hooks ==========
-  
+
   const handleCursorState = useCallback((variant, text = "") => {
     setCursorVariant(variant);
     setCursorText(text);
@@ -844,34 +661,38 @@ const Portfolio = () => {
     setIsDetailsModalOpen(true);
   }, []);
 
-  const goToPage = useCallback((page) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  }, [totalPages]);
+  const goToPage = useCallback(
+    (page) => {
+      if (page >= 1 && page <= totalPages) {
+        setCurrentPage(page);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    },
+    [totalPages],
+  );
 
-  const goToVideoPage = useCallback((page) => {
-    if (page >= 1 && page <= videoTotalPages) {
-      setVideoPage(page);
-    }
-  }, [videoTotalPages]);
+  const goToVideoPage = useCallback(
+    (page) => {
+      if (page >= 1 && page <= videoTotalPages) {
+        setVideoPage(page);
+      }
+    },
+    [videoTotalPages],
+  );
 
   // ========== useEffect hooks ==========
 
-  // Effect 1: Window resize handler
   useEffect(() => {
     const handleResize = () => {
-      windowSizeRef.current = { 
-        width: window.innerWidth, 
-        height: window.innerHeight 
+      windowSizeRef.current = {
+        width: window.innerWidth,
+        height: window.innerHeight,
       };
     };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Effect 2: Global mouse move handler
   useEffect(() => {
     const handleGlobalMouse = (e) => {
       globalX.set(e.clientX);
@@ -881,7 +702,6 @@ const Portfolio = () => {
     return () => window.removeEventListener("mousemove", handleGlobalMouse);
   }, [globalX, globalY]);
 
-  // Effect 3: Fetch ALL featured items
   useEffect(() => {
     const fetchFeaturedItems = async () => {
       try {
@@ -900,7 +720,6 @@ const Portfolio = () => {
     fetchFeaturedItems();
   }, []);
 
-  // Effect 4: Fetch portfolio items with pagination
   useEffect(() => {
     const fetchPortfolioItems = async () => {
       try {
@@ -930,7 +749,9 @@ const Portfolio = () => {
 
           setPortfolioItems(items);
           setFilteredItems(items);
-          setTotalPages(response.data.totalPages || Math.ceil(total / itemsPerPage));
+          setTotalPages(
+            response.data.totalPages || Math.ceil(total / itemsPerPage),
+          );
           setTotalItems(response.data.total || total);
         } else {
           setError("No portfolio items found");
@@ -950,7 +771,6 @@ const Portfolio = () => {
     fetchPortfolioItems();
   }, [currentPage]);
 
-  // Effect 5: Fetch portfolio page images
   useEffect(() => {
     const fetchPageImages = async () => {
       try {
@@ -992,7 +812,6 @@ const Portfolio = () => {
     fetchPageImages();
   }, []);
 
-  // Effect 6: Fetch videos with pagination
   useEffect(() => {
     const fetchVideos = async () => {
       try {
@@ -1025,9 +844,8 @@ const Portfolio = () => {
     fetchVideos();
   }, [videoPage]);
 
-  // Effect 7: Filter items by category
   useEffect(() => {
-    if (activeFilter === "All Celebrations") {
+    if (activeFilter === "All") {
       setFilteredItems(portfolioItems);
     } else {
       setFilteredItems(
@@ -1042,54 +860,22 @@ const Portfolio = () => {
 
   // ========== useMemo hooks ==========
 
-  const celebrationImages = useMemo(() => ({
-    leftImage: pageImages.centerImageMain || pageImages.heroBanner || null,
-    rightImage1: pageImages.centerImage1 || null,
-    rightImage2: pageImages.centerImage2 || null,
-    rightImage3: pageImages.centerImage3 || null,
-  }), [pageImages]);
+  const celebrationImages = useMemo(
+    () => ({
+      leftImage: pageImages.centerImageMain || pageImages.heroBanner || null,
+      rightImage1: pageImages.centerImage1 || null,
+      rightImage2: pageImages.centerImage2 || null,
+      rightImage3: pageImages.centerImage3 || null,
+    }),
+    [pageImages],
+  );
 
   const galleryImages = useMemo(() => pageImages.images || [], [pageImages]);
 
-  const filters = useMemo(() => {
-    const categories = new Set();
-    portfolioItems.forEach((item) => {
-      if (item.category) {
-        categories.add(item.category);
-      }
-    });
-    
-    const filterNames = ["All Celebrations", ...Array.from(categories)];
-    
-    const iconMap = {
-      "All Celebrations": Sparkles,
-      Weddings: Heart,
-      "Pre Wedding": Camera,
-      "Destination Wedding": Camera,
-      "Mehndi & Haldi": Flower2,
-      Sangeet: Music,
-      Reception: GlassWater,
-      "Corporate Events": Building2,
-      "Social Events": Users,
-    };
-    
-    return filterNames.map((cat) => {
-      let Icon = Sparkles;
-      Object.keys(iconMap).forEach((key) => {
-        if (
-          cat.toLowerCase().includes(key.toLowerCase()) ||
-          key.toLowerCase().includes(cat.toLowerCase())
-        ) {
-          Icon = iconMap[key];
-        }
-      });
-      return { name: cat, icon: Icon };
-    });
-  }, [portfolioItems]);
-
-  const displayItems = useMemo(() => 
-    filteredItems.length > 0 ? filteredItems : portfolioItems,
-  [filteredItems, portfolioItems]);
+  const displayItems = useMemo(
+    () => (filteredItems.length > 0 ? filteredItems : portfolioItems),
+    [filteredItems, portfolioItems],
+  );
 
   // ========== RENDER PAGINATION ==========
   const renderPagination = useCallback(() => {
@@ -1189,15 +975,15 @@ const Portfolio = () => {
       ref={compRef}
       className="min-h-screen bg-[#FDFBF7] font-sans selection:bg-[#C58B48] selection:text-white pb-20 overflow-x-hidden md:cursor-none"
     >
-      {/* HERO SECTION */}
+      {/* HERO SECTION - FIXED OVERFLOW */}
       <section
-        className="relative w-full min-h-[85vh] flex items-center pt-24 lg:pt-32 pb-24"
+        className="relative w-full min-h-[85vh] flex items-center pt-24 lg:pt-28 pb-16 lg:pb-20 overflow-hidden"
         style={{ perspective: 1200 }}
       >
         {pageImages.heroBanner ? (
           <motion.div
             style={{ x: bgX, y: bgY }}
-            className="absolute top-0 right-[-5%] w-full lg:w-[65%] h-[110vh] z-0 pointer-events-none"
+            className="absolute top-0 right-[-5%] w-full lg:w-[65%] h-full z-0 pointer-events-none"
           >
             <img
               src={pageImages.heroBanner}
@@ -1216,7 +1002,7 @@ const Portfolio = () => {
             <div className="absolute inset-0 bg-gradient-to-t from-[#FDFBF7] via-transparent to-transparent" />
           </motion.div>
         ) : (
-          <div className="absolute top-0 right-[-5%] w-full lg:w-[65%] h-[110vh] z-0 pointer-events-none bg-[#FDFBF7]" />
+          <div className="absolute top-0 right-[-5%] w-full lg:w-[65%] h-full z-0 pointer-events-none bg-[#FDFBF7]" />
         )}
 
         <div
@@ -1238,29 +1024,48 @@ const Portfolio = () => {
 
           <motion.div
             style={{ x: heroX, y: heroY }}
-            className="w-full lg:w-[50%] pt-10 pl-0 md:pl-10"
+            className="w-full lg:w-[50%] pt-4 lg:pt-8 pl-0 md:pl-10"
           >
-            <span className="hero-element font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-4 block">
+            <span className="hero-element font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-3 block">
               OUR PORTFOLIO
             </span>
-            <h1 className="hero-element font-cormorant text-5xl lg:text-[72px] text-[#1F2937] leading-[1.1] mb-6">
-              Stories we've <br />
-              <span className="italic text-[#C58B48]">Beautifully Crafted</span>
+            <h1 className="hero-element font-cormorant text-4xl md:text-5xl lg:text-[64px] text-[#1F2937] leading-[1.1] mb-4">
+              The Celebrations We Create <br />
+              <span className="italic text-[#C58B48]">
+                The Stories They Leave Behind
+              </span>
             </h1>
 
-            <p className="hero-element font-inter text-gray-600 text-sm leading-[1.8] max-w-[380px] mb-10">
-              A glimpse of celebrations we've designed with passion, precision
-              and perfection across breathtaking destinations.
+            <p className="hero-element font-inter text-gray-600 text-sm leading-[1.7] max-w-[420px] mb-6 line-clamp-6 lg:line-clamp-none">
+              A celebration is more than a beautiful setting or a perfectly
+              planned occasion. It is the laughter shared, the music that fills
+              the evening, the people gathered together and the moments that
+              stay with you long after the last guest has left.
             </p>
 
-            <div className="hero-element flex flex-col sm:flex-row items-center gap-6">
+            <p className="hero-element font-inter text-gray-600 text-sm leading-[1.7] max-w-[420px] mb-6 line-clamp-4 lg:line-clamp-none">
+              Our portfolio is a collection of celebrations brought to life by
+              Violin Events LLP across extraordinary destinations. From grand
+              destination weddings and intimate gatherings to spectacular events
+              filled with exceptional artists, entertainment and unforgettable
+              experiences, every celebration is thoughtfully curated around the
+              people, the place and the story.
+            </p>
+
+            <p className="hero-element font-inter text-gray-600 text-sm leading-[1.7] max-w-[420px] mb-8 line-clamp-3 lg:line-clamp-none">
+              Explore the moments, details and experiences that define our work
+              and discover how ordinary occasions can become extraordinary
+              memories.
+            </p>
+
+            <div className="hero-element flex flex-col sm:flex-row items-center gap-4">
               <Button
                 variant="champagne"
                 size="md"
-                className="font-montserrat tracking-[0.2em] shadow-none w-full sm:w-auto hover:scale-105 transition-transform"
+                className="font-montserrat text-[9px] tracking-[0.2em] shadow-none w-full sm:w-auto hover:scale-105 transition-transform"
                 onClick={() => navigate("/contact")}
               >
-                EXPLORE OUR WORK <ArrowRight size={14} className="ml-1" />
+                EXPLORE OUR PORTFOLIO <ArrowRight size={14} className="ml-1" />
               </Button>
             </div>
           </motion.div>
@@ -1270,7 +1075,7 @@ const Portfolio = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5, duration: 1 }}
-          className="absolute bottom-16 left-6 lg:left-24 flex flex-col items-center gap-2 text-gray-400 opacity-60 pointer-events-none"
+          className="absolute bottom-8 left-6 lg:left-24 flex flex-col items-center gap-2 text-gray-400 opacity-60 pointer-events-none"
         >
           <span className="font-montserrat text-[8px] font-bold tracking-[0.2em] uppercase">
             SCROLL
@@ -1281,19 +1086,19 @@ const Portfolio = () => {
 
       {/* FILTER BAR */}
       <div className="w-full px-4 lg:px-16 max-w-[1400px] mx-auto -mt-16 relative z-30 flex justify-center">
-        <div className="bg-white/90 backdrop-blur-md rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.06)] border border-[#EBE3D5] p-2 flex items-center overflow-x-auto no-scrollbar w-full max-w-[1100px]">
-          {filters.map((filter, idx) => (
+        <div className="bg-white/90 backdrop-blur-md rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.06)] border border-[#EBE3D5] p-2 flex items-center overflow-x-auto no-scrollbar w-full max-w-[1200px]">
+          {filterConfig.map((filter, idx) => (
             <button
               key={idx}
               onClick={() => setActiveFilter(filter.name)}
-              className={`flex flex-col items-center justify-center min-w-[110px] px-4 py-3 rounded-full transition-all duration-300 ${
+              className={`flex flex-col items-center justify-center min-w-[80px] px-3 py-2 rounded-full transition-all duration-300 ${
                 activeFilter === filter.name
                   ? "text-[#C58B48]"
                   : "text-gray-400 hover:text-[#C58B48]"
               }`}
             >
-              <filter.icon className="w-5 h-5 mb-1.5" strokeWidth={1.5} />
-              <span className="font-montserrat text-[8px] font-bold tracking-widest uppercase whitespace-nowrap">
+              <filter.icon className="w-4 h-4 mb-1" strokeWidth={1.5} />
+              <span className="font-montserrat text-[7px] font-bold tracking-widest uppercase whitespace-nowrap">
                 {filter.name}
               </span>
             </button>
@@ -1301,33 +1106,21 @@ const Portfolio = () => {
         </div>
       </div>
 
-      {/* FEATURED CELEBRATIONS - ALL ITEMS */}
-      <FeaturedCelebrations 
-        featuredItems={featuredItems} 
-        handleCursorState={handleCursorState} 
-        navigate={navigate} 
+      {/* FEATURED CELEBRATIONS - SHOW ALL DATA */}
+      <FeaturedCelebrations
+        featuredItems={featuredItems}
+        handleCursorState={handleCursorState}
+        navigate={navigate}
       />
 
-      {/* ✅ AUTO MARQUEE GALLERY - SHOW ALL GALLERY IMAGES */}
+      {/* AUTO MARQUEE GALLERY */}
       <AutoMarqueeGallery images={galleryImages} />
 
-      {/* CELEBRATION SECTION */}
-      <CelebrationSection 
-        celebrationImages={celebrationImages} 
-        handleCursorState={handleCursorState} 
-      />
-
-      {/* VIDEOS SECTION WITH PAGINATION */}
-      <VideoSection 
+      {/* CINEMATIC STORYTELLING - SHOW ALL VIDEOS */}
+      <CinematicStorytelling
         videoItems={videoItems}
-        videosLoading={videosLoading}
         handleVideoClick={handleVideoClick}
         handleCursorState={handleCursorState}
-        videoPage={videoPage}
-        videoTotalPages={videoTotalPages}
-        onVideoPageChange={goToVideoPage}
-        videoTotalItems={videoTotalItems}
-        videoLimit={videoLimit}
       />
 
       {/* ALL PORTFOLIO ITEMS WITH PAGINATION */}
@@ -1443,7 +1236,7 @@ const Portfolio = () => {
       </section>
 
       {/* FINAL CTA */}
-      <FinalCTA 
+      <FinalCTA
         pageImages={pageImages}
         navigate={navigate}
         handleCursorState={handleCursorState}
@@ -1451,12 +1244,13 @@ const Portfolio = () => {
 
       {/* MODALS */}
       <AnimatePresence>
-        <ProjectModal 
-          selectedProject={selectedProject} 
-          setSelectedProject={setSelectedProject} 
+        <ProjectModal
+          selectedProject={selectedProject}
+          setSelectedProject={setSelectedProject}
         />
       </AnimatePresence>
 
+      {/* Video Modal */}
       <VideoModal
         isOpen={isVideoModalOpen}
         onClose={() => {

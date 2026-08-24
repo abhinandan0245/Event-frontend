@@ -5,15 +5,75 @@ import {
   ChevronLeft,
   MapPin,
   Star,
-  Users,
-  Calendar,
-  Music,
-  Mic,
   ArrowRight,
   Sparkles,
   Play,
 } from "lucide-react";
 import { artistPublicApi } from "../api/artistPublicApi";
+
+// Exact category content from the text file - matched by lowercase category name
+const CATEGORY_CONTENT = {
+  "bollywood celebrities": {
+    caption: "Bollywood Celebrities for Unforgettable Events",
+    description:
+      "Bring the glamour and star power of Bollywood to your celebration with Violin Events LLP. Discover renowned actors, actresses, celebrity personalities and influencers for luxury weddings, destination celebrations, corporate events, private parties and exclusive gatherings. From celebrity appearances and guest engagements to special performances, we help clients find the right Bollywood talent for events across Dubai, India, Sri Lanka, Malaysia, Thailand and Vietnam.",
+  },
+  "singers & vocalists": {
+    caption: "Exceptional Singers & Vocalists for Every Celebration",
+    description:
+      "Set the perfect atmosphere with exceptional singers and vocalists curated for unforgettable occasions. Violin Events LLP connects you with Bollywood singers, playback artists, independent vocalists, Sufi singers, classical performers and contemporary musicians. Whether you are planning an intimate wedding ceremony, luxury reception, corporate gala or destination celebration, discover voices that bring emotion, energy and personality to your event across Dubai, India, Sri Lanka, Malaysia, Thailand and Vietnam.",
+  },
+  "dance & electronic arts": {
+    caption: "Dance & Electronic Artists That Bring Events to Life",
+    description:
+      "Create an energetic and visually captivating experience with exceptional dance and electronic artists. From contemporary dancers and EDM performers to creative movement artists and electronic musicians, Violin Events LLP brings together talent for modern celebrations and luxury events. Our artists are suited for weddings, sangeet celebrations, private parties, club events, corporate experiences and destination celebrations across Dubai, India, Sri Lanka, Malaysia, Thailand and Vietnam.",
+  },
+  "artistes & hosts": {
+    caption: "Charismatic Artistes & Hosts for Extraordinary Events",
+    description:
+      "The right host can transform an event from a gathering into an experience. Violin Events LLP connects you with professional wedding hosts, celebrity hosts, corporate emcees, presenters and multilingual artistes who know how to engage audiences and keep celebrations flowing seamlessly. From luxury destination weddings to corporate conferences, award ceremonies and gala evenings, find experienced personalities for events across Dubai, India, Sri Lanka, Malaysia, Thailand and Vietnam.",
+  },
+  "live bands": {
+    caption: "Live Bands for Unforgettable Celebrations",
+    description:
+      "Bring your event to life with the energy of live music. Violin Events LLP connects you with exceptional Bollywood bands, fusion ensembles, acoustic groups, jazz bands, rock bands and contemporary live performers. Whether you are planning a luxury wedding, cocktail evening, private celebration, hotel event or corporate gala, discover live bands that create the right atmosphere for your guests across Dubai, India, Sri Lanka, Malaysia, Thailand and Vietnam.",
+  },
+  "sufi & qawwali artists": {
+    caption: "Soulful Sufi & Qawwali Artists",
+    description:
+      "Add emotion, culture and timeless musical expression to your celebration with exceptional Sufi and Qawwali artists. Violin Events LLP brings together soulful singers, Qawwali ensembles, classical vocalists and traditional performers for deeply immersive musical experiences. Perfect for wedding celebrations, intimate gatherings, cultural occasions and luxury destination events, our artists bring authenticity and soul to celebrations across Dubai, India, Sri Lanka, Malaysia, Thailand and Vietnam.",
+  },
+  "wedding entertainment": {
+    caption: "Extraordinary Wedding Entertainment for Celebrations That Matter",
+    description:
+      "Your wedding deserves entertainment as memorable as the occasion itself. Violin Events LLP offers a curated selection of singers, DJs, live bands, dancers, celebrity artists, hosts, instrumentalists and special performers for weddings of every style. From grand destination weddings in Dubai and Thailand to intimate celebrations in India, Sri Lanka, Malaysia and Vietnam, we help you discover entertainment that complements your wedding, venue and guests.",
+  },
+  "dance performers": {
+    caption: "Dance Performers Who Command the Stage",
+    description:
+      "Make your celebration visually unforgettable with exceptional dance performers. From Bollywood and contemporary dance to classical, fusion, international and specialty performances, Violin Events LLP connects you with artists who know how to captivate an audience. Create spectacular moments for sangeet ceremonies, wedding celebrations, corporate events, stage shows, private parties and destination weddings across Dubai, India, Sri Lanka, Malaysia, Thailand and Vietnam.",
+  },
+  "special acts & stage shows": {
+    caption: "Spectacular Special Acts & Stage Shows",
+    description:
+      "Give your guests something they never expected. Violin Events LLP brings together extraordinary performers and specialty acts including illusionists, magicians, acrobats, aerial performers, LED artists, immersive acts and visually captivating stage entertainment. Designed for luxury weddings, corporate celebrations, gala dinners, brand events and private occasions, these performances add surprise, excitement and unforgettable moments to events across Dubai, India, Sri Lanka, Malaysia, Thailand and Vietnam.",
+  },
+  "instrumental artists": {
+    caption: "Instrumental Artists for Elegant Events",
+    description:
+      "Create an atmosphere of sophistication with exceptional instrumental musicians. Violin Events LLP connects you with talented violinists, saxophonists, pianists, guitarists, flautists, percussionists, cellists and other instrumental performers. Whether you need elegant music for a wedding ceremony, live entertainment for a cocktail evening or refined background music for a luxury dinner, discover musicians for events across Dubai, India, Sri Lanka, Malaysia, Thailand and Vietnam.",
+  },
+  "international talent": {
+    caption: "International Talent for Global Celebrations",
+    description:
+      "Bring a truly international character to your event with exceptional artists from around the world. Violin Events LLP connects clients with international singers, musicians, DJs, dancers, cultural performers and specialty artists for extraordinary celebrations. Whether you are planning a destination wedding, luxury resort event, corporate gathering or international celebration, discover global entertainment for events in Dubai, India, Sri Lanka, Malaysia, Thailand and Vietnam.",
+  },
+  "corporate & luxury entertainment": {
+    caption: "Premium Entertainment for Corporate & Luxury Events",
+    description:
+      "Exceptional events require entertainment that reflects their scale, audience and ambition. Violin Events LLP provides access to premium artists, celebrity appearances, live bands, luxury DJs, international performers, corporate hosts and specialty acts. From corporate galas and award ceremonies to luxury brand launches, VIP celebrations, conferences and exclusive private events, we curate entertainment experiences for discerning clients across Dubai, India, Sri Lanka, Malaysia, Thailand and Vietnam.",
+  },
+};
 
 const ArtistsByCategory = () => {
   const { categoryId } = useParams();
@@ -67,6 +127,34 @@ const ArtistsByCategory = () => {
     };
     return styles[availability] || styles.available;
   };
+
+  // Get exact category content based on category name (case-insensitive)
+  const getCategoryContent = () => {
+    if (!category) return null;
+    
+    const categoryNameLower = category.name?.toLowerCase().trim() || "";
+    
+    // Try exact match by lowercase category name
+    if (CATEGORY_CONTENT[categoryNameLower]) {
+      return CATEGORY_CONTENT[categoryNameLower];
+    }
+    
+    // Try partial match - find key that contains the category name
+    const matchedKey = Object.keys(CATEGORY_CONTENT).find(
+      key => categoryNameLower.includes(key) || key.includes(categoryNameLower)
+    );
+    if (matchedKey) {
+      return CATEGORY_CONTENT[matchedKey];
+    }
+    
+    // Fallback: use category data
+    return {
+      caption: `${category.name || "Artists"} for Unforgettable Events`,
+      description: category.description || `Discover exceptional ${category.name || "artists"} for your celebration.`,
+    };
+  };
+
+  const content = getCategoryContent();
 
   if (loading) {
     return (
@@ -130,17 +218,21 @@ const ArtistsByCategory = () => {
               <span className="text-sm font-medium">Back</span>
             </button>
 
-            <span className="font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-3 block">
-              {category?.name || "Artists"}
-            </span>
-            <h1 className="font-serif text-4xl md:text-5xl lg:text-[56px] text-[#1F2937] leading-[1.1] mb-4">
+            {/* Category Name - Main Heading */}
+            <h1 className="font-serif text-3xl md:text-4xl lg:text-[48px] text-[#1F2937] leading-[1.1] mb-2">
               {category?.name || "Artists"}
             </h1>
-            {category?.description && (
-              <p className="font-inter text-gray-600 text-sm leading-[1.8] max-w-[480px] mb-2">
-                {category.description}
-              </p>
-            )}
+
+            {/* Caption */}
+            <span className="font-montserrat text-[#C58B48] text-[10px] font-bold tracking-[0.2em] uppercase mb-3 block">
+              {content?.caption || category?.name || "Artists"}
+            </span>
+
+            {/* Description */}
+            <p className="font-inter text-gray-600 text-sm leading-[1.8] max-w-[560px] mb-3">
+              {content?.description || category?.description || `Discover exceptional ${category?.name || "artists"} for your celebration.`}
+            </p>
+
             <p className="text-sm text-[#C58B48] font-medium">
               {artists.length} {artists.length === 1 ? "Artist" : "Artists"} available
             </p>
@@ -234,10 +326,6 @@ const ArtistsByCategory = () => {
                       <span className="font-semibold text-[#C58B48]">
                         {formatPrice(artist.price, artist.priceUnit)}
                       </span>
-                      {/* <span className="text-xs text-gray-400 flex items-center gap-1">
-                        <Users size={12} />
-                        {artist.views || 0}
-                      </span> */}
                     </div>
                   </div>
                 </Link>

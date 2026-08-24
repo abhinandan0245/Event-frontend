@@ -27,6 +27,7 @@ import {
   ChevronRight,
   Play,
   Video,
+  Bed,
 } from "lucide-react";
 import Button from "./Button";
 import { venueApi } from "../../api/venueApi";
@@ -71,6 +72,7 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
   const [isPaused, setIsPaused] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
   const popupRef = useRef(null);
+  const contentRef = useRef(null);
   const slideInterval = useRef(null);
 
   // Fetch venue details when popup opens
@@ -108,7 +110,7 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
     return () => document.removeEventListener("keydown", handleEscape);
   }, [onClose]);
 
-  // Handle click outside
+  // Handle click outside - fixed to only close when clicking outside the popup
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (popupRef.current && !popupRef.current.contains(e.target)) {
@@ -116,14 +118,30 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
       }
     };
     if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
+      // Use mousedown with a small delay to prevent conflict with scroll
+      const timeoutId = setTimeout(() => {
+        document.addEventListener("mousedown", handleClickOutside);
+      }, 10);
       document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.width = "100%";
+      document.body.style.top = `-${window.scrollY}px`;
     } else {
+      const scrollY = document.body.style.top;
       document.body.style.overflow = "unset";
+      document.body.style.position = "";
+      document.body.style.width = "";
+      document.body.style.top = "";
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || "0") * -1);
+      }
     }
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
       document.body.style.overflow = "unset";
+      document.body.style.position = "";
+      document.body.style.width = "";
+      document.body.style.top = "";
     };
   }, [isOpen, onClose]);
 
@@ -234,7 +252,6 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
   const toggleVideo = () => {
     setShowVideo(!showVideo);
     if (!showVideo) {
-      // Pause auto-slide when video is shown
       setIsPaused(true);
     } else {
       setIsPaused(false);
@@ -245,6 +262,21 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
   const getAmenityIcon = (amenity) => {
     const Icon = amenityIcons[amenity] || CheckCircle;
     return Icon;
+  };
+
+  // Handle scroll inside popup
+  const handleWheel = (e) => {
+    // Allow scroll inside popup content
+    if (contentRef.current) {
+      const container = contentRef.current;
+      const isAtTop = container.scrollTop === 0;
+      const isAtBottom = container.scrollHeight - container.scrollTop === container.clientHeight;
+      
+      // If at top and scrolling up, or at bottom and scrolling down, prevent default
+      if ((isAtTop && e.deltaY < 0) || (isAtBottom && e.deltaY > 0)) {
+        e.preventDefault();
+      }
+    }
   };
 
   if (!isOpen) return null;
@@ -262,6 +294,7 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm overflow-y-auto"
           style={{ minHeight: "100vh" }}
+          onWheel={handleWheel}
         >
           <motion.div
             ref={popupRef}
@@ -270,6 +303,8 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
             exit={{ scale: 0.9, y: 20, opacity: 0 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="relative w-full max-w-5xl bg-white rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
+            style={{ maxHeight: "90vh", overflowY: "auto" }}
+            onWheel={(e) => e.stopPropagation()}
           >
             {/* Close Button */}
             <button
@@ -429,7 +464,7 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
                 </div>
 
                 {/* Content */}
-                <div className="p-6 md:p-8">
+                <div ref={contentRef} className="p-6 md:p-8 max-h-[50vh] overflow-y-auto">
                   {/* Name, Location, Category */}
                   <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
                     <div>
@@ -452,17 +487,17 @@ const VenuePopup = ({ isOpen, onClose, venueId }) => {
                     </div>
                   </div>
 
-                  {/* Quick Stats */}
-                  {(venue.capacity || venue.featured) && (
+                  {/* Quick Stats - Changed Capacity to Rooms */}
+                  {(venue.rooms || venue.capacity || venue.featured) && (
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4 bg-[#FDFBF7] rounded-xl mb-6">
-                      {venue.capacity && (
+                      {(venue.rooms || venue.capacity) && (
                         <div className="flex items-center gap-3">
-                          <Users className="w-5 h-5 text-[#C58B48]" />
+                          <Bed className="w-5 h-5 text-[#C58B48]" />
                           <div>
                             <p className="text-sm font-semibold text-gray-900 font-inter">
-                              {venue.capacity}
+                              {venue.rooms || venue.capacity}
                             </p>
-                            <p className="text-xs text-gray-500">Capacity</p>
+                            <p className="text-xs text-gray-500">Rooms</p>
                           </div>
                         </div>
                       )}
