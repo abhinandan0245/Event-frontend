@@ -1029,9 +1029,9 @@ const Portfolio = () => {
             <span className="hero-element font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-3 block">
               OUR PORTFOLIO
             </span>
-            <h1 className="hero-element font-cormorant text-4xl md:text-5xl lg:text-[64px] text-[#1F2937] leading-[1.1] mb-4">
+            <h1 className="hero-element whitespace-nowrap font-cormorant text-4xl md:text-5xl lg:text-[64px] text-[#1F2937] leading-[1.1] mb-4">
               The Celebrations We Create <br />
-              <span className="italic text-[#C58B48]">
+              <span className="italic text-[#C58B48] whitespace-nowrap">
                 The Stories They Leave Behind
               </span>
             </h1>

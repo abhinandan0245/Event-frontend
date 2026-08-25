@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from "react";
 
 // --- TESTIMONIAL DATA ---
+// Removed 'type' and 'image' properties as all cards will now be uniform
 const testimonials = [
   {
-    type: "light",
     text: "The team's creativity, planning and execution were extraordinary. Our wedding was nothing short of a fairytale!",
     names: "MEGHA & KUNAL",
     location: "GOA",
     avatar:
       "https://images.unsplash.com/photo-1523419409543-a5e549c1faa5?w=100&q=80",
-    image:
-      "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=400&q=80",
   },
   {
-    type: "dark",
     text: "Professional, calm and incredibly organized. They handled everything so seamlessly that we could truly enjoy every moment.",
     names: "PRIYA & ARJUN",
     location: "JAIPUR",
@@ -21,14 +18,11 @@ const testimonials = [
       "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=100&q=80",
   },
   {
-    type: "light",
     text: "Our guests are still talking about the experience! Violin Events LLP created memories that will last a lifetime.",
     names: "NEHA & VIVEK",
     location: "BALI",
     avatar:
       "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80",
-    image:
-      "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=400&q=80",
   },
 ];
 
@@ -62,7 +56,6 @@ const TestimonialSection = () => {
   return (
     <section className="relative w-full min-h-screen bg-[#FDFBF7] font-sans overflow-hidden py-16 flex flex-col justify-between">
       {/* --- BACKGROUND IMAGE FIX --- */}
-      {/* Positioned cleanly on the right with a soft gradient fade to the left */}
       <div className="absolute top-0 right-0 w-[90%] md:w-[65%] h-full z-0">
         <img
           src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=869&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -112,100 +105,59 @@ const TestimonialSection = () => {
           </p>
         </div>
 
-        {/* --- AUTO-SLIDING GALLERY (DISCRETE SLIDES) --- */}
+        {/* --- AUTO-SLIDING GALLERY --- */}
         <div
           className="w-full overflow-hidden py-10 cursor-pointer"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
-          {/* 
-            The wrapper translates based on the currentIndex.
-            We use a fixed calc() to shift exactly one card width + gap per slide.
-          */}
           <div
             className="flex items-center gap-6 md:gap-10 transition-transform duration-700 ease-in-out"
             style={{
-              transform: `translateX(calc(-${currentIndex} * (min(450px, 85vw) + 24px)))`, // Translates by card width + gap
+              // Adjusted the math slightly to match the new 400px max-width of the cards
+              transform: `translateX(calc(-${currentIndex} * (min(400px, 85vw) + 24px)))`,
             }}
           >
             {sliderCards.map((testimonial, idx) => (
               <div
                 key={idx}
-                // Set fixed widths so the slider math is perfectly accurate
-                className="flex-shrink-0 w-[85vw] max-w-[320px] md:max-w-[450px]"
+                className="flex-shrink-0 w-[85vw] max-w-[320px] md:max-w-[400px]"
               >
-                {/* LIGHT CARD STYLE */}
-                {testimonial.type === "light" ? (
-                  <div className="w-full h-[280px] bg-[#FDFBF7] rounded-md flex overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.06)]">
-                    <div className="w-1/2 p-5 md:p-6 flex flex-col justify-between">
-                      <div>
-                        <span className="font-serif text-5xl text-[#C58B48] leading-none mb-2 block">
-                          “
-                        </span>
-                        <p className="text-[#1F2937] text-[10px] md:text-xs leading-relaxed font-medium">
-                          {testimonial.text}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2 md:gap-3">
-                        <img
-                          src={testimonial.avatar}
-                          alt="Avatar"
-                          className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover"
-                        />
-                        <div>
-                          <h4 className="text-[9px] md:text-[10px] font-semibold tracking-wider text-[#1F2937] uppercase">
-                            {testimonial.names}
-                          </h4>
-                          <p className="text-[8px] md:text-[9px] font-semibold tracking-widest text-[#C58B48] uppercase">
-                            {testimonial.location}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="w-1/2 h-full">
-                      <img
-                        src={testimonial.image}
-                        alt="Event"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
+                {/* UNIFIED WHITE CARD WITH GOLDEN SHADOW */}
+                <div 
+                  className="w-full h-[280px] bg-white rounded-xl p-6 md:p-8 flex flex-col justify-between border border-[#C58B48]/20 transition-transform hover:scale-[1.02]"
+                  style={{
+                    // Custom Golden Shadow 
+                    boxShadow: "0 15px 40px rgba(197, 139, 72, 0.15)"
+                  }}
+                >
+                  {/* Top: Quote Mark & Text */}
+                  <div>
+                    <span className="font-serif text-5xl text-[#C58B48] leading-none mb-2 block">
+                      “
+                    </span>
+                    <p className="text-[#1F2937] text-sm leading-relaxed font-medium">
+                      {testimonial.text}
+                    </p>
                   </div>
-                ) : (
-                  /* DARK CARD STYLE */
-                  <div className="w-full h-[320px] bg-[#1A1A1A] rounded-[12px] border border-[#C58B48]/60 p-6 md:p-8 flex flex-col justify-between shadow-[0_20px_50px_rgba(0,0,0,0.3)] transform scale-[1.02] md:scale-105 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#2a1d10]/20 to-transparent pointer-events-none" />
-
-                    <div className="relative z-10">
-                      <span className="font-serif text-5xl text-[#C58B48] leading-none mb-2 block">
-                        “
-                      </span>
-                      <p className="text-[#E8E8E8] text-[11px] md:text-sm leading-[1.8] font-normal">
-                        {testimonial.text}
+                  
+                  {/* Bottom: Avatar & Details */}
+                  <div className="flex items-center gap-3 mt-4">
+                    <img
+                      src={testimonial.avatar}
+                      alt="Avatar"
+                      className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover ring-2 ring-[#C58B48]/40"
+                    />
+                    <div>
+                      <h4 className="text-[10px] md:text-[11px] font-semibold tracking-wider text-[#1F2937] uppercase">
+                        {testimonial.names}
+                      </h4>
+                      <p className="text-[8px] md:text-[9px] font-semibold tracking-widest text-[#C58B48] uppercase mt-0.5">
+                        {testimonial.location}
                       </p>
                     </div>
-
-                    <div className="relative z-10 flex items-center justify-between mt-6">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={testimonial.avatar}
-                          alt="Avatar"
-                          className="w-10 h-10 md:w-11 md:h-11 rounded-full object-cover ring-2 ring-[#C58B48]"
-                        />
-                        <div>
-                          <h4 className="text-[10px] md:text-[11px] font-semibold tracking-wider text-[#E8E8E8] uppercase">
-                            {testimonial.names}
-                          </h4>
-                          <p className="text-[8px] md:text-[9px] font-semibold tracking-widest text-[#C58B48] uppercase">
-                            {testimonial.location}
-                          </p>
-                        </div>
-                      </div>
-                      <span className="font-serif text-6xl md:text-7xl text-[#C58B48]/20 leading-none h-10 flex items-end">
-                        ”
-                      </span>
-                    </div>
                   </div>
-                )}
+                </div>
               </div>
             ))}
           </div>

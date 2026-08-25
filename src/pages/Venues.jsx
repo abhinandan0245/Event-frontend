@@ -466,7 +466,7 @@ const Venues = () => {
             <span className="hero-element font-montserrat text-[#C58B48] text-[10px] md:text-[11px] font-bold tracking-[0.3em] uppercase block mb-4">EXTRAORDINARY VENUES</span>
             <h1 className="hero-element font-cormorant text-5xl lg:text-[72px] text-[#1F2937] leading-[1.1] mb-4">
               A Setting Worth <br />
-              <span className="italic text-[#C58B48]">Remembering Forever</span>
+              <span className="italic text-[#C58B48] whitespace-nowrap">Remembering Forever</span>
             </h1>
 
             <p className="hero-element font-inter text-gray-600 text-sm leading-[1.8] max-w-[460px] mb-8">

@@ -128,9 +128,9 @@ const About = () => {
             <span className="font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-4 block">
               ABOUT US
             </span>
-            <h1 className="font-cormorant text-5xl lg:text-[72px] text-[#1F2937] leading-[1.1] mb-6">
+            <h1 className="font-cormorant whitespace-nowrap text-5xl lg:text-[72px] text-[#1F2937] leading-[1.1] mb-6">
               Crafting Dreams Into <br />
-              <span className="italic text-[#C58B48]">Timeless Celebrations</span>
+              <span className="italic text-[#C58B48] whitespace">Timeless Celebrations</span>
             </h1>
             
             <p className="font-inter text-gray-600 text-sm leading-[1.8] max-w-[400px] mb-6">

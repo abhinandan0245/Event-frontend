@@ -465,25 +465,27 @@ const Destinations = () => {
       className="min-h-screen bg-[#FDFBF7] font-sans selection:bg-[#C58B48] selection:text-white pb-20 overflow-hidden md:cursor-none"
     >
       {/* ================= HERO SECTION ================= */}
+     {/* ================= HERO SECTION ================= */}
       <section
-        className="relative w-full min-h-[90vh] flex items-center pt-24 lg:pt-32 pb-16 lg:pb-20 overflow-hidden"
+        className="relative w-full min-h-screen flex items-center pt-28 sm:pt-24 lg:pt-32 pb-20 sm:pb-32 overflow-hidden"
         style={{ perspective: 1200 }}
       >
         <motion.div
           style={{ x: bgX, y: bgY }}
-          className="absolute top-0 right-[-5%] w-full lg:w-[70%] h-full z-0 pointer-events-none"
+          className="absolute top-0 right-[-5%] w-full lg:w-[70%] h-[60vh] sm:h-[80vh] lg:h-[110vh] z-0 pointer-events-none"
         >
           <img
             src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=1600&auto=format&fit=crop"
             alt="Destination Wedding"
             className="w-full h-full object-cover opacity-95 scale-110"
             style={{
-              maskImage: "linear-gradient(to right, transparent 0%, black 35%)",
+              maskImage:
+                "linear-gradient(to right, transparent 0%, black 35%)",
               WebkitMaskImage:
                 "linear-gradient(to right, transparent 0%, black 35%)",
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#FDFBF7] via-transparent to-transparent" />
+          {/* <div className="absolute inset-0 bg-gradient-to-t from-[#FDFBF7] via-transparent to-transparent" /> */}
         </motion.div>
 
         <div
@@ -495,32 +497,35 @@ const Destinations = () => {
         <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 lg:px-16 flex flex-col justify-center h-full">
           <motion.div
             style={{ x: heroX, y: heroY }}
-            className="w-full lg:w-[45%] pt-6 lg:pt-10 pl-0 md:pl-10"
+            className="w-full lg:w-[60%] pt-10 pl-0 md:pl-10"
           >
             <span className="hero-element font-montserrat text-[#C58B48] text-[9px] font-bold tracking-[0.25em] uppercase mb-4 block">
               DESTINATION WEDDINGS
             </span>
-            <h1 className="hero-element font-cormorant text-4xl sm:text-5xl lg:text-[72px] text-[#1F2937] leading-[1.1] mb-4">
-              Where Your Love Story <br />
+
+            <h1 className="hero-element font-cormorant text-4xl sm:text-5xl lg:text-[72px] text-[#1F2937] leading-[1.1] mb-4 whitespace-nowrap sm:whitespace-nowwrap">
+              Where Your Love Story
+              <br />
               <span className="italic text-[#C58B48]">
                 Becomes an Unforgettable Journey
               </span>
             </h1>
 
-            <p className="hero-element font-inter text-gray-600 text-[13px] leading-[1.8] max-w-[460px] mb-8 line-clamp-6 lg:line-clamp-none overflow-hidden">
+            <p className="hero-element font-inter text-gray-600 text-[13px] leading-[1.8] max-w-[460px] mb-8">
               Some weddings are celebrated. Others become stories that are
-              remembered for a lifetime. Violin Events LLP creates extraordinary
-              destination weddings in some of the world's most captivating
-              locations. From the glamour of Dubai and the timeless beauty of
-              India to the tropical shores of Sri Lanka, Malaysia, Thailand and
-              Vietnam, we bring together exceptional venues, entertainment and
-              experiences to create celebrations that feel truly yours. Whether
-              it is an intimate celebration by the sea, a grand palace wedding
-              or a spectacular multi day celebration, every detail is
-              thoughtfully brought together to make your wedding unforgettable.
+              remembered for a lifetime. Violin Events LLP creates
+              extraordinary destination weddings in some of the world's most
+              captivating locations. From the glamour of Dubai and the
+              timeless beauty of India to the tropical shores of Sri Lanka,
+              Malaysia, Thailand and Vietnam, we bring together exceptional
+              venues, entertainment and experiences to create celebrations
+              that feel truly yours. Whether it is an intimate celebration by
+              the sea, a grand palace wedding or a spectacular multi day
+              celebration, every detail is thoughtfully brought together to
+              make your wedding unforgettable.
             </p>
 
-            <div className="hero-element flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+            <div className="hero-element flex flex-col sm:flex-row items-center gap-6">
               <Button
                 onClick={() =>
                   (window.location.href = "/plan-your-celebration")
@@ -680,22 +685,18 @@ const Destinations = () => {
         </div>
       </section>
 
-      {/* ================= EXCLUSIVE VENUES ================= */}
+      {/* ================= EXCLUSIVE VENUES WITH IMAGE CAROUSEL (No Thumbnails) ================= */}
       <section className="py-16 relative z-10 border-t border-[#EBE3D5]/50">
         <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-16 text-center">
-          <div className="flex flex-col items-center justify-center mb-6">
+          <div className="flex flex-col items-center justify-center mb-16">
             <h2 className="font-cormorant text-4xl md:text-5xl text-[#1F2937] mb-4 uppercase tracking-widest">
-              Discover Extraordinary Destinations
+              Exclusive Venues
             </h2>
             <div className="w-4 h-4 rounded-full border border-[#C58B48]/50 flex items-center justify-center p-0.5">
               <div className="w-full h-full bg-[#C58B48] rounded-full opacity-30"></div>
             </div>
-            <p className="font-inter text-sm text-gray-500 mt-4 max-w-2xl">
-              From iconic palaces and private islands to breathtaking beaches
-              and luxurious resorts, discover remarkable destinations across
-              Dubai, India, Sri Lanka, Malaysia, Thailand and Vietnam, carefully
-              selected to set the stage for unforgettable weddings and
-              celebrations.
+            <p className="font-inter text-sm text-gray-500 mt-4">
+              {displayVenues.length} handpicked venues for your celebration
             </p>
           </div>
 
@@ -705,7 +706,7 @@ const Destinations = () => {
             </div>
           ) : (
             <div
-              className="venue-grid grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-12"
+              className="venue-grid grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6"
               style={{ perspective: 1200 }}
             >
               {displayVenues.map((venue, idx) => {
@@ -720,6 +721,7 @@ const Destinations = () => {
                       onClick={() => handleVenueClick(venueId)}
                     >
                       <div className="bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#EBE3D5] flex flex-col h-full group hover:border-[#C58B48]/40 transition-colors">
+                        {/* ✅ Image Carousel - No Thumbnails */}
                         <ImageCarousel
                           images={{
                             image: venue.image,

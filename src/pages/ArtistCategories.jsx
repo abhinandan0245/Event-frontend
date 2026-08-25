@@ -107,7 +107,7 @@ const ArtistCategories = () => {
             </span>
             <h1 className="font-serif text-4xl md:text-5xl lg:text-[64px] text-[#1F2937] leading-[1.1] mb-4">
               For Unforgettable <br />
-              <span className="italic text-[#C58B48]">
+              <span className="italic text-[#C58B48] whitespace-nowrap">
                 Events Across the World
               </span>
             </h1>

@@ -94,29 +94,29 @@ const iconMap = {
   ),
 };
 
-// --- THEMES ---
+// --- THEMES (Light Version) ---
 const cardThemes = {
   frontGold: {
-    border: "border-amber-400/80",
+    border: "border-amber-300/60",
     innerGlow:
-      "inset 0 1px 2px 0 rgba(251, 191, 36, 0.4), inset 0 0 20px 0 rgba(245, 158, 11, 0.15)",
-    iconColor: "text-amber-300 drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]",
+      "inset 0 1px 2px 0 rgba(251, 191, 36, 0.2), inset 0 0 20px 0 rgba(245, 158, 11, 0.08)",
+    iconColor: "text-amber-500 drop-shadow-[0_0_8px_rgba(245,158,11,0.15)]",
   },
   frontBoldGlow: {
-    border: "border-amber-400/90",
+    border: "border-amber-400/70",
     innerGlow:
-      "inset 0 1px 2px 0 rgba(251, 191, 36, 0.6), inset 0 0 30px 0 rgba(245, 158, 11, 0.3)",
-    iconColor: "text-white/95",
+      "inset 0 1px 2px 0 rgba(251, 191, 36, 0.3), inset 0 0 30px 0 rgba(245, 158, 11, 0.15)",
+    iconColor: "text-amber-600",
     isBrightCenter: true,
   },
   backFaint: {
-    border: "border-neutral-700/50",
+    border: "border-neutral-300/50",
     innerGlow: "inset 0 1px 1px 0 rgba(255, 255, 255, 0.05)",
-    iconColor: "text-neutral-500",
+    iconColor: "text-neutral-400",
   },
 };
 
-// --- CARD DATA WITH DIFFERENT SIZES ---
+// --- CARD DATA (2 rows of 8 = 16 cards) ---
 const cardsData = [
   { id: 1, icon: "palace", size: "w-28 h-28", theme: "frontGold" },
   { id: 2, icon: "temple", size: "w-36 h-36", theme: "frontGold" },
@@ -138,34 +138,35 @@ const cardsData = [
 
 export default function TrustedClients() {
   return (
-    <section className="relative min-h-screen w-full bg-[#030303] text-white flex flex-col items-center justify-start pt-12 pb-20 overflow-hidden select-none">
-      {/* TOP GOLD RADIAL LIGHTING */}
+    <section className="relative min-h-screen w-full bg-[#FAF8F5] text-[#1A1A1A] flex flex-col items-center justify-start pt-12 pb-20 overflow-hidden select-none">
+      {/* TOP WARM GOLD RADIAL LIGHTING */}
       <div
-        className="absolute top-0 left-[60%] -translate-x-1/2 w-[900px] h-[500px] pointer-events-none opacity-50 blur-[120px]"
+        className="absolute top-0 left-[60%] -translate-x-1/2 w-[900px] h-[500px] pointer-events-none opacity-30 blur-[120px]"
         style={{
           background:
-            "radial-gradient(circle at 50% 0%, rgba(217, 119, 6, 0.4) 0%, rgba(180, 83, 9, 0.15) 50%, transparent 80%)",
+            "radial-gradient(circle at 50% 0%, rgba(217, 119, 6, 0.2) 0%, rgba(180, 83, 9, 0.08) 50%, transparent 80%)",
         }}
       />
 
       {/* TEXT CONTENT SECTION */}
       <div className="relative z-20 text-center max-w-2xl px-6 space-y-2 mt-4">
-        <p className="text-xs uppercase tracking-[0.4em] font-medium text-amber-500/80">
+        <p className="text-xs uppercase tracking-[0.4em] font-medium text-amber-600/80">
           Trusted Worldwide
         </p>
-        <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-amber-100 via-amber-200 to-amber-500/80">
+        <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-[#1A1A1A]">
           Trusted by Exceptional Clients.
         </h2>
-        <p className="text-sm md:text-base text-neutral-400 font-light leading-relaxed max-w-xl mx-auto pt-2">
+        <p className="text-sm md:text-base text-neutral-600 font-light leading-relaxed max-w-xl mx-auto pt-2">
           From luxury hotels and heritage palaces to destination wedding clients
           and global brands, Violin Events LLP delivers exceptional experiences
           with precision, creativity, and flawless execution.
         </p>
       </div>
 
-      {/* CARDS GRID - ALL SEPARATE, NO OVERLAP, PROPER GAPS */}
+      {/* CARDS GRID - CHANGED GAP HERE */}
       <div className="relative z-10 w-full max-w-6xl px-4 mt-10 md:mt-16">
-        <div className="flex flex-wrap items-center justify-center gap-4 md:gap-5">
+        {/* We changed gap-[2px] to gap-4 sm:gap-6 for better spacing */}
+        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-4 sm:gap-6">
           {cardsData.map((card) => {
             const theme = cardThemes[card.theme];
             const isletters =
@@ -175,12 +176,12 @@ export default function TrustedClients() {
             return (
               <div
                 key={card.id}
-                className={`transition-all duration-500 ease-out cursor-pointer hover:scale-110 hover:z-[50] ${card.size}`}
+                className={`transition-all duration-500 ease-out cursor-pointer hover:scale-110 hover:z-[50] ${card.size} justify-self-center`}
               >
                 <div
                   className={`
                     relative w-full h-full rounded-2xl md:rounded-3xl p-6 flex flex-col items-center justify-center
-                    bg-gradient-to-br from-[#1c1a17] via-[#0f0e0d] to-[#060606]
+                    bg-gradient-to-br from-[#F5F0EA] via-[#EFEAE3] to-[#E8E2D9]
                     border ${theme.border}
                     transition-all duration-300
                     hover:shadow-xl
@@ -188,21 +189,21 @@ export default function TrustedClients() {
                   style={{
                     boxShadow: `
                       ${theme.innerGlow},
-                      0 25px 60px -12px rgba(0, 0, 0, 0.95)
+                      0 8px 30px -8px rgba(0, 0, 0, 0.1)
                     `,
                   }}
                 >
                   {theme.isBrightCenter && (
                     <div
-                      className="absolute inset-0 rounded-2xl md:rounded-3xl pointer-events-none opacity-80"
+                      className="absolute inset-0 rounded-2xl md:rounded-3xl pointer-events-none opacity-60"
                       style={{
                         background:
-                          "linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.05) 40%, transparent 60%)",
+                          "linear-gradient(135deg, rgba(255,215,0,0.15) 0%, rgba(255,215,0,0.02) 40%, transparent 60%)",
                       }}
                     />
                   )}
 
-                  <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-amber-300/40 to-transparent" />
+                  <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-amber-300/60 to-transparent" />
 
                   <div
                     className={`relative z-10 flex items-center justify-center transition-transform duration-300 ${isletters ? "text-3xl" : ""}`}
@@ -210,7 +211,7 @@ export default function TrustedClients() {
                     {iconMap[card.icon](theme.iconColor)}
                   </div>
 
-                  <div className="absolute bottom-0 left-1/3 right-1/3 h-[1px] bg-gradient-to-r from-transparent via-amber-500/10 to-transparent" />
+                  <div className="absolute bottom-0 left-1/3 right-1/3 h-[1px] bg-gradient-to-r from-transparent via-amber-400/20 to-transparent" />
                 </div>
               </div>
             );

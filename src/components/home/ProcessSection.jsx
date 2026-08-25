@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowRight, Play } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -66,7 +65,7 @@ const ProcessSection = () => {
           pin: true,
           scrub: 1,
           start: "top top",
-          end: "+=4000", // Smooth scrolling duration
+          end: "+=4000",
           onUpdate: () => {
             const p = scrollProxy.p;
 
@@ -76,7 +75,6 @@ const ProcessSection = () => {
               setActiveStep(roundedP);
             }
 
-            // The 3D Fan Math
             cardsRef.current.forEach((card, index) => {
               if (!card) return;
 
@@ -86,7 +84,6 @@ const ProcessSection = () => {
 
               const isMobile = window.innerWidth < 1024;
 
-              // Tighter spread for mobile screens so they don't overflow
               const xOffset = isMobile ? 80 : 210;
               const zOffset = isMobile ? 120 : 280;
               const rotateAmount = isMobile ? 22 : 28;
@@ -99,8 +96,8 @@ const ProcessSection = () => {
 
               const boxShadow =
                 absDiff === 0
-                  ? "0 40px 100px rgba(0,0,0,0.9), 0 0 60px rgba(212,175,55,0.2)"
-                  : `${sign * (isMobile ? 15 : 30)}px 30px 60px rgba(0,0,0,0.8)`;
+                  ? "0 40px 100px rgba(0,0,0,0.15), 0 0 60px rgba(196,154,90,0.15)"
+                  : `${sign * (isMobile ? 15 : 30)}px 30px 60px rgba(0,0,0,0.08)`;
 
               gsap.set(card, {
                 x: x,
@@ -115,7 +112,6 @@ const ProcessSection = () => {
               });
             });
 
-            // Progress Dot Animation (Desktop Only)
             if (trackRef.current && dotRef.current) {
               const trackHeight = trackRef.current.clientHeight;
               const dotHeight = dotRef.current.clientHeight;
@@ -135,21 +131,20 @@ const ProcessSection = () => {
   return (
     <section
       ref={containerRef}
-      className="relative w-full h-screen max-h-screen overflow-hidden bg-[#0A0A0A] flex flex-col items-center justify-center box-border"
+      className="relative w-full h-screen max-h-screen overflow-hidden bg-[#F8F6F0] flex flex-col items-center justify-center box-border"
     >
-      {/* Subtle background glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#2A1D10]/40 via-[#0A0A0A] to-[#0A0A0A] pointer-events-none" />
+      {/* Subtle background glow - warm white/cream */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#F0EBE0]/60 via-[#F8F6F0] to-[#F8F6F0] pointer-events-none" />
 
-      {/* MOBILE FIX: Changed to flex-col on mobile, flex-row on desktop */}
       <div className="relative w-full h-full max-w-[1800px] mx-auto px-4 md:px-12 flex flex-col lg:flex-row items-center justify-between">
-        {/* ================= TEXT COLUMN (Top 35% on Mobile, Left 25% on Desktop) ================= */}
+        {/* ================= TEXT COLUMN ================= */}
         <div className="w-full lg:w-1/4 h-[35%] lg:h-full flex items-end pb-4 lg:pb-0 lg:items-center justify-center lg:justify-start relative z-20 pointer-events-none mt-4 lg:mt-0">
           <div className="pointer-events-auto flex flex-row items-center w-full justify-center lg:justify-start text-center lg:text-left">
-            {/* Progress Track (HIDDEN ON MOBILE to save space) */}
+            {/* Progress Track */}
             <div className="hidden lg:flex relative flex-col justify-between items-center w-8 h-[400px] mr-10">
               <div
                 ref={trackRef}
-                className="absolute top-0 bottom-0 w-[1px] bg-white/20"
+                className="absolute top-0 bottom-0 w-[1px] bg-[#D4C9B8]"
               />
               <div
                 ref={dotRef}
@@ -158,13 +153,13 @@ const ProcessSection = () => {
               <span className="absolute -top-8 text-[#C49A5A] text-xs font-serif">
                 01
               </span>
-              <span className="absolute -bottom-8 text-white/50 text-xs font-serif">
+              <span className="absolute -bottom-8 text-[#A89880] text-xs font-serif">
                 05
               </span>
               {steps.map((_, i) => (
                 <div
                   key={i}
-                  className="w-1.5 h-1.5 rounded-full bg-white/30 z-0"
+                  className="w-1.5 h-1.5 rounded-full bg-[#D4C9B8] z-0"
                 />
               ))}
             </div>
@@ -176,7 +171,7 @@ const ProcessSection = () => {
               </h4>
 
               <h2 className="flex flex-col mb-3 lg:mb-6">
-                <span className="font-serif text-3xl md:text-4xl lg:text-5xl xl:text-[56px] font-medium leading-[1.1] text-white lg:font-canela">
+                <span className="font-serif text-3xl md:text-4xl lg:text-5xl xl:text-[56px] font-medium leading-[1.1] text-[#1A1A1A] lg:font-canela">
                   From Vision to
                 </span>
                 <span className="font-serif text-3xl md:text-4xl lg:text-5xl xl:text-[56px] font-medium leading-[1.1] text-[#C58B48] lg:font-canela">
@@ -189,15 +184,15 @@ const ProcessSection = () => {
                 <div className="h-[1px] w-16 bg-[#C58B48]/40" />
               </div>
 
-              {/* Simple Mobile Progress Indicator */}
+              {/* Mobile Progress Indicator */}
               <div className="flex lg:hidden items-center gap-2 mb-3">
                 <span className="text-[#C49A5A] font-serif text-lg">
                   0{activeStep + 1}
                 </span>
-                <span className="text-white/40 font-serif text-sm">/ 05</span>
+                <span className="text-[#A89880] font-serif text-sm">/ 05</span>
               </div>
 
-              <p className="font-manrope text-[11px] lg:text-[13px] font-normal leading-[1.6] text-white/60 max-w-[320px] mb-4 lg:mb-10 px-4 lg:px-0">
+              <p className="font-manrope text-[11px] lg:text-[13px] font-normal leading-[1.6] text-[#6B5F4E] max-w-[320px] mb-4 lg:mb-10 px-4 lg:px-0">
                 Every extraordinary celebration unfolds through a carefully
                 orchestrated journey. Scroll to experience each chapter.
               </p>
@@ -205,7 +200,7 @@ const ProcessSection = () => {
           </div>
         </div>
 
-        {/* ================= 3D CAROUSEL (Bottom 65% on Mobile, Right 75% on Desktop) ================= */}
+        {/* ================= 3D CAROUSEL ================= */}
         <div
           className="w-full lg:w-3/4 h-[65%] lg:h-full relative flex items-center justify-center overflow-visible z-10"
           style={{ perspective: "1800px" }}
@@ -214,39 +209,38 @@ const ProcessSection = () => {
             <div
               key={index}
               ref={(el) => (cardsRef.current[index] = el)}
-              // --- SIZING FIX APPLIED HERE: Reduced height and width to keep it inside the screen ---
               className="absolute top-1/2 left-1/2 w-[200px] h-[280px] md:w-[240px] md:h-[340px] lg:w-[280px] lg:h-[440px] xl:w-[320px] xl:h-[500px] rounded-[16px] xl:rounded-[24px] flex flex-col items-center justify-center cursor-default transition-transform duration-300 ease-out"
               style={{
                 transformStyle: "preserve-3d",
                 background:
-                  "linear-gradient(145deg, #FFF1D0 0%, #C5A880 30%, #5C4018 80%, #2A1D10 100%)",
+                  "linear-gradient(145deg, #FFFFFF 0%, #F5F0E8 40%, #E8DFD0 80%, #D5C8B8 100%)",
                 padding: "3px",
               }}
             >
-              <div className="relative w-full h-full rounded-[13px] xl:rounded-[21px] bg-[#0A0A0A] overflow-hidden flex flex-col items-center ring-1 ring-inset ring-white/10">
+              <div className="relative w-full h-full rounded-[13px] xl:rounded-[21px] bg-white overflow-hidden flex flex-col items-center ring-1 ring-inset ring-[#E8E0D6]">
                 <img
                   src={step.image}
                   alt={step.title}
-                  className="absolute inset-0 w-full h-full object-cover opacity-[0.75] mix-blend-screen"
+                  className="absolute inset-0 w-full h-full object-cover opacity-[0.85]"
                 />
 
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/60 to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-b from-[#0A0A0A]/80 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-white via-white/50 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-transparent" />
 
                 <div className="relative z-10 w-full h-full flex flex-col items-center text-center p-4 lg:p-6">
-                  <span className="font-serif text-[40px] lg:text-[64px] font-medium leading-none text-transparent bg-clip-text bg-gradient-to-b from-[#E9C38A] to-[#855F37] mt-4 lg:mt-6 mb-auto lg:font-canela drop-shadow-md">
+                  <span className="font-serif text-[40px] lg:text-[64px] font-medium leading-none text-transparent bg-clip-text bg-gradient-to-b from-[#C49A5A] to-[#8B7355] mt-4 lg:mt-6 mb-auto lg:font-canela drop-shadow-sm">
                     {step.num}
                   </span>
 
                   <div className="mt-auto pb-2 lg:pb-4 w-full flex flex-col items-center">
-                    <h3 className="font-serif text-lg lg:text-[24px] font-medium tracking-tight text-white mb-1 lg:mb-2 lg:font-canela">
+                    <h3 className="font-serif text-lg lg:text-[24px] font-medium tracking-tight text-[#1A1A1A] mb-1 lg:mb-2 lg:font-canela">
                       {step.title}
                     </h3>
-                    <h4 className="font-cormorant text-xs lg:text-[16px] font-medium italic text-[#C99754] mb-2 lg:mb-3">
+                    <h4 className="font-cormorant text-xs lg:text-[16px] font-medium italic text-[#C58B48] mb-2 lg:mb-3">
                       {step.sub}
                     </h4>
 
-                    <p className="font-manrope text-[9px] lg:text-[11px] font-normal leading-[1.6] text-white/60 max-w-[95%] lg:max-w-[85%] mx-auto hidden sm:block">
+                    <p className="font-manrope text-[9px] lg:text-[11px] font-normal leading-[1.6] text-[#6B5F4E] max-w-[95%] lg:max-w-[85%] mx-auto hidden sm:block">
                       {step.desc}
                     </p>
                   </div>

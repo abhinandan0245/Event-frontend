@@ -229,7 +229,7 @@ const Services = () => {
             className="w-full h-full object-cover opacity-90 scale-110"
             style={{ maskImage: 'linear-gradient(to right, transparent 0%, black 30%)', WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 30%)' }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#FDFBF7] via-transparent to-transparent" />
+          {/* <div className="absolute inset-0 bg-gradient-to-t from-[#FDFBF7] via-transparent to-transparent" /> */}
         </motion.div>
 
         {/* Decorative Floral Overlay Left */}
