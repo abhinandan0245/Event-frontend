@@ -16,7 +16,8 @@ import {
   Crown,
   Video,
   X,
-  Bed
+  Bed,
+  Search
 } from "lucide-react";
 import Button from "../components/ui/Button";
 import { venueApi } from "../api/venueApi";
@@ -188,6 +189,7 @@ const Venues = () => {
   const compRef = useRef(null);
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("ALL VENUES");
+  const [searchTerm, setSearchTerm] = useState("");
   const [cursorVariant, setCursorVariant] = useState("default");
   const [cursorText, setCursorText] = useState("");
   const [venues, setVenues] = useState([]);
@@ -308,6 +310,7 @@ const Venues = () => {
         _id: "1",
         name: "The Leela Palace",
         location: "Udaipur, Rajasthan",
+        country: "India",
         category: "Palace",
         image: "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=800&q=80",
         rooms: "200",
@@ -319,6 +322,7 @@ const Venues = () => {
         _id: "2",
         name: "Taj Exotica Resort & Spa",
         location: "Goa",
+        country: "India",
         category: "Beachfront Resort",
         image: "https://images.unsplash.com/photo-1512343879784-9602d5de7a10?w=800&q=80",
         rooms: "150",
@@ -329,6 +333,7 @@ const Venues = () => {
         _id: "3",
         name: "Umaid Bhawan Palace",
         location: "Jodhpur, Rajasthan",
+        country: "India",
         category: "Heritage Palace",
         image: "https://images.unsplash.com/photo-1590582007337-f5d55ec5aaf0?w=800&q=80",
         rooms: "180",
@@ -339,6 +344,7 @@ const Venues = () => {
         _id: "4",
         name: "Alila Villas Uluwatu",
         location: "Bali, Indonesia",
+        country: "Indonesia",
         category: "Cliffside Resort",
         image: "https://images.unsplash.com/photo-1593693397690-362cb9666fc2?w=800&q=80",
         rooms: "100",
@@ -349,33 +355,71 @@ const Venues = () => {
         _id: "5",
         name: "The Oberoi Amarvilas",
         location: "Agra, India",
+        country: "India",
         category: "Luxury Hotel",
         image: "https://images.unsplash.com/photo-1564507592333-c60657eea523?w=800&q=80",
         rooms: "120",
         description: "Luxury hotel with Taj Mahal views.",
         featured: true
       },
+      {
+        _id: "6",
+        name: "Burj Al Arab",
+        location: "Dubai",
+        country: "UAE",
+        category: "Luxury Hotel",
+        image: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=800&q=80",
+        rooms: "200",
+        description: "Iconic luxury hotel in Dubai.",
+        featured: true
+      },
+      {
+        _id: "7",
+        name: "Four Seasons Resort",
+        location: "Maldives",
+        country: "Maldives",
+        category: "Beachfront Resort",
+        image: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=800&q=80",
+        rooms: "100",
+        description: "Luxury overwater villas in the Maldives.",
+        featured: true
+      },
     ];
   };
 
+  // ✅ FILTER VENUES BY CATEGORY AND SEARCH TERM
   useEffect(() => {
-    if (selectedCategory === "ALL VENUES") {
-      setFilteredVenues(venues);
-    } else {
-      setFilteredVenues(
-        venues.filter(
-          (v) =>
-            v.category?.toUpperCase().includes(selectedCategory.toUpperCase()) ||
-            v.category?.toLowerCase() === selectedCategory.toLowerCase()
-        )
+    let filtered = venues;
+
+    // Filter by category
+    if (selectedCategory !== "ALL VENUES") {
+      filtered = filtered.filter(
+        (v) =>
+          v.category?.toUpperCase().includes(selectedCategory.toUpperCase()) ||
+          v.category?.toLowerCase() === selectedCategory.toLowerCase()
       );
     }
-  }, [selectedCategory, venues]);
+
+    // Filter by search term (name, location, country, category)
+    if (searchTerm.trim()) {
+      const term = searchTerm.toLowerCase().trim();
+      filtered = filtered.filter(
+        (v) =>
+          (v.name && v.name.toLowerCase().includes(term)) ||
+          (v.location && v.location.toLowerCase().includes(term)) ||
+          (v.country && v.country.toLowerCase().includes(term)) ||
+          (v.category && v.category.toLowerCase().includes(term))
+      );
+    }
+
+    setFilteredVenues(filtered);
+  }, [selectedCategory, searchTerm, venues]);
 
   const displayExperiences = featuredVenues.length > 0 
     ? featuredVenues.slice(0, 4).map((venue) => ({
         title: venue.name,
         location: venue.location || venue.city || "",
+        country: venue.country || "",
         image: venue.image || "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=600&q=80",
         videoUrl: venue.videoUrl || null,
         id: venue._id || venue.id
@@ -384,6 +428,7 @@ const Venues = () => {
         {
           title: "Royal Palace Wedding",
           location: "Udaipur, Rajasthan",
+          country: "India",
           image: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80",
           videoUrl: null,
           id: "1"
@@ -391,6 +436,7 @@ const Venues = () => {
         {
           title: "Beachside Celebration",
           location: "Phuket, Thailand",
+          country: "Thailand",
           image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&q=80",
           videoUrl: null,
           id: "2"
@@ -398,6 +444,7 @@ const Venues = () => {
         {
           title: "Heritage Fort Wedding",
           location: "Jaipur, Rajasthan",
+          country: "India",
           image: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&q=80",
           videoUrl: null,
           id: "3"
@@ -405,6 +452,7 @@ const Venues = () => {
         {
           title: "Luxury Resort Wedding",
           location: "Bali, Indonesia",
+          country: "Indonesia",
           image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=600&q=80",
           videoUrl: null,
           id: "4"
@@ -495,7 +543,34 @@ const Venues = () => {
               <div className="w-10 h-[1px] bg-[#C58B48]/40" />
             </div>
             <h2 className="font-cormorant text-3xl md:text-4xl lg:text-[42px] text-[#1F2937]">Discover Our Extraordinary Venues</h2>
-            <p className="font-inter text-sm text-gray-500 mt-2">{venues.length} venues available</p>
+            <p className="font-inter text-sm text-gray-500 mt-2">{filteredVenues.length} venues available</p>
+          </div>
+
+          {/* ✅ SEARCH BAR */}
+          <div className="max-w-2xl mx-auto mb-8">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <input
+                type="text"
+                placeholder="Search by venue name, location, country, or category..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-12 pr-4 py-3.5 border border-[#EBE3D5] rounded-full focus:outline-none focus:ring-2 focus:ring-[#C58B48] focus:border-transparent bg-white shadow-sm text-sm font-inter"
+              />
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm("")}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+            {searchTerm && (
+              <p className="text-xs text-gray-400 mt-2 text-center">
+                Showing results for: <span className="text-[#C58B48] font-medium">"{searchTerm}"</span>
+              </p>
+            )}
           </div>
 
           <div className="filter-container flex flex-wrap items-center justify-center gap-2 lg:gap-3 mb-12">
@@ -546,6 +621,12 @@ const Venues = () => {
                               Featured
                             </div>
                           )}
+                          {/* ✅ Show Country Badge */}
+                          {venue.country && (
+                            <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm text-white text-[8px] px-2.5 py-1 rounded-full font-medium border border-white/10">
+                              {venue.country}
+                            </div>
+                          )}
                           <button className="absolute top-3 right-3 text-white/80 hover:text-white transition-colors z-10" onMouseEnter={(e) => e.stopPropagation()}>
                             <Heart className="w-5 h-5 drop-shadow-md" strokeWidth={1.5} />
                           </button>
@@ -582,7 +663,24 @@ const Venues = () => {
                 ))
               ) : (
                 <div className="col-span-full text-center py-20">
-                  <p className="text-gray-500 font-inter">No venues found in this category.</p>
+                  <div className="text-4xl mb-4">🏢</div>
+                  <p className="text-gray-500 font-inter text-lg">No venues found</p>
+                  <p className="text-gray-400 text-sm mt-2">
+                    {searchTerm 
+                      ? `No venues match your search for "${searchTerm}"` 
+                      : "No venues available in this category"}
+                  </p>
+                  {(searchTerm || selectedCategory !== "ALL VENUES") && (
+                    <button
+                      onClick={() => {
+                        setSearchTerm("");
+                        setSelectedCategory("ALL VENUES");
+                      }}
+                      className="mt-4 text-[#C58B48] hover:text-[#B07A3A] text-sm font-medium transition-colors"
+                    >
+                      Clear all filters
+                    </button>
+                  )}
                 </div>
               )}
             </AnimatePresence>
@@ -670,6 +768,11 @@ const Venues = () => {
                       <p className="font-inter text-xs text-gray-500">
                         {exp.location}
                       </p>
+                      {exp.country && (
+                        <p className="font-inter text-[10px] text-[#C58B48] mt-0.5">
+                          {exp.country}
+                        </p>
+                      )}
                       {exp.videoUrl && (
                         <div className="mt-1.5 inline-flex items-center gap-1 text-[8px] text-[#C58B48] font-medium">
                           <Video size={10} />
