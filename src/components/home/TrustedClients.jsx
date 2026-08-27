@@ -1,223 +1,228 @@
 import React from "react";
+import { motion } from "framer-motion";
 
-// --- CONSTANTS FOR ICONS ---
-const iconMap = {
-  palace: (className) => (
-    <svg
-      className={`w-14 h-14 ${className}`}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.2"
-    >
-      <path d="M3 21h18v-7l-9-5-9 5v7zM12 9v12m-4 0v-4m8 4v-4M7 3h2v3H7zm4 0h2v3h-2zm4 0h2v3h-2z" />
-    </svg>
-  ),
-  wheat: (className) => (
-    <svg
-      className={`w-14 h-14 ${className}`}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.2"
-    >
-      <path d="M12 2a4 4 0 0 1 4 4v12a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4zM8 10l-4 1m4-1-1 4m5-4 4 1m-4-1 1 4M10 16l-3 1m3-1-1 3m5-3 3 1m-3-1 1 3" />
-    </svg>
-  ),
-  airplane: (className) => (
-    <svg
-      className={`w-16 h-16 ${className}`}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.2"
-    >
-      <path d="M22 12 12.5 13 9 20 6.5 20 8.5 13 3 12.5 2 15 1 15 2 12 1 9 2 9 3 11.5 8.5 11 6.5 4 9 4 12.5 11 22 12z" />
-    </svg>
-  ),
-  crest: (className) => (
-    <svg
-      className={`w-16 h-16 ${className}`}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.2"
-    >
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10zM12 6a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-2 5h4v5l-2 2-2-2v-5z" />
-    </svg>
-  ),
-  crown: (className) => (
-    <svg
-      className={`w-12 h-12 ${className}`}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.2"
-    >
-      <path d="M16 4h.01M8 4h.01M12 2l-2.5 3L6 4l1.5 6h9L18 4l-3.5 1L12 2zM3 13h18v6H3v-6zm3-7v6m12-6v6" />
-    </svg>
-  ),
-  temple: (className) => (
-    <svg
-      className={`w-14 h-14 ${className}`}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.2"
-    >
-      <path d="M12 3v18M5 10l7-7 7 7v9H5v-9zm0 0v10m14-10v10M7 19v3m10-3v3M9 13a3 3 0 1 1 6 0" />
-    </svg>
-  ),
-  circle: (className) => (
-    <svg
-      className={`w-10 h-10 ${className}`}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.2"
-    >
-      <circle cx="12" cy="12" r="9" />
-    </svg>
-  ),
-  letterX: (className) => (
-    <span className={`text-3xl font-light font-sans ${className}`}>X</span>
-  ),
-  lettersRR: (className) => (
-    <span
-      className={`text-4xl font-extrabold font-serif tracking-tighter ${className}`}
-    >
-      RR
-    </span>
-  ),
-  letterV: (className) => (
-    <span className={`text-6xl font-light font-serif ${className}`}>V</span>
-  ),
-};
+const TrustedClients = () => {
+  // Generate 20 logo paths
+  const logos = Array.from({ length: 20 }, (_, i) => ({
+    id: i + 1,
+    src: `/assets/tslogo/tslogo${i + 1}.png`,
+    alt: `Client Logo ${i + 1}`,
+  }));
 
-// --- THEMES (Light Version) ---
-const cardThemes = {
-  frontGold: {
-    border: "border-amber-300/60",
-    innerGlow:
-      "inset 0 1px 2px 0 rgba(251, 191, 36, 0.2), inset 0 0 20px 0 rgba(245, 158, 11, 0.08)",
-    iconColor: "text-amber-500 drop-shadow-[0_0_8px_rgba(245,158,11,0.15)]",
-  },
-  frontBoldGlow: {
-    border: "border-amber-400/70",
-    innerGlow:
-      "inset 0 1px 2px 0 rgba(251, 191, 36, 0.3), inset 0 0 30px 0 rgba(245, 158, 11, 0.15)",
-    iconColor: "text-amber-600",
-    isBrightCenter: true,
-  },
-  backFaint: {
-    border: "border-neutral-300/50",
-    innerGlow: "inset 0 1px 1px 0 rgba(255, 255, 255, 0.05)",
-    iconColor: "text-neutral-400",
-  },
-};
+  // Animation variants for cards
+  const cardVariants = {
+    hidden: {
+      opacity: 0,
+      y: 50,
+      rotateY: -10,
+    },
+    visible: (index) => ({
+      opacity: 1,
+      y: 0,
+      rotateY: 0,
+      transition: {
+        delay: index * 0.03,
+        duration: 0.6,
+        ease: "easeOut",
+      },
+    }),
+  };
 
-// --- CARD DATA (2 rows of 8 = 16 cards) ---
-const cardsData = [
-  { id: 1, icon: "palace", size: "w-28 h-28", theme: "frontGold" },
-  { id: 2, icon: "temple", size: "w-36 h-36", theme: "frontGold" },
-  { id: 3, icon: "circle", size: "w-24 h-24", theme: "frontGold" },
-  { id: 4, icon: "temple", size: "w-32 h-32", theme: "frontGold" },
-  { id: 5, icon: "wheat", size: "w-40 h-40", theme: "frontGold" },
-  { id: 6, icon: "airplane", size: "w-44 h-44", theme: "frontGold" },
-  { id: 7, icon: "crest", size: "w-44 h-44", theme: "frontGold" },
-  { id: 8, icon: "letterV", size: "w-48 h-48", theme: "frontBoldGlow" },
-  { id: 9, icon: "crown", size: "w-32 h-32", theme: "frontGold" },
-  { id: 10, icon: "crest", size: "w-44 h-44", theme: "frontGold" },
-  { id: 11, icon: "lettersRR", size: "w-40 h-40", theme: "frontGold" },
-  { id: 12, icon: "palace", size: "w-28 h-28", theme: "frontGold" },
-  { id: 13, icon: "temple", size: "w-36 h-36", theme: "frontGold" },
-  { id: 14, icon: "wheat", size: "w-32 h-32", theme: "frontGold" },
-  { id: 15, icon: "circle", size: "w-20 h-20", theme: "frontGold" },
-  { id: 16, icon: "letterX", size: "w-16 h-16", theme: "frontGold" },
-];
+  // Hover animation variants
+  const hoverVariants = {
+    rest: {
+      scale: 1,
+      rotateY: 0,
+      rotateX: 0,
+      z: 0,
+      boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+      transition: {
+        duration: 0.3,
+        ease: "easeOut",
+      },
+    },
+    hover: {
+      scale: 1.08,
+      rotateY: 8,
+      rotateX: -4,
+      z: 50,
+      boxShadow:
+        "0 20px 60px rgba(0,0,0,0.15), 0 8px 30px rgba(180, 83, 9, 0.12)",
+      transition: {
+        duration: 0.3,
+        ease: "easeOut",
+      },
+    },
+  };
 
-export default function TrustedClients() {
+  // Glow effect variants
+  const glowVariants = {
+    rest: {
+      opacity: 0,
+      scale: 0.8,
+    },
+    hover: {
+      opacity: 1,
+      scale: 1.2,
+      transition: {
+        duration: 0.3,
+        ease: "easeOut",
+      },
+    },
+  };
+
   return (
-    <section className="relative min-h-screen w-full bg-[#FAF8F5] text-[#1A1A1A] flex flex-col items-center justify-start pt-12 pb-20 overflow-hidden select-none">
-      {/* TOP WARM GOLD RADIAL LIGHTING */}
+    <section className="trusted-clients-section relative min-h-screen w-full bg-[#FAF8F5] text-[#1A1A1A] flex flex-col items-center justify-start pt-16 pb-20 overflow-hidden select-none">
+      {/* Background Gradients */}
       <div
-        className="absolute top-0 left-[60%] -translate-x-1/2 w-[900px] h-[500px] pointer-events-none opacity-30 blur-[120px]"
+        className="absolute top-0 left-[60%] -translate-x-1/2 w-[1000px] h-[600px] pointer-events-none opacity-30 blur-[120px]"
         style={{
           background:
             "radial-gradient(circle at 50% 0%, rgba(217, 119, 6, 0.2) 0%, rgba(180, 83, 9, 0.08) 50%, transparent 80%)",
         }}
       />
 
-      {/* TEXT CONTENT SECTION */}
-      <div className="relative z-20 text-center max-w-2xl px-6 space-y-2 mt-4">
-        <p className="text-xs uppercase tracking-[0.4em] font-medium text-amber-600/80">
+      <div
+        className="absolute bottom-0 right-0 w-[800px] h-[400px] pointer-events-none opacity-20 blur-[100px]"
+        style={{
+          background:
+            "radial-gradient(circle at 70% 100%, rgba(180, 83, 9, 0.15) 0%, transparent 70%)",
+        }}
+      />
+
+      {/* Decorative Lines */}
+      <div className="absolute top-1/3 left-0 w-[1px] h-[200px] bg-gradient-to-b from-transparent via-amber-300/30 to-transparent" />
+      <div className="absolute top-1/3 right-0 w-[1px] h-[200px] bg-gradient-to-b from-transparent via-amber-300/30 to-transparent" />
+
+      {/* Text Content Section */}
+      <div className="relative z-20 text-center max-w-3xl px-6 space-y-3 mt-4">
+        <motion.p
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-xs uppercase tracking-[0.4em] font-medium text-amber-600/80"
+        >
           Trusted Worldwide
-        </p>
-        <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-[#1A1A1A]">
+        </motion.p>
+
+        <motion.h2
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight text-[#1A1A1A]"
+        >
           Trusted by Exceptional Clients.
-        </h2>
-        <p className="text-sm md:text-base text-neutral-600 font-light leading-relaxed max-w-xl mx-auto pt-2">
+        </motion.h2>
+
+        <motion.p
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="text-sm md:text-base text-neutral-600 font-light leading-relaxed max-w-xl mx-auto pt-2"
+        >
           From luxury hotels and heritage palaces to destination wedding clients
           and global brands, Violin Events LLP delivers exceptional experiences
           with precision, creativity, and flawless execution.
-        </p>
+        </motion.p>
       </div>
 
-      {/* CARDS GRID - CHANGED GAP HERE */}
-      <div className="relative z-10 w-full max-w-6xl px-4 mt-10 md:mt-16">
-        {/* We changed gap-[2px] to gap-4 sm:gap-6 for better spacing */}
-        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-4 sm:gap-6">
-          {cardsData.map((card) => {
-            const theme = cardThemes[card.theme];
-            const isletters =
-              typeof card.icon === "string" &&
-              (card.icon.includes("letters") || card.icon.includes("letter"));
-
-            return (
-              <div
-                key={card.id}
-                className={`transition-all duration-500 ease-out cursor-pointer hover:scale-110 hover:z-[50] ${card.size} justify-self-center`}
+      {/* Grid Section */}
+      <div className="relative z-10 w-full max-w-7xl px-4 sm:px-6 mt-12 md:mt-16">
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          className="trusted-clients-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 gap-4 sm:gap-5 md:gap-6"
+        >
+          {logos.map((logo, index) => (
+            <motion.div
+              key={logo.id}
+              custom={index}
+              variants={cardVariants}
+              initial="hidden"
+              animate="visible"
+              whileHover="hover"
+              className="trusted-client-card-wrapper relative flex items-center justify-center"
+              style={{ perspective: "1000px" }}
+            >
+              <motion.div
+                variants={hoverVariants}
+                className="trusted-client-card relative w-full aspect-square rounded-2xl bg-gradient-to-br from-[#F5F0EA] via-[#EFEAE3] to-[#E8E2D9] border border-amber-300/40 flex items-center justify-center p-4 cursor-pointer"
+                style={{
+                  transformStyle: "preserve-3d",
+                  boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+                }}
               >
+                {/* Inner Glow */}
                 <div
-                  className={`
-                    relative w-full h-full rounded-2xl md:rounded-3xl p-6 flex flex-col items-center justify-center
-                    bg-gradient-to-br from-[#F5F0EA] via-[#EFEAE3] to-[#E8E2D9]
-                    border ${theme.border}
-                    transition-all duration-300
-                    hover:shadow-xl
-                  `}
+                  className="absolute inset-0 rounded-2xl pointer-events-none"
                   style={{
-                    boxShadow: `
-                      ${theme.innerGlow},
-                      0 8px 30px -8px rgba(0, 0, 0, 0.1)
-                    `,
+                    background:
+                      "inset 0 1px 2px 0 rgba(251, 191, 36, 0.2), inset 0 0 30px 0 rgba(245, 158, 11, 0.05)",
                   }}
+                />
+
+                {/* Top Border Glow */}
+                <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-amber-300/60 to-transparent" />
+
+                {/* Bottom Border Glow */}
+                <div className="absolute bottom-0 left-1/3 right-1/3 h-[1px] bg-gradient-to-r from-transparent via-amber-400/20 to-transparent" />
+
+                {/* Hover Glow Effect */}
+                <motion.div
+                  variants={glowVariants}
+                  className="absolute inset-0 rounded-2xl pointer-events-none trusted-client-glow"
+                />
+
+                {/* Logo Image */}
+                <motion.img
+                  src={logo.src}
+                  alt={logo.alt}
+                  className="trusted-client-logo w-full h-full object-contain max-w-[80%] max-h-[80%] relative z-10"
+                  style={{
+                    filter: "brightness(0.9) saturate(0.9)",
+                    transform: "translateZ(20px)",
+                  }}
+                  whileHover={{
+                    scale: 1.05,
+                    filter: "brightness(1) saturate(1)",
+                    transition: { duration: 0.3 },
+                  }}
+                  onError={(e) => {
+                    // Fallback if image doesn't load
+                    e.target.style.display = "none";
+                    const parent = e.target.parentElement;
+                    const fallback = document.createElement("div");
+                    fallback.className = "text-4xl text-amber-500/40";
+                    fallback.textContent = "✦";
+                    parent?.appendChild(fallback);
+                  }}
+                />
+
+                {/* Shine Effect on Hover */}
+                <motion.div
+                  className="absolute inset-0 rounded-2xl pointer-events-none overflow-hidden trusted-client-shine"
+                  initial={{ opacity: 0 }}
+                  whileHover={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
                 >
-                  {theme.isBrightCenter && (
-                    <div
-                      className="absolute inset-0 rounded-2xl md:rounded-3xl pointer-events-none opacity-60"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, rgba(255,215,0,0.15) 0%, rgba(255,215,0,0.02) 40%, transparent 60%)",
-                      }}
-                    />
-                  )}
+                  <div className="trusted-client-shine-overlay absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent" />
+                </motion.div>
+              </motion.div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
 
-                  <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-amber-300/60 to-transparent" />
-
-                  <div
-                    className={`relative z-10 flex items-center justify-center transition-transform duration-300 ${isletters ? "text-3xl" : ""}`}
-                  >
-                    {iconMap[card.icon](theme.iconColor)}
-                  </div>
-
-                  <div className="absolute bottom-0 left-1/3 right-1/3 h-[1px] bg-gradient-to-r from-transparent via-amber-400/20 to-transparent" />
-                </div>
-              </div>
-            );
-          })}
+      {/* Decorative Elements */}
+      <div className="relative z-20 w-full flex justify-center mt-12">
+        <div className="flex items-center gap-6">
+          <div className="w-12 h-[1px] bg-gradient-to-r from-transparent to-amber-300/50" />
+          <div className="w-2 h-2 rotate-45 border border-amber-400/40 bg-[#FAF8F5]" />
+          <div className="w-12 h-[1px] bg-gradient-to-l from-transparent to-amber-300/50" />
         </div>
       </div>
     </section>
   );
-}
+};
+
+export default TrustedClients;

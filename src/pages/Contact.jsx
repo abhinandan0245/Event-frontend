@@ -45,7 +45,7 @@ const Contact = () => {
 
     try {
       const response = await contactApi.submit(formData);
-      
+
       if (response.success) {
         setIsSubmitted(true);
         setFormData({
@@ -57,13 +57,18 @@ const Contact = () => {
           celebrationType: "",
           message: "",
         });
-        toast.success("Inquiry submitted successfully! We'll get back to you soon.");
+        toast.success(
+          "Inquiry submitted successfully! We'll get back to you soon.",
+        );
       } else {
         toast.error(response.message || "Failed to submit inquiry");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error(error.response?.data?.message || "Something went wrong. Please try again.");
+      toast.error(
+        error.response?.data?.message ||
+          "Something went wrong. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -73,24 +78,35 @@ const Contact = () => {
     {
       icon: Phone,
       title: "CALL US",
-      details: ["+91 9928000990"],
+      details: ["+91 9928000990", "+91 9982249990"],
     },
     {
       icon: Mail,
       title: "EMAIL US",
-      details: ["hello@violinevents.com", "We reply within 24 hours"],
+      details: ["info@violineventsllc.com", "We reply within 24 hours"],
     },
     {
       icon: MapPin,
-      title: "VISIT US",
+      title: "INDIA OFFICE",
       details: [
-        "2nd Floor, 393, Dhruv Marg, opp. KMS Hospital, Tilak Nagar, Jaipur, Rajasthan 302004",
+        "393, Dhruv Marg",
+        "Tilak Nagar, Jaipur",
+        "Rajasthan - 302004",
+        "+91 9928000990",
+        "+91 9982249990",
+        "+91 1414015000",
+        "+91 1414018002",
       ],
     },
     {
-      icon: MessageCircle,
-      title: "WHATSAPP",
-      details: ["+91 9928000990", "Chat with our team"],
+      icon: MapPin,
+      title: "DUBAI OFFICE",
+      details: [
+        "521, Oasis Residency",
+        "Block A, Mankhool",
+        "Bur Dubai, Dubai UAE",
+        "+971 525168789",
+      ],
     },
     {
       icon: Clock,
@@ -396,19 +412,62 @@ const Contact = () => {
               <div className="flex items-center gap-3 mb-6">
                 <MapPin className="w-5 h-5 text-[#C58B48]" strokeWidth={1.5} />
                 <h3 className="font-cormorant text-3xl text-[#1F2937]">
-                  Find Our Office
+                  Our Offices
                 </h3>
               </div>
-              <div className="font-inter text-gray-600 text-sm leading-relaxed space-y-1 mb-8">
-                <p className="font-semibold text-[#1F2937]">
-                  Violin Events LLP
-                </p>
-                <p>Office No. 12, 1st Floor,</p>
-                <p>Siddhivinayak Vision One,</p>
-                <p>Dr. Annie Besant Road,</p>
-                <p>Worli, Mumbai - 400018</p>
+
+              {/* India Office */}
+              <div className="mb-6">
+                <h4 className="font-montserrat text-[#C58B48] text-[10px] font-bold tracking-widest uppercase mb-2">
+                  India Office
+                </h4>
+                <div className="font-inter text-gray-600 text-sm leading-relaxed space-y-1">
+                  <p>393, Dhruv Marg</p>
+                  <p>Tilak Nagar, Jaipur</p>
+                  <p>Rajasthan - 302004</p>
+                  <div className="pt-2 space-y-1">
+                    <p className="flex items-center gap-2">
+                      <Phone size={12} className="text-[#C58B48]" />
+                      <span>+91 9928000990</span>
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <Phone size={12} className="text-[#C58B48]" />
+                      <span>+91 9982249990</span>
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <Phone size={12} className="text-[#C58B48]" />
+                      <span>+91 1414015000</span>
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <Phone size={12} className="text-[#C58B48]" />
+                      <span>+91 1414018002</span>
+                    </p>
+                  </div>
+                </div>
               </div>
-              <button className="font-montserrat text-[#C58B48] text-[10px] font-bold tracking-widest uppercase hover:text-amber-900 transition-colors flex items-center gap-2 group">
+
+              {/* Divider */}
+              <div className="w-full h-[1px] bg-[#D8D3C8] my-6" />
+
+              {/* Dubai Office */}
+              <div>
+                <h4 className="font-montserrat text-[#C58B48] text-[10px] font-bold tracking-widest uppercase mb-2">
+                  Dubai Office
+                </h4>
+                <div className="font-inter text-gray-600 text-sm leading-relaxed space-y-1">
+                  <p>521, Oasis Residency</p>
+                  <p>Block A, Mankhool</p>
+                  <p>Bur Dubai, Dubai UAE</p>
+                  <div className="pt-2 space-y-1">
+                    <p className="flex items-center gap-2">
+                      <Phone size={12} className="text-[#C58B48]" />
+                      <span>+971 525168789</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <button className="mt-6 font-montserrat text-[#C58B48] text-[10px] font-bold tracking-widest uppercase hover:text-amber-900 transition-colors flex items-center gap-2 group">
                 GET DIRECTIONS{" "}
                 <ArrowRight
                   size={14}
@@ -419,9 +478,9 @@ const Contact = () => {
             </div>
 
             {/* Map iframe */}
-            <div className="lg:col-span-8 h-[400px] rounded-sm overflow-hidden border border-[#EBE3D5] grayscale-[30%] opacity-90 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+            <div className="lg:col-span-8 h-[500px] rounded-sm overflow-hidden border border-[#EBE3D5] grayscale-[30%] opacity-90 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3772.669434199986!2d72.818469!3d19.006846!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7ce7697424601%3A0x6b49e3cfcb2af893!2sWorli%2C%20Mumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3558.555555555555!2d75.7848!3d26.8761!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjbCsDUyJzM0LjAiTiA3NcKwNDcnMDUuMyJF!5e0!3m2!1sen!2sin!4v1700000000000"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}

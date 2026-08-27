@@ -7,7 +7,6 @@ import {
   Briefcase,
   Crown,
   Compass,
-  MapPin,
 } from "lucide-react";
 import Button from "../ui/Button";
 import { useNavigate } from "react-router-dom";
@@ -38,7 +37,6 @@ const features = [
   },
 ];
 
-// ✅ Only keep this for image load error fallback
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&q=80";
 
@@ -52,7 +50,7 @@ const DestinationsSection = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // Fetch featured destinations from API - NO FALLBACK DATA
+  // Fetch featured destinations from API
   useEffect(() => {
     const fetchFeaturedDestinations = async () => {
       try {
@@ -65,7 +63,6 @@ const DestinationsSection = () => {
         if (response?.success && response?.data) {
           let featuredData = [];
 
-          // Handle different response formats
           if (Array.isArray(response.data)) {
             featuredData = response.data;
           } else if (response.data.destinations) {
@@ -74,20 +71,14 @@ const DestinationsSection = () => {
             featuredData = response.data.data;
           }
 
-          // ✅ Map API data to match the component's expected format
           const formattedDestinations = featuredData.map((dest) => ({
-            name: dest.city || dest.state || dest.country || "Destination",
+            name: dest.country || dest.state || dest.city || "Destination",
             subtitle: dest.country || "Exclusive Destination",
             description:
               dest.description ||
               "Experience luxury and elegance at this stunning destination.",
             image: dest.image || FALLBACK_IMAGE,
             country: dest.country,
-            state: dest.state,
-            city: dest.city,
-            category: dest.category,
-            price: dest.price,
-            tags: dest.tags || [],
             id: dest._id || dest.id,
           }));
 
@@ -172,7 +163,7 @@ const DestinationsSection = () => {
         opacity: 1,
         filter: "brightness(1)",
         boxShadow:
-          "0 40px 80px -20px rgba(0,0,0,0.85), 0 0 40px rgba(217,177,124,0.15)",
+          "0 40px 80px -20px rgba(0,0,0,0.4), 0 0 60px rgba(217,177,124,0.25), 0 0 120px rgba(217,177,124,0.1)",
       };
     } else if (index === prevIndex) {
       return {
@@ -180,9 +171,9 @@ const DestinationsSection = () => {
         transform:
           "translateX(-125%) perspective(1200px) rotateY(20deg) scale(0.85)",
         zIndex: 20,
-        opacity: 1,
-        filter: "brightness(0.6)",
-        boxShadow: "-35px 25px 50px -15px rgba(0,0,0,0.8)",
+        opacity: 0.7,
+        filter: "brightness(0.7)",
+        boxShadow: "-35px 25px 50px -15px rgba(0,0,0,0.5)",
       };
     } else if (index === nextIndex) {
       return {
@@ -190,9 +181,9 @@ const DestinationsSection = () => {
         transform:
           "translateX(25%) perspective(1200px) rotateY(-20deg) scale(0.85)",
         zIndex: 20,
-        opacity: 1,
-        filter: "brightness(0.6)",
-        boxShadow: "35px 25px 50px -15px rgba(0,0,0,0.8)",
+        opacity: 0.7,
+        filter: "brightness(0.7)",
+        boxShadow: "35px 25px 50px -15px rgba(0,0,0,0.5)",
       };
     } else {
       return {
@@ -221,7 +212,6 @@ const DestinationsSection = () => {
     );
   }
 
-  // ✅ Error State
   if (error) {
     return (
       <section className="relative w-full bg-[#FAF9F5] px-6 py-20 lg:px-12">
@@ -241,7 +231,6 @@ const DestinationsSection = () => {
     );
   }
 
-  // ✅ No Data State
   if (destinations.length === 0) {
     return (
       <section className="relative w-full bg-[#FAF9F5] px-6 py-20 lg:px-12">
@@ -323,15 +312,31 @@ const DestinationsSection = () => {
               {destinations.map((dest, index) => (
                 <div
                   key={dest.id || dest.name + index}
-                  className="absolute top-1/2 flex w-[220px] sm:w-[240px] lg:w-[280px] xl:w-[320px] 2xl:w-[360px] h-[320px] sm:h-[360px] lg:h-[420px] 2xl:h-[460px] -translate-y-1/2 flex-col overflow-hidden rounded-2xl md:rounded-[2rem] border-[3px] border-[#D9B17C]/60 bg-[#171717] ring-1 ring-inset ring-black/50 transition-all duration-[1000ms] ease-[0.25,1,0.5,1] cursor-pointer"
-                  style={getCardStyle(index)}
+                  className="absolute top-1/2 flex w-[220px] sm:w-[240px] lg:w-[280px] xl:w-[320px] 2xl:w-[360px] h-[320px] sm:h-[360px] lg:h-[420px] 2xl:h-[460px] -translate-y-1/2 flex-col overflow-hidden rounded-2xl md:rounded-[2rem] transition-all duration-[1000ms] ease-[0.25,1,0.5,1] cursor-pointer"
+                  style={{
+                    ...getCardStyle(index),
+                    border: "2px solid rgba(217, 177, 124, 0.4)",
+                    boxShadow: getCardStyle(index).boxShadow,
+                  }}
                   onClick={() => {
                     if (dest.id) {
                       navigate(`/destination/${dest.id}`);
                     }
                   }}
                 >
-                  {/* Background Image */}
+                  {/* Golden Glow Effect - Outer */}
+                  <div className="absolute -inset-1 rounded-[2.5rem] bg-gradient-to-r from-[#D9B17C]/30 via-[#F5E6D0]/20 to-[#D9B17C]/30 blur-2xl opacity-50 -z-10" />
+
+                  {/* Golden Border Glow - Inner */}
+                  <div className="absolute inset-0 rounded-2xl md:rounded-[2rem] ring-2 ring-[#D9B17C]/40 ring-inset pointer-events-none z-20" />
+                  
+                  {/* Corner Accents */}
+                  <div className="absolute -top-0.5 -left-0.5 w-6 h-6 border-t-2 border-l-2 border-[#D9B17C] rounded-tl-xl z-20 opacity-80" />
+                  <div className="absolute -top-0.5 -right-0.5 w-6 h-6 border-t-2 border-r-2 border-[#D9B17C] rounded-tr-xl z-20 opacity-80" />
+                  <div className="absolute -bottom-0.5 -left-0.5 w-6 h-6 border-b-2 border-l-2 border-[#D9B17C] rounded-bl-xl z-20 opacity-80" />
+                  <div className="absolute -bottom-0.5 -right-0.5 w-6 h-6 border-b-2 border-r-2 border-[#D9B17C] rounded-br-xl z-20 opacity-80" />
+
+                  {/* Background Image - Clean with minimal gradient */}
                   <div className="absolute inset-0">
                     <img
                       src={dest.image || FALLBACK_IMAGE}
@@ -341,41 +346,29 @@ const DestinationsSection = () => {
                         e.target.src = FALLBACK_IMAGE;
                       }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/95" />
-                    <div className="absolute inset-0 shadow-[inset_0_0_20px_rgba(0,0,0,0.6)] pointer-events-none" />
+                    {/* Very subtle gradient at bottom ONLY for text readability */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                    {/* Subtle glow overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#D9B17C]/5 via-transparent to-transparent pointer-events-none" />
                   </div>
 
-                  {/* Card Content */}
+                  {/* Card Content - Only Country and Description */}
                   <div className="relative z-10 mt-auto flex flex-col items-center p-4 text-center text-white pb-6">
-                    <div className="mb-2 flex h-8 w-8 md:h-10 md:w-10 items-center justify-center rounded-full border border-[#D9B17C] bg-black/60 shadow-[0_0_15px_rgba(0,0,0,0.5)] backdrop-blur-md">
-                      <Crown className="h-4 w-4 md:h-5 md:w-5 text-[#D9B17C]" />
-                    </div>
-
+                    {/* Country Name */}
                     <h3
-                      className="mb-1 font-serif text-xl md:text-2xl lg:text-3xl font-medium tracking-wide lg:font-canela"
-                      style={{ textShadow: "0 4px 10px rgba(0,0,0,0.8)" }}
+                      className="mb-2 font-serif text-2xl md:text-3xl lg:text-4xl font-medium tracking-wide lg:font-canela"
+                      style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8)" }}
                     >
-                      {dest.name.toUpperCase()}
+                      {dest.country || dest.name}
                     </h3>
-                    <h4
-                      className="mb-2 font-cormorant text-sm md:text-base lg:text-lg font-medium italic text-[#D9B17C]"
-                      style={{ textShadow: "0 2px 5px rgba(0,0,0,0.8)" }}
-                    >
-                      {dest.subtitle}
-                    </h4>
-                    <p className="font-manrope text-[10px] md:text-xs font-normal leading-[1.5] text-[#E8E8E8] max-w-[95%] line-clamp-2">
+
+                    {/* Description */}
+                    <p className="font-manrope text-[10px] md:text-xs font-normal leading-[1.6] text-[#E8E8E8] max-w-[90%] line-clamp-3">
                       {dest.description}
                     </p>
 
-                    {/* Location indicator */}
-                    {dest.city && dest.country && (
-                      <div className="mt-2 flex items-center gap-1 text-[8px] md:text-[10px] text-[#D9B17C]/80 font-manrope">
-                        <MapPin className="w-3 h-3" />
-                        <span>
-                          {dest.city}, {dest.country}
-                        </span>
-                      </div>
-                    )}
+                    {/* Decorative Line */}
+                    <div className="mt-3 w-12 h-[1px] bg-gradient-to-r from-transparent via-[#D9B17C] to-transparent" />
                   </div>
                 </div>
               ))}

@@ -336,7 +336,10 @@ const DropdownMenu = ({ isOpen, onClose }) => {
 
           if (countries.length > 0) {
             setActiveCountry(countries[0]);
-            setActiveState(formattedData[countries[0]].states[0]);
+            const firstState = formattedData[countries[0]]?.states?.[0];
+            if (firstState) {
+              setActiveState(firstState);
+            }
           }
         }
       } catch (error) {
@@ -365,8 +368,15 @@ const DropdownMenu = ({ isOpen, onClose }) => {
     const groupedData = {};
 
     destinationsArray.forEach((dest) => {
+      // Skip if dest is null or undefined
+      if (!dest) return;
+
       const { country, state, city } = dest;
-      // Get the database ID (MongoDB uses _id, some databases use id)
+
+      // Skip if country or state is missing
+      if (!country || !state) return;
+
+      // Get the database ID
       const destId = dest._id || dest.id;
 
       if (!groupedData[country]) {
@@ -389,7 +399,6 @@ const DropdownMenu = ({ isOpen, onClose }) => {
         if (!cityExists) {
           groupedData[country].statesMap[state].cities.push({
             name: city,
-            // Route directly to the single destination page using its ID
             path: `/destination/${destId}`,
           });
         }
@@ -408,9 +417,13 @@ const DropdownMenu = ({ isOpen, onClose }) => {
 
   const handleCountryHover = (country) => {
     setActiveCountry(country);
-    setActiveState(menuData[country].states[0]);
+    const firstState = menuData[country]?.states?.[0];
+    if (firstState) {
+      setActiveState(firstState);
+    }
   };
 
+  // Return null while loading or if no data
   if (loading || countryNames.length === 0) return null;
 
   return (
@@ -421,19 +434,17 @@ const DropdownMenu = ({ isOpen, onClose }) => {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 10, scale: 0.97 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
-          // Added max-h-[70vh] so the entire menu doesn't exceed screen height
           className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[800px] max-h-[70vh] bg-white rounded-2xl shadow-2xl border border-gray-100/50 overflow-hidden z-50 flex"
           onMouseLeave={onClose}
         >
           {/* COLUMN 1 — COUNTRIES */}
-          {/* Added overflow-y-auto to allow scrolling if too many countries */}
           <div className="w-[220px] bg-gradient-to-b from-gray-900 to-gray-800 py-6 px-3 flex flex-col overflow-y-auto custom-scrollbar">
             <span className="px-3 text-xs font-semibold tracking-widest text-pink-400 mb-3 shrink-0">
               DESTINATIONS
             </span>
             <div className="flex-1 space-y-1">
               {countryNames.map((country) => {
-                const CountryIcon = menuData[country].icon || Globe;
+                const CountryIcon = menuData[country]?.icon || Globe;
                 const isActive = activeCountry === country;
 
                 return (
@@ -462,21 +473,21 @@ const DropdownMenu = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          {/* COLUMN 2 — STATES (NOT clickable for navigation anymore, just hover) */}
+          {/* COLUMN 2 — STATES */}
           <div className="w-[260px] bg-[#faf7f2] py-6 px-4 border-r border-gray-200/70 overflow-y-auto custom-scrollbar">
-            {activeCountry && (
+            {activeCountry && menuData[activeCountry] && (
               <>
                 <span className="text-xs font-semibold tracking-widest text-amber-700 mb-3 block">
                   {activeCountry.toUpperCase()}
                 </span>
                 <div className="space-y-0.5">
-                  {menuData[activeCountry].states.map((state) => {
-                    const StateIcon = state.icon || MapPin;
-                    const isActive = activeState?.name === state.name;
+                  {menuData[activeCountry].states?.map((state) => {
+                    const StateIcon = state?.icon || MapPin;
+                    const isActive = activeState?.name === state?.name;
                     return (
                       <div
-                        key={state.name}
-                        onMouseEnter={() => setActiveState(state)}
+                        key={state?.name || Math.random()}
+                        onMouseEnter={() => state && setActiveState(state)}
                         className={`w-full flex items-center gap-3 px-2 py-2.5 rounded-lg cursor-default transition-all duration-200 ${
                           isActive ? "bg-white shadow-sm" : "hover:bg-white/60"
                         }`}
@@ -491,10 +502,11 @@ const DropdownMenu = ({ isOpen, onClose }) => {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="text-sm font-semibold text-gray-800 truncate">
-                            {state.name}
+                            {state?.name || "Unknown"}
                           </div>
                           <div className="text-[11px] text-gray-500 truncate">
-                            {state.description}
+                            {state?.description ||
+                              "Explore this beautiful region"}
                           </div>
                         </div>
                         <ChevronRight
@@ -508,27 +520,33 @@ const DropdownMenu = ({ isOpen, onClose }) => {
             )}
           </div>
 
-          {/* COLUMN 3 — CITIES (Clickable) */}
+          {/* COLUMN 3 — CITIES */}
           <div className="flex-1 py-6 px-5 overflow-y-auto custom-scrollbar">
-            {activeState && (
+            {activeState && activeState.name && (
               <>
                 <span className="text-xs font-semibold tracking-widest text-pink-500 mb-3 block">
                   POPULAR IN {activeState.name.toUpperCase()}
                 </span>
                 <div className="grid grid-cols-2 gap-2">
-                  {activeState.cities.map((city) => (
-                    <Link
-                      key={city.name}
-                      to={city.path}
-                      onClick={onClose}
-                      className="group flex items-center gap-2 px-3 py-2.5 rounded-lg hover:bg-pink-50/60 transition-colors duration-200"
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-pink-400 group-hover:scale-125 transition-transform" />
-                      <span className="text-sm text-gray-700 group-hover:text-pink-600 font-medium truncate">
-                        {city.name}
-                      </span>
-                    </Link>
-                  ))}
+                  {activeState.cities && activeState.cities.length > 0 ? (
+                    activeState.cities.map((city) => (
+                      <Link
+                        key={city.name}
+                        to={city.path}
+                        onClick={onClose}
+                        className="group flex items-center gap-2 px-3 py-2.5 rounded-lg hover:bg-pink-50/60 transition-colors duration-200"
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-pink-400 group-hover:scale-125 transition-transform" />
+                        <span className="text-sm text-gray-700 group-hover:text-pink-600 font-medium truncate">
+                          {city.name}
+                        </span>
+                      </Link>
+                    ))
+                  ) : (
+                    <div className="text-sm text-gray-400 col-span-2 text-center py-4">
+                      No cities available
+                    </div>
+                  )}
                 </div>
               </>
             )}

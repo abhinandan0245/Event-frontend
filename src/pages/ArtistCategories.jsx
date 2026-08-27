@@ -183,45 +183,60 @@ const ArtistCategories = () => {
                   <Link
                     key={category._id || index}
                     to={`/artists/category/${category._id}`}
-                    className="group relative overflow-hidden bg-[#FFFDF9] rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-[#F0EBE1] hover:-translate-y-1 h-[360px] flex flex-col p-6"
+                    className="group relative overflow-hidden bg-[#FFFDF9] rounded-2xl shadow-sm transition-all duration-500 border-[6px] border-transparent hover:border-[#C58B48] hover:shadow-[0_0_40px_rgba(197,139,72,0.4)] hover:-translate-y-2 h-[360px] flex flex-col p-0"
                   >
-                    {/* Right-aligned Background Image with Gradient Mask */}
-                    <div className="absolute top-0 right-0 bottom-0 w-[65%] z-0">
+                    {/* Golden Glow Effect on Hover */}
+                    <div className="absolute -inset-2 rounded-2xl bg-gradient-to-r from-[#C58B48]/0 via-[#C58B48]/0 to-[#C58B48]/0 group-hover:from-[#C58B48]/30 group-hover:via-[#C58B48]/15 group-hover:to-[#C58B48]/30 blur-2xl transition-all duration-500 opacity-0 group-hover:opacity-100" />
+
+                    {/* Background Image - Full Card */}
+                    <div className="absolute inset-0 z-0">
                       <img
                         src={imageUrl}
                         alt={category.name}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                         onError={(e) => {
                           e.target.style.display = "none";
                         }}
                       />
-                      {/* Horizontal fade to blend image into background */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-[#FFFDF9] via-[#FFFDF9]/80 to-transparent" />
-                      {/* Subtle bottom fade for text legibility */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#FFFDF9]/50 via-transparent to-transparent" />
+                      {/* Black overlay behind text - bottom 40% */}
+                      <div className="absolute bottom-0 left-0 right-0 h-[45%] bg-gradient-to-t from-black/90 via-black/60 to-transparent" />
+                      {/* Subtle overlay to darken image slightly for better text contrast */}
+                      <div className="absolute inset-0 bg-black/10 group-hover:bg-black/5 transition-all duration-500" />
                     </div>
 
-                    {/* Card Content Overlay */}
-                    <div className="relative z-10 flex flex-col h-full w-[85%]">
-                      {/* Bottom: Text Content */}
-                      <div className="mt-auto mb-5">
-                        <h3 className="font-serif text-[1.35rem] leading-tight font-medium text-[#1F2937] mb-3 group-hover:text-[#C58B48] transition-colors pr-2">
+                    {/* Card Content - Overlay on Image */}
+                    <div className="relative z-10 flex flex-col h-full w-full p-6">
+                      {/* Top: Empty space */}
+                      <div className="flex-1"></div>
+
+                      {/* Bottom: Text Content with black overlay */}
+                      <div className="mt-auto">
+                        {/* Category Name - White with text shadow for readability */}
+                        <h3 className="font-serif text-[1.5rem] leading-tight font-medium text-white mb-2 group-hover:text-[#C58B48] transition-colors drop-shadow-lg">
                           {category.name}
                         </h3>
-                        <p className="text-xs text-gray-500 leading-relaxed line-clamp-3 pr-4">
+                        
+                        {/* Description - White with subtle opacity */}
+                        <p className="text-sm text-white/90 leading-relaxed line-clamp-2 pr-4 drop-shadow-md">
                           {category.description ||
                             "Explore our specialized collection of talent for your events."}
                         </p>
                       </div>
 
-                      {/* Link - No underline/hover line */}
-                      <div className="flex items-center text-[#C58B48] text-xs font-medium transition-all">
+                      {/* Bottom: View Artists Link */}
+                      <div className="flex items-center text-white/90 text-xs font-medium transition-all mt-3 group-hover:text-[#C58B48]">
                         <span>View Artists</span>
-                        <span className="ml-2 transition-transform group-hover:translate-x-1">
+                        <span className="ml-2 transition-transform group-hover:translate-x-2 group-hover:text-[#C58B48]">
                           →
                         </span>
                       </div>
                     </div>
+
+                    {/* Golden Border Glow - Corner Accents with larger size */}
+                    <div className="absolute -top-1 -left-1 w-8 h-8 border-t-[3px] border-l-[3px] border-[#C58B48] rounded-tl-xl z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute -top-1 -right-1 w-8 h-8 border-t-[3px] border-r-[3px] border-[#C58B48] rounded-tr-xl z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute -bottom-1 -left-1 w-8 h-8 border-b-[3px] border-l-[3px] border-[#C58B48] rounded-bl-xl z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute -bottom-1 -right-1 w-8 h-8 border-b-[3px] border-r-[3px] border-[#C58B48] rounded-br-xl z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </Link>
                 );
               })}

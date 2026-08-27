@@ -94,7 +94,7 @@ const DestinationDetails = () => {
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             Go Back
           </button>
-          
+
           <button
             onClick={handleExploreMore}
             className="inline-flex items-center gap-2 text-[#C58B48] hover:text-[#1F2937] transition-colors font-inter text-sm group"
@@ -122,27 +122,30 @@ const DestinationDetails = () => {
           )}
         </div>
 
-        {/* Image Section */}
-        <div className="w-full h-[50vh] md:h-[60vh] rounded-3xl overflow-hidden shadow-xl mb-12 relative group">
-          <img
-            src={imageUrl}
-            alt={destination.city}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
-            onError={(e) => {
-              e.currentTarget.src = FALLBACK_IMAGE;
-            }}
-          />
-          <div className="absolute bottom-6 left-6 bg-white/90 backdrop-blur-md py-2 px-4 rounded-full flex items-center gap-2 shadow-lg">
-            <MapPin className="w-4 h-4 text-[#C58B48]" />
-            <span className="text-sm font-semibold text-gray-800">
-              {destination.city}, {destination.country}
-            </span>
+        {/* Left: Image | Right: Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+          {/* Image Section - left, sticky, portrait-friendly */}
+          <div className="lg:sticky lg:top-24">
+            <div className="w-full max-w-sm mx-auto lg:mx-0 aspect-square max-h-[320px] rounded-3xl overflow-hidden shadow-xl relative group bg-gray-100">
+              <img
+                src={imageUrl}
+                alt={destination.city}
+                className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-1000"
+                onError={(e) => {
+                  e.currentTarget.src = FALLBACK_IMAGE;
+                }}
+              />
+              <div className="absolute bottom-6 left-6 bg-white/90 backdrop-blur-md py-2 px-4 rounded-full flex items-center gap-2 shadow-lg">
+                <MapPin className="w-4 h-4 text-[#C58B48]" />
+                <span className="text-sm font-semibold text-gray-800">
+                  {destination.city}, {destination.country}
+                </span>
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* Details Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          <div className="md:col-span-2">
+          {/* Content Section - right */}
+          <div>
             <h3 className="font-cormorant text-3xl text-[#1F2937] mb-4">
               About the Destination
             </h3>
@@ -153,7 +156,7 @@ const DestinationDetails = () => {
 
             {/* Tags Section */}
             {destination.tags && destination.tags.length > 0 && (
-              <div className="mt-6">
+              <div className="mb-8">
                 <h4 className="font-montserrat text-xs font-bold tracking-widest text-gray-400 uppercase mb-3">
                   Tags
                 </h4>
@@ -169,55 +172,48 @@ const DestinationDetails = () => {
                 </div>
               </div>
             )}
-          </div>
 
-          {/* Sidebar Box */}
-          <div className="bg-white p-8 rounded-2xl shadow-lg border border-[#EBE3D5] h-fit">
-            <h4 className="font-montserrat text-[#C58B48] text-xs font-bold tracking-widest uppercase mb-6 border-b border-[#EBE3D5] pb-4">
-              Quick Info
-            </h4>
+            {/* Quick Info Box */}
+            <div className="bg-white p-8 rounded-2xl shadow-lg border border-[#EBE3D5]">
+              <h4 className="font-montserrat text-[#C58B48] text-xs font-bold tracking-widest uppercase mb-6 border-b border-[#EBE3D5] pb-4">
+                Quick Info
+              </h4>
 
-            <div className="space-y-4 font-inter text-sm text-gray-700">
-              <div className="flex justify-between">
-                <span className="text-gray-400">Country</span>
-                <span className="font-semibold">{destination.country}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">State</span>
-                <span className="font-semibold">{destination.state}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">City</span>
-                <span className="font-semibold">{destination.city}</span>
-              </div>
-              {destination.category && (
+              <div className="space-y-4 font-inter text-sm text-gray-700">
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Category</span>
-                  <span className="font-semibold">{destination.category}</span>
+                  <span className="text-gray-400">Country</span>
+                  <span className="font-semibold">{destination.country}</span>
                 </div>
-              )}
-              {destination.price && (
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Starting Price</span>
-                  <span className="font-semibold text-[#C58B48]">
-                    {destination.price}
-                  </span>
+                  <span className="text-gray-400">State</span>
+                  <span className="font-semibold">{destination.state}</span>
                 </div>
-              )}
-              {destination.featured && (
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Status</span>
-                  <span className="font-semibold text-[#C58B48]">Featured</span>
+                  <span className="text-gray-400">City</span>
+                  <span className="font-semibold">{destination.city}</span>
                 </div>
-              )}
+                {destination.category && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Category</span>
+                    <span className="font-semibold">{destination.category}</span>
+                  </div>
+                )}
+               
+                {destination.featured && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Status</span>
+                    <span className="font-semibold text-[#C58B48]">Featured</span>
+                  </div>
+                )}
+              </div>
+
+              <Button
+                onClick={() => navigate("/contact")}
+                className="w-full mt-8 bg-[#1F2937] text-white py-3 rounded-lg font-montserrat text-xs tracking-widest hover:bg-[#C58B48] transition-colors"
+              >
+                PLAN YOUR EVENT
+              </Button>
             </div>
-
-            <Button 
-              onClick={() => navigate("/contact")} 
-              className="w-full mt-8 bg-[#1F2937] text-white py-3 rounded-lg font-montserrat text-xs tracking-widest hover:bg-[#C58B48] transition-colors"
-            >
-              PLAN YOUR EVENT
-            </Button>
           </div>
         </div>
 
@@ -230,7 +226,7 @@ const DestinationDetails = () => {
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             Go Back
           </button>
-          
+
           <div className="flex gap-3">
             <button
               onClick={handleExploreMore}

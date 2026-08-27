@@ -303,7 +303,7 @@ const HeroSection = () => {
                 variant="secondary"
                 size="md"
                 shape="leaf"
-                className="w-full rounded-[3px] bg-white/80 text-[#D8C7B3] backdrop-blur-md sm:w-auto font-Manrope Medium text-[11px] tracking-[0.18em] uppercase sm:text-xs"
+                // className="w-full rounded-[3px] bg-white/80 text-[#D8C7B3] backdrop-blur-md sm:w-auto font-Manrope Medium text-[11px] tracking-[0.18em] uppercase sm:text-xs"
               >
                 EXPLORE PORTFOLIO
               </Button>

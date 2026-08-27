@@ -146,44 +146,44 @@ const WelcomeSection = () => {
           {/* ================= RIGHT: IMAGE COLLAGE ================= */}
           <div
             ref={imagesRef}
-            className="relative mt-10 h-[400px] w-full lg:mt-0 lg:col-span-6 lg:h-[500px] xl:col-span-7"
+            className="relative mt-10 h-[450px] w-full lg:mt-0 lg:col-span-6 lg:h-[550px] xl:col-span-7"
           >
-            <div className="relative mx-auto h-full w-full max-w-[650px]">
+            <div className="relative mx-auto h-full w-full max-w-[700px]">
               {/* Main Center Image */}
-              <div className="collage-img absolute left-[20%] top-0 z-10 w-[55%] border-[6px] border-[#FAF9F5] bg-white shadow-xl lg:left-[25%] lg:w-[45%]">
+              <div className="collage-img absolute left-[20%] top-0 z-10 w-[55%] border-[6px] border-[#FAF9F5] bg-white shadow-xl lg:left-[20%] lg:w-[50%]">
                 <div className="border border-[#A77942]/30 p-1">
                   <img
-                    src="/assets/welcome.jpg"
+                    src="/assets/welcome1.png"
                     alt="Grand Palace Event"
                     className="aspect-[3/4] w-full object-cover"
                   />
                 </div>
               </div>
 
-              {/* Left Image */}
-              <div className="collage-img absolute bottom-[10%] left-0 z-20 w-[40%] border-[6px] border-[#FAF9F5] bg-white shadow-lg lg:w-[35%]">
+              {/* Left Image - Moved up slightly */}
+              <div className="collage-img absolute bottom-[15%] left-0 z-20 w-[38%] border-[6px] border-[#FAF9F5] bg-white shadow-lg lg:w-[32%]">
                 <div className="border border-[#A77942]/30 p-1">
                   <img
-                    src="/assets/welcome2.jpg"
+                    src="/assets/welcome2.png"
                     alt="Luxury Table Setup"
                     className="aspect-[4/5] w-full object-cover"
                   />
                 </div>
               </div>
 
-              {/* Right Image */}
-              <div className="collage-img absolute right-4 top-[10%] z-0 w-[40%] border-[6px] border-[#FAF9F5] bg-white shadow-lg lg:w-[32%]">
+              {/* Right Image - FULL SIZE, completely visible */}
+              <div className="collage-img absolute right-0 top-[8%] z-0 w-[42%] border-[6px] border-[#FAF9F5] bg-white shadow-lg lg:w-[38%]">
                 <div className="border border-[#A77942]/30 p-1">
                   <img
-                    src="/assets/heromobile.png"
+                    src="/assets/welcome3.png"
                     alt="Grand Stage Setup"
-                    className="aspect-[1/2] w-full object-cover"
+                    className="aspect-[4/5] w-full object-cover"
                   />
                 </div>
               </div>
 
-              {/* Quote Card */}
-              <div className="quote-card absolute bottom-[0%] right-[5%] z-30 w-[85%] max-w-[260px] rounded-sm bg-[#FAF9F5] p-5 shadow-xl lg:-right-4">
+              {/* Quote Card - Adjusted position */}
+              <div className="quote-card absolute bottom-[2%] right-[2%] z-30 w-[85%] max-w-[270px] rounded-sm bg-[#FAF9F5] p-5 shadow-xl lg:-right-2">
                 <span className="font-cormorant text-4xl leading-none text-[#B5793F]">
                   &#8220;
                 </span>

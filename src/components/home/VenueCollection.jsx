@@ -1,4 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  useMemo,
+  memo,
+} from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TextPlugin } from "gsap/TextPlugin";
@@ -24,83 +31,96 @@ import VenuePopup from "../ui/VenuePopup";
 
 gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
-// ✅ Only FALLBACK_IMAGES for error handling (when image URL fails to load)
 const FALLBACK_IMAGES = {
-  default: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=80",
+  default:
+    "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=80",
 };
 
-// Icon mapping based on venue category
-const getVenueIcon = (category) => {
-  const categoryMap = {
-    "Palace": Castle,
-    "Palace Hotel": Castle,
-    "Heritage Palace": Castle,
-    "Luxury Hotel": Building2,
-    "Hotel": Building2,
-    "Private Estate": Landmark,
-    "Estate": Landmark,
-    "Beachfront": Waves,
-    "Beachfront Resort": Waves,
-    "Resort": Waves,
-    "Vineyard": Grape,
-    "Winery": Grape,
-    "Mountain": Mountain,
-    "Retreat": Mountain,
-    "Desert": Tent,
-    "Camp": Tent,
-    "Yacht": Ship,
-    "Cruise": Ship,
-    "Island": Waves,
-  };
-  return categoryMap[category] || Building2;
+const CATEGORY_ICON_MAP = {
+  Palace: Castle,
+  "Palace Hotel": Castle,
+  "Heritage Palace": Castle,
+  "Luxury Hotel": Building2,
+  Hotel: Building2,
+  "Private Estate": Landmark,
+  Estate: Landmark,
+  Beachfront: Waves,
+  "Beachfront Resort": Waves,
+  Resort: Waves,
+  Vineyard: Grape,
+  Winery: Grape,
+  Mountain: Mountain,
+  Retreat: Mountain,
+  Desert: Tent,
+  Camp: Tent,
+  Yacht: Ship,
+  Cruise: Ship,
+  Island: Waves,
 };
 
+const getVenueIcon = (category) => CATEGORY_ICON_MAP[category] || Building2;
+
+const prefersReducedMotion =
+  typeof window !== "undefined" &&
+  window.matchMedia &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 // ==========================================
-// 1. INDIVIDUAL CARD (3D Parallax Logic)
+// 1. INDIVIDUAL CARD
 // ==========================================
-const VenueCard = ({ venue, onCardClick }) => {
+const VenueCard = memo(({ venue, onCardClick }) => {
   const cardRef = useRef(null);
-  const [isHovered, setIsHovered] = useState(false);
+  const quickRef = useRef(null);
 
-  const handleMouseMove = (e) => {
-    if (!cardRef.current) return;
+  useEffect(() => {
+    if (!cardRef.current || prefersReducedMotion) return;
+    quickRef.current = {
+      rotateY: gsap.quickTo(cardRef.current, "rotateY", {
+        duration: 0.4,
+        ease: "power2.out",
+      }),
+      rotateX: gsap.quickTo(cardRef.current, "rotateX", {
+        duration: 0.4,
+        ease: "power2.out",
+      }),
+      scale: gsap.quickTo(cardRef.current, "scale", {
+        duration: 0.4,
+        ease: "power2.out",
+      }),
+    };
+    return () => {
+      quickRef.current = null;
+    };
+  }, []);
+
+  const handleMouseMove = useCallback((e) => {
+    if (!cardRef.current || !quickRef.current) return;
     const { left, top, width, height } =
       cardRef.current.getBoundingClientRect();
     const x = (e.clientX - left - width / 2) / 15;
     const y = (e.clientY - top - height / 2) / 15;
 
-    gsap.to(cardRef.current, {
-      rotateY: x,
-      rotateX: -y,
-      scale: 1.1,
-      z: 50,
-      boxShadow: "0 30px 60px rgba(0,0,0,0.4), 0 0 40px rgba(197,139,72,0.2)",
-      duration: 0.4,
-      ease: "power2.out",
-      overwrite: "auto",
-    });
-  };
+    quickRef.current.rotateY(x);
+    quickRef.current.rotateX(-y);
+    quickRef.current.scale(1.1);
+    cardRef.current.classList.add("venue-card--hovered");
+  }, []);
 
-  const handleMouseLeave = () => {
-    if (!cardRef.current) return;
-    setIsHovered(false);
-    gsap.to(cardRef.current, {
-      rotateY: 0,
-      rotateX: 0,
-      scale: 1,
-      z: 0,
-      boxShadow: "0 4px 6px rgba(0,0,0,0.05)",
-      duration: 0.7,
-      ease: "power3.out",
-      overwrite: "auto",
-    });
-  };
+  const handleMouseLeave = useCallback(() => {
+    if (!cardRef.current || !quickRef.current) return;
+    quickRef.current.rotateY(0);
+    quickRef.current.rotateX(0);
+    quickRef.current.scale(1);
+    cardRef.current.classList.remove("venue-card--hovered");
+  }, []);
 
-  const handleCardClick = () => {
-    if (onCardClick) {
-      onCardClick(venue._id || venue.id);
-    }
-  };
+  const handleCardClick = useCallback(() => {
+    onCardClick?.(venue._id || venue.id);
+  }, [onCardClick, venue._id, venue.id]);
+
+  const handleImgError = useCallback((e) => {
+    e.target.src = FALLBACK_IMAGES.default;
+  }, []);
 
   const Icon = getVenueIcon(venue.category);
   const imageSrc = venue.image || FALLBACK_IMAGES.default;
@@ -110,22 +130,24 @@ const VenueCard = ({ venue, onCardClick }) => {
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      onMouseEnter={() => setIsHovered(true)}
       onClick={handleCardClick}
-      className="venue-card relative flex flex-col w-[280px] md:w-[320px] aspect-[4/3] rounded-xl overflow-hidden cursor-pointer border border-[#E5E5E5] bg-white transition-all duration-500 ease-out z-10"
-      style={{ transformStyle: "preserve-3d", transformPerspective: "1000px" }}
+      className="venue-card relative flex flex-col w-[280px] md:w-[320px] aspect-[4/3] rounded-xl overflow-hidden cursor-pointer border border-[#E5E5E5] bg-white transition-shadow duration-500 ease-out z-10"
+      style={{
+        transformStyle: "preserve-3d",
+        transformPerspective: "1000px",
+        willChange: "transform",
+      }}
     >
       <img
         src={imageSrc}
         alt={venue.name || venue.title}
+        loading="lazy"
+        decoding="async"
         className="absolute inset-0 w-full h-full object-cover"
-        onError={(e) => {
-          e.target.src = FALLBACK_IMAGES.default;
-        }}
+        onError={handleImgError}
       />
       <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A]/90 via-[#1A1A1A]/20 to-transparent pointer-events-none" />
 
-      {/* Featured Badge */}
       {venue.featured && (
         <div className="absolute top-4 left-4 bg-[#C58B48] text-white px-3 py-1 rounded-full text-[10px] font-semibold flex items-center gap-1.5 z-10">
           <Crown className="w-3 h-3" />
@@ -133,7 +155,6 @@ const VenueCard = ({ venue, onCardClick }) => {
         </div>
       )}
 
-      {/* Icon */}
       <div className="absolute top-4 right-4 w-9 h-9 bg-white/95 rounded-full flex items-center justify-center border border-[#C58B48]/30 shadow-sm pointer-events-none translate-z-10">
         <Icon size={16} strokeWidth={1.5} className="text-[#C58B48]" />
       </div>
@@ -154,70 +175,109 @@ const VenueCard = ({ venue, onCardClick }) => {
       </div>
     </div>
   );
-};
+});
+VenueCard.displayName = "VenueCard";
 
 // ==========================================
-// 2. SCROLLING ROW (Marquee Logic)
+// 2. SCROLLING ROW - COMPLETELY FIXED
 // ==========================================
-const MarqueeRow = ({ items, direction = "left", speed = 40, onCardClick }) => {
-  const rowRef = useRef(null);
-  const tweenRef = useRef(null);
+const MarqueeRow = memo(
+  ({ items, direction = "left", speed = 40, onCardClick }) => {
+    const rowRef = useRef(null);
+    const tweenRef = useRef(null);
 
-  useEffect(() => {
-    const row = rowRef.current;
-    if (!row || items.length === 0) return;
+    // ✅ CRITICAL FIX: Deduplicate items at the source
+    const uniqueItems = useMemo(() => {
+      if (!items || items.length === 0) return [];
+      
+      const seen = new Set();
+      const result = [];
+      
+      items.forEach((item) => {
+        const id = item._id || item.id;
+        // Skip if we've already seen this ID
+        if (!seen.has(id)) {
+          seen.add(id);
+          result.push(item);
+        }
+      });
+      
+      console.log('Unique items count:', result.length); // Debug log
+      return result;
+    }, [items]);
 
-    const distance = direction === "left" ? -50 : 0;
-    const startPos = direction === "left" ? 0 : -50;
+    useEffect(() => {
+      const row = rowRef.current;
+      if (!row || uniqueItems.length === 0) return;
+      if (prefersReducedMotion) return;
 
-    gsap.set(row, { xPercent: startPos });
+      const distance = direction === "left" ? -50 : 0;
+      const startPos = direction === "left" ? 0 : -50;
 
-    tweenRef.current = gsap.to(row, {
-      xPercent: distance,
-      repeat: -1,
-      duration: speed,
-      ease: "none",
-    });
+      gsap.set(row, { xPercent: startPos });
 
-    return () => {
-      if (tweenRef.current) tweenRef.current.kill();
-    };
-  }, [direction, speed, items.length]);
+      tweenRef.current = gsap.to(row, {
+        xPercent: distance,
+        repeat: -1,
+        duration: speed,
+        ease: "none",
+      });
 
-  // ✅ Create unique keys for duplicated items
-  const duplicatedItems = items.length > 0 
-    ? items.map((item, idx) => ({
-        ...item,
-        _key: `${item._id || item.id || idx}-first`
-      })).concat(
-        items.map((item, idx) => ({
+      return () => {
+        tweenRef.current?.kill();
+        tweenRef.current = null;
+      };
+    }, [direction, speed, uniqueItems.length]);
+
+    // ✅ FIX: Only duplicate if we have enough items for infinite scroll
+    const duplicatedItems = useMemo(() => {
+      if (uniqueItems.length === 0) return [];
+      
+      // For infinite scroll, we need at least 2 copies
+      // But we ONLY duplicate unique items
+      return [
+        ...uniqueItems.map((item, idx) => ({
           ...item,
-          _key: `${item._id || item.id || idx}-second`
-        }))
-      )
-    : [];
+          _key: `copy1-${item._id || item.id || idx}`,
+        })),
+        ...uniqueItems.map((item, idx) => ({
+          ...item,
+          _key: `copy2-${item._id || item.id || idx}`,
+        })),
+      ];
+    }, [uniqueItems]);
 
-  return (
-    <div
-      className="flex w-max py-4"
-      onMouseEnter={() => tweenRef.current?.pause()}
-      onMouseLeave={() => tweenRef.current?.play()}
-    >
-      <div ref={rowRef} className="flex gap-6 px-3">
-        {duplicatedItems.map((venue) => (
-          <VenueCard 
-            key={venue._key} 
-            venue={venue} 
-            onCardClick={onCardClick}
-          />
-        ))}
+    const handlePause = useCallback(() => tweenRef.current?.pause(), []);
+    const handlePlay = useCallback(() => tweenRef.current?.play(), []);
+
+    // If we don't have enough items, don't render
+    if (uniqueItems.length === 0) {
+      return null;
+    }
+
+    return (
+      <div
+        className="flex w-max py-4"
+        onMouseEnter={handlePause}
+        onMouseLeave={handlePlay}
+      >
+        <div ref={rowRef} className="flex gap-6 px-3">
+          {duplicatedItems.map((venue) => (
+            <VenueCard
+              key={venue._key}
+              venue={venue}
+              onCardClick={onCardClick}
+            />
+          ))}
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  },
+);
+MarqueeRow.displayName = "MarqueeRow";
 
 // ==========================================
-// 3. MAIN COMPONENT
+// 3. MAIN COMPONENT - COMPLETELY FIXED
 // ==========================================
 const VenueCollection = () => {
   const sectionRef = useRef(null);
@@ -233,31 +293,53 @@ const VenueCollection = () => {
   const [selectedVenueId, setSelectedVenueId] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-  // ✅ Fetch featured venues from API - NO FALLBACK DATA
+  // ✅ COMPLETELY FIXED: Fetch and deduplicate data
   useEffect(() => {
+    let isMounted = true;
+
     const fetchFeaturedVenues = async () => {
       try {
         setLoading(true);
         setError(null);
-        
+
         const response = await venueApi.getFeatured();
-        console.log("📡 Venue API Response:", response);
-        
+        if (!isMounted) return;
+
+        console.log('API Response:', response); // Debug log
+
         if (response?.success && response?.data) {
           let venueData = [];
           
-          // Handle different response formats
+          // Extract data from different response formats
           if (Array.isArray(response.data)) {
             venueData = response.data;
           } else if (response.data.venues) {
             venueData = response.data.venues;
           } else if (response.data.data) {
             venueData = response.data.data;
+          } else if (response.data.items) {
+            venueData = response.data.items;
           }
 
-          // ✅ Filter to only show venues with images
-          const validVenues = venueData.filter(venue => venue.image);
+          console.log('Raw venue data count:', venueData.length); // Debug log
+
+          // ✅ CRITICAL FIX: Deduplicate using Set
+          const seenIds = new Set();
+          const uniqueVenues = [];
           
+          venueData.forEach((venue) => {
+            const id = venue._id || venue.id;
+            if (id && !seenIds.has(id)) {
+              seenIds.add(id);
+              uniqueVenues.push(venue);
+            }
+          });
+
+          console.log('Unique venues count:', uniqueVenues.length); // Debug log
+
+          // Filter venues with images
+          const validVenues = uniqueVenues.filter((venue) => venue.image);
+
           if (validVenues.length > 0) {
             setVenues(validVenues);
           } else {
@@ -269,34 +351,68 @@ const VenueCollection = () => {
           setVenues([]);
         }
       } catch (err) {
-        console.error("❌ Error fetching featured venues:", err);
+        if (!isMounted) return;
+        console.error("Error fetching featured venues:", err);
         setError("Failed to load venues. Please try again later.");
         setVenues([]);
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
 
     fetchFeaturedVenues();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  // Handle card click to open popup
-  const handleCardClick = (venueId) => {
+  // ✅ FIX: Ensure venues are always deduplicated
+  const memoizedVenues = useMemo(() => {
+    if (!venues || venues.length === 0) return [];
+    
+    const seen = new Set();
+    const result = [];
+    
+    venues.forEach((venue) => {
+      const id = venue._id || venue.id;
+      if (id && !seen.has(id)) {
+        seen.add(id);
+        result.push(venue);
+      }
+    });
+    
+    console.log('Memoized venues count:', result.length); // Debug log
+    return result;
+  }, [venues]);
+
+  const handleCardClick = useCallback((venueId) => {
     setSelectedVenueId(venueId);
     setIsPopupOpen(true);
-  };
+  }, []);
 
-  // Handle popup close
-  const handlePopupClose = () => {
+  const handlePopupClose = useCallback(() => {
     setIsPopupOpen(false);
     setSelectedVenueId(null);
-  };
+  }, []);
 
-  // GSAP Animations
+  const handleRetry = useCallback(() => window.location.reload(), []);
+  const goToVenues = useCallback(() => navigate("/venues"), [navigate]);
+  const goToContact = useCallback(() => navigate("/contact"), [navigate]);
+
+  // GSAP intro animation
   useEffect(() => {
-    if (loading) return;
+    if (loading || error || memoizedVenues.length === 0) return;
+    if (
+      !sectionRef.current ||
+      !mainTitleRef.current ||
+      !descRef.current ||
+      !buttonsRef.current ||
+      !typingTextRef.current
+    ) {
+      return;
+    }
 
-    let ctx = gsap.context(() => {
+    const ctx = gsap.context(() => {
       const textTimeline = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
@@ -325,30 +441,30 @@ const VenueCollection = () => {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, [loading]);
+  }, [loading, error, memoizedVenues.length]);
 
-  // ✅ Loading State
   if (loading) {
     return (
       <section className="relative w-full bg-[#FAF8F0] py-24 flex items-center justify-center">
         <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#C58B48] mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#C58B48] mb-4" />
           <p className="text-gray-500 font-inter text-sm">Loading venues...</p>
         </div>
       </section>
     );
   }
 
-  // ✅ Error State - Show error message with retry button
   if (error) {
     return (
       <section className="relative w-full bg-[#FAF8F0] py-24 flex items-center justify-center">
         <div className="flex flex-col items-center text-center px-6 max-w-md">
           <div className="text-4xl mb-4">🏛️</div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">No Venues Available</h3>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+            No Venues Available
+          </h3>
           <p className="text-gray-500 font-inter text-sm mb-6">{error}</p>
           <Button
-            onClick={() => window.location.reload()}
+            onClick={handleRetry}
             variant="secondary"
             shape="pill"
             size="md"
@@ -360,18 +476,20 @@ const VenueCollection = () => {
     );
   }
 
-  // ✅ No Data State - Show message when no venues
-  if (venues.length === 0) {
+  if (memoizedVenues.length === 0) {
     return (
       <section className="relative w-full bg-[#FAF8F0] py-24 flex items-center justify-center">
         <div className="flex flex-col items-center text-center px-6 max-w-md">
           <div className="text-4xl mb-4">🏛️</div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">No Venues Found</h3>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+            No Venues Found
+          </h3>
           <p className="text-gray-500 font-inter text-sm mb-6">
-            We couldn't find any featured venues at the moment. Please check back later.
+            We couldn't find any featured venues at the moment. Please check
+            back later.
           </p>
           <Button
-            onClick={() => navigate("/venues")}
+            onClick={goToVenues}
             variant="secondary"
             shape="pill"
             size="md"
@@ -388,9 +506,6 @@ const VenueCollection = () => {
       ref={sectionRef}
       className="relative w-full bg-[#FAF8F0] font-sans pb-24 pt-16 overflow-hidden"
     >
-      {/* ==========================================
-          TOP SECTION: TEXT & BLENDED HERO IMAGE
-          ========================================== */}
       <div className="relative w-full max-w-[1600px] mx-auto min-h-[500px] lg:min-h-[550px] flex items-center px-6 lg:px-12">
         <div className="absolute top-0 right-0 w-full lg:w-[65%] h-full z-0">
           <div className="absolute top-[-10%] right-[5%] w-[80%] h-[110%] border-t-[1px] border-r-[1px] border-[#C58B48]/40 rounded-tr-[500px] z-0 pointer-events-none" />
@@ -398,38 +513,15 @@ const VenueCollection = () => {
           <img
             src="https://images.unsplash.com/photo-1625076932159-61a032e2b7ad?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?w=1600&q=80"
             alt="Luxury Heritage Palace"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
             className="absolute inset-0 w-full h-full object-cover object-center z-10"
           />
 
           <div className="absolute inset-y-0 left-0 w-[40%] lg:w-[50%] bg-gradient-to-r from-[#FAF8F0] via-[#FAF8F0]/90 to-transparent z-20" />
           <div className="absolute inset-x-0 bottom-0 h-[30%] bg-gradient-to-t from-[#FAF8F0] via-[#FAF8F0]/80 to-transparent z-20" />
           <div className="absolute inset-x-0 top-0 h-[15%] bg-gradient-to-b from-[#FAF8F0] to-transparent z-20" />
-
-          <div className="absolute bottom-[10%] right-[10%] z-30 flex items-center justify-center w-28 h-28 lg:w-32 lg:h-32 cursor-pointer group">
-            <svg
-              viewBox="0 0 100 100"
-              className="absolute w-full h-full animate-[spin_12s_linear_infinite]"
-            >
-              <path
-                id="textPath"
-                d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0"
-                fill="none"
-              />
-              <text
-                fontSize="9.5"
-                fill="#C58B48"
-                letterSpacing="1.5"
-                className="font-sans font-bold"
-              >
-                <textPath href="#textPath" startOffset="0%">
-                  CURATED FOR YOU • CURATED FOR YOU •
-                </textPath>
-              </text>
-            </svg>
-            <div className="w-14 h-14 lg:w-16 lg:h-16 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300">
-              <Play className="w-4 h-4 lg:w-5 lg:h-5 text-[#C58B48] ml-1 fill-current" />
-            </div>
-          </div>
         </div>
 
         <div className="relative z-20 w-full lg:w-[50%] pt-10 pb-20">
@@ -468,7 +560,7 @@ const VenueCollection = () => {
             className="flex flex-col sm:flex-row items-center gap-4 opacity-0"
           >
             <Button
-              onClick={() => navigate("/venues")}
+              onClick={goToVenues}
               variant="primary"
               shape="pill"
               size="md"
@@ -477,7 +569,7 @@ const VenueCollection = () => {
               EXPLORE VENUES <ArrowRight size={14} />
             </Button>
             <Button
-              onClick={() => navigate("/contact")}
+              onClick={goToContact}
               variant="secondary"
               shape="pill"
               size="md"
@@ -493,19 +585,15 @@ const VenueCollection = () => {
         <div className="w-2 h-2 rotate-45 border border-[#C58B48] bg-[#FAF8F0]" />
       </div>
 
-      {/* ==========================================
-          BOTTOM SECTION: INFINITE MARQUEE
-          ========================================== */}
       <div className="gallery-wrapper relative z-20 w-full overflow-hidden flex flex-col gap-2">
-        <MarqueeRow 
-          items={venues} 
-          direction="left" 
-          speed={60} 
+        <MarqueeRow
+          items={memoizedVenues}
+          direction="left"
+          speed={60}
           onCardClick={handleCardClick}
         />
       </div>
 
-      {/* Venue Popup */}
       <VenuePopup
         isOpen={isPopupOpen}
         onClose={handlePopupClose}

@@ -10,36 +10,31 @@ const steps = [
     title: "DISCOVER",
     sub: "We begin with you.",
     desc: "Understanding your story, aspirations and dreams to create a vision that's uniquely yours.",
-    image:
-      "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&q=80",
+    image: "/assets/discover.png",
   },
   {
     title: "DESIGN",
     sub: "Conceptualizing beauty.",
     desc: "Bespoke designs and concepts meticulously crafted to reflect your personality and the essence of celebration.",
-    image:
-      "https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=800&q=80",
+    image: "/assets/design.png",
   },
   {
     title: "CURATE",
     sub: "Bringing it to life.",
     desc: "Handpicking the finest elements, artisans, and experiences to bring every detail to life.",
-    image:
-      "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&q=80",
+    image: "/assets/curate.png",
   },
   {
     title: "EXECUTE",
     sub: "Flawless in every moment.",
     desc: "Seamless coordination and precision execution where every element comes together to create magic beyond expectations.",
-    image:
-      "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=80",
+    image: "/assets/excute.png",
   },
   {
     title: "CELEBRATE",
     sub: "Memories that last forever.",
     desc: "You enjoy every moment. We create memories that you and your guests will cherish for a lifetime and beyond.",
-    image:
-      "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=80",
+    image: "/assets/celebrate.png",
   },
 ];
 
@@ -213,20 +208,37 @@ const ProcessSection = () => {
               style={{
                 transformStyle: "preserve-3d",
                 background:
-                  "linear-gradient(145deg, #FFFFFF 0%, #F5F0E8 40%, #E8DFD0 80%, #D5C8B8 100%)",
+                  "linear-gradient(145deg, #C49A5A 0%, #D4B87A 30%, #E8D5A8 60%, #F5E8D0 100%)",
                 padding: "3px",
+                boxShadow:
+                  "0 0 30px rgba(196, 154, 90, 0.15), 0 0 60px rgba(196, 154, 90, 0.08)",
               }}
             >
-              <div className="relative w-full h-full rounded-[13px] xl:rounded-[21px] bg-white overflow-hidden flex flex-col items-center ring-1 ring-inset ring-[#E8E0D6]">
+              {/* Golden Border Glow - Corner Accents */}
+              <div className="absolute -top-1 -left-1 w-8 h-8 border-t-2 border-l-2 border-[#C49A5A] rounded-tl-[16px] xl:rounded-tl-[24px] z-20 opacity-80" />
+              <div className="absolute -top-1 -right-1 w-8 h-8 border-t-2 border-r-2 border-[#C49A5A] rounded-tr-[16px] xl:rounded-tr-[24px] z-20 opacity-80" />
+              <div className="absolute -bottom-1 -left-1 w-8 h-8 border-b-2 border-l-2 border-[#C49A5A] rounded-bl-[16px] xl:rounded-bl-[24px] z-20 opacity-80" />
+              <div className="absolute -bottom-1 -right-1 w-8 h-8 border-b-2 border-r-2 border-[#C49A5A] rounded-br-[16px] xl:rounded-br-[24px] z-20 opacity-80" />
+
+              {/* Golden Glow Effect */}
+              <div className="absolute -inset-1 rounded-[20px] xl:rounded-[28px] bg-gradient-to-r from-[#C49A5A]/20 via-[#E8D5A8]/30 to-[#C49A5A]/20 blur-xl opacity-50 -z-10" />
+
+              <div className="relative w-full h-full rounded-[13px] xl:rounded-[21px] bg-white overflow-hidden flex flex-col items-center">
+                {/* Image - Clean and Sharp with only bottom gradient */}
                 <img
                   src={step.image}
                   alt={step.title}
-                  className="absolute inset-0 w-full h-full object-cover opacity-[0.85]"
+                  className="absolute inset-0 w-full h-full object-cover"
+                  style={{ opacity: 1 }}
                 />
 
-                <div className="absolute inset-0 bg-gradient-to-t from-white via-white/50 to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-transparent" />
+                {/* Bottom gradient ONLY - for text readability */}
+                <div className="absolute bottom-0 left-0 right-0 h-[65%] bg-gradient-to-t from-white via-white/70 to-transparent" />
 
+                {/* Top gradient - very subtle, almost transparent */}
+                <div className="absolute top-0 left-0 right-0 h-[20%] bg-gradient-to-b from-white/10 to-transparent" />
+
+                {/* Content */}
                 <div className="relative z-10 w-full h-full flex flex-col items-center text-center p-4 lg:p-6">
                   <span className="font-serif text-[40px] lg:text-[64px] font-medium leading-none text-transparent bg-clip-text bg-gradient-to-b from-[#C49A5A] to-[#8B7355] mt-4 lg:mt-6 mb-auto lg:font-canela drop-shadow-sm">
                     {step.num}

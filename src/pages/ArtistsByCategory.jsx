@@ -8,6 +8,8 @@ import {
   ArrowRight,
   Sparkles,
   Play,
+  Crown,
+  Calendar,
 } from "lucide-react";
 import { artistPublicApi } from "../api/artistPublicApi";
 
@@ -120,10 +122,10 @@ const ArtistsByCategory = () => {
 
   const getAvailabilityBadge = (availability) => {
     const styles = {
-      available: "bg-green-100 text-green-800",
-      busy: "bg-red-100 text-red-800",
-      "on-tour": "bg-amber-100 text-amber-800",
-      unavailable: "bg-gray-100 text-gray-600",
+      available: "bg-green-500/20 text-green-400 border-green-500/30",
+      busy: "bg-red-500/20 text-red-400 border-red-500/30",
+      "on-tour": "bg-amber-500/20 text-amber-400 border-amber-500/30",
+      unavailable: "bg-gray-500/20 text-gray-400 border-gray-500/30",
     };
     return styles[availability] || styles.available;
   };
@@ -240,7 +242,7 @@ const ArtistsByCategory = () => {
         </div>
       </section>
 
-      {/* ====== ARTISTS GRID SECTION ====== */}
+      {/* ====== ARTISTS GRID SECTION - PREMIUM CARDS WITH TRANSPARENT BLUR ====== */}
       <section className="bg-[#FAF8F0] py-12 px-4 md:px-8 lg:px-16">
         <div className="max-w-7xl mx-auto">
           {/* Artists Grid */}
@@ -260,31 +262,41 @@ const ArtistsByCategory = () => {
                 <Link
                   key={artist._id}
                   to={`/artists/${artist._id}`}
-                  className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[#C58B48]/40 hover:-translate-y-1"
+                  className="group relative overflow-hidden rounded-2xl transition-all duration-500 border-[3px] border-transparent hover:border-[#C58B48] hover:shadow-[0_0_40px_rgba(197,139,72,0.35)] hover:-translate-y-2"
                 >
-                  {/* Artist Image */}
-                  <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
+                  {/* Golden Glow Effect on Hover */}
+                  <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-[#C58B48]/0 via-[#C58B48]/0 to-[#C58B48]/0 group-hover:from-[#C58B48]/20 group-hover:via-[#C58B48]/10 group-hover:to-[#C58B48]/20 blur-xl transition-all duration-500 opacity-0 group-hover:opacity-100 pointer-events-none" />
+
+                  {/* Artist Image - Full Cover */}
+                  <div className="relative w-full aspect-[3/4] overflow-hidden bg-gray-200">
                     <img
                       src={
                         artist.image ||
-                        "https://via.placeholder.com/400x300?text=🎵"
+                        "https://via.placeholder.com/600x800?text=🎵"
                       }
                       alt={artist.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       onError={(e) => {
                         e.target.src =
-                          "https://via.placeholder.com/400x300?text=🎵";
+                          "https://via.placeholder.com/600x800?text=🎵";
                       }}
                     />
+                    
+                    {/* Dark gradient overlay for text contrast */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+
+                    {/* Featured Badge - Top Left */}
                     {artist.featured && (
-                      <div className="absolute top-3 left-3 bg-[#C58B48] text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
-                        <Star size={12} fill="white" />
+                      <div className="absolute top-4 left-4 bg-[#C58B48] text-white px-3 py-1.5 rounded-full text-[10px] font-semibold flex items-center gap-1.5 shadow-lg z-10">
+                        <Crown size={12} />
                         Featured
                       </div>
                     )}
+
+                    {/* Availability Badge - Top Right */}
                     {artist.availability && (
                       <div
-                        className={`absolute bottom-3 left-3 px-3 py-1 rounded-full text-xs font-medium ${getAvailabilityBadge(
+                        className={`absolute top-4 right-4 px-3 py-1 rounded-full text-[10px] font-medium border backdrop-blur-sm shadow-lg z-10 ${getAvailabilityBadge(
                           artist.availability
                         )}`}
                       >
@@ -292,42 +304,70 @@ const ArtistsByCategory = () => {
                           artist.availability.slice(1)}
                       </div>
                     )}
+
+                    {/* ====== CONTENT - TRANSPARENT BLUR BACKGROUND ====== */}
+                    <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
+                      {/* Transparent Blur Container */}
+                      <div className="bg-black/40 backdrop-blur-md rounded-2xl p-4 border border-white/10 group-hover:border-[#C58B48]/40 transition-all duration-300 shadow-xl">
+                        {/* Artist Name - Golden on Hover */}
+                        <h3 className="font-serif text-lg font-semibold text-white group-hover:text-[#C58B48] transition-colors drop-shadow-lg">
+                          {artist.name}
+                        </h3>
+
+                        {/* Location */}
+                        {artist.location && (
+                          <p className="text-sm text-white/80 flex items-center gap-1 mt-0.5 drop-shadow-md">
+                            <MapPin size={14} className="text-[#C58B48]" />
+                            {artist.location}
+                          </p>
+                        )}
+
+                        {/* Tags */}
+                        <div className="flex items-center gap-2 mt-2 flex-wrap">
+                          {artist.languages && artist.languages.length > 0 && (
+                            <span className="text-[10px] px-2.5 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white/90 border border-white/10">
+                              {artist.languages.slice(0, 2).join(", ")}
+                              {artist.languages.length > 2 &&
+                                ` +${artist.languages.length - 2}`}
+                            </span>
+                          )}
+                          {artist.experience > 0 && (
+                            <span className="text-[10px] px-2.5 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white/90 border border-white/10 flex items-center gap-1">
+                              <Calendar size={10} />
+                              {artist.experience}+ yrs
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Divider with Price and Rating */}
+                        <div className="mt-3 pt-3 border-t border-white/10 flex items-center justify-between">
+                          <span className="font-semibold text-[#C58B48] text-sm drop-shadow-md">
+                            {formatPrice(artist.price, artist.priceUnit)}
+                          </span>
+                          
+                          {/* Rating */}
+                          {artist.rating && (
+                            <span className="flex items-center gap-1 text-white/80 text-xs">
+                              <Star size={14} fill="#C58B48" stroke="#C58B48" />
+                              {artist.rating}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* View Details Link - Golden on Hover */}
+                        <div className="mt-2 flex items-center justify-end text-xs font-medium text-[#C58B48]/70 group-hover:text-[#C58B48] transition-all">
+                          <span>View Profile</span>
+                          <ArrowRight size={14} className="ml-1 group-hover:translate-x-1 transition-transform" />
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Artist Info */}
-                  <div className="p-4">
-                    <h3 className="font-serif text-lg font-semibold text-[#1F2937] group-hover:text-[#C58B48] transition-colors">
-                      {artist.name}
-                    </h3>
-
-                    {artist.location && (
-                      <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
-                        <MapPin size={14} />
-                        {artist.location}
-                      </p>
-                    )}
-
-                    <div className="flex items-center gap-2 mt-2 flex-wrap">
-                      {artist.languages && artist.languages.length > 0 && (
-                        <span className="text-xs px-2 py-1 bg-gray-100 rounded-full text-gray-600">
-                          {artist.languages.slice(0, 2).join(", ")}
-                          {artist.languages.length > 2 &&
-                            ` +${artist.languages.length - 2}`}
-                        </span>
-                      )}
-                      {artist.experience > 0 && (
-                        <span className="text-xs px-2 py-1 bg-gray-100 rounded-full text-gray-600">
-                          {artist.experience}+ yrs
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
-                      <span className="font-semibold text-[#C58B48]">
-                        {formatPrice(artist.price, artist.priceUnit)}
-                      </span>
-                    </div>
-                  </div>
+                  {/* Golden Border Corner Accents */}
+                  <div className="absolute -top-0.5 -left-0.5 w-7 h-7 border-t-[3px] border-l-[3px] border-[#C58B48] rounded-tl-xl z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute -top-0.5 -right-0.5 w-7 h-7 border-t-[3px] border-r-[3px] border-[#C58B48] rounded-tr-xl z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute -bottom-0.5 -left-0.5 w-7 h-7 border-b-[3px] border-l-[3px] border-[#C58B48] rounded-bl-xl z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute -bottom-0.5 -right-0.5 w-7 h-7 border-b-[3px] border-r-[3px] border-[#C58B48] rounded-br-xl z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </Link>
               ))}
             </div>

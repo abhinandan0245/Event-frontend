@@ -163,33 +163,7 @@ const TestimonialSection = () => {
           </div>
         </div>
 
-        {/* --- BOTTOM CITIES BAR --- */}
-        <div className="w-full mt-10 pb-8 flex flex-col items-center">
-          <p className="text-[#C58B48] text-[9px] md:text-[10px] font-semibold tracking-[0.3em] uppercase mb-6">
-            CELEBRATED WITH AMAZING CLIENTS ACROSS
-          </p>
-
-          <div className="flex items-center justify-center w-full max-w-4xl relative">
-            <div className="flex flex-wrap justify-center items-center gap-x-4 gap-y-2 md:gap-x-8 text-[#1F2937] text-sm md:text-base font-serif">
-              {[
-                "Udaipur",
-                "Jaipur",
-                "Goa",
-                "Dubai",
-                "Bali",
-                "Phuket",
-                "Thailand",
-              ].map((city, i, arr) => (
-                <React.Fragment key={city}>
-                  <span className="whitespace-nowrap">{city}</span>
-                  {i < arr.length - 1 && (
-                    <span className="text-[#C58B48]/30">|</span>
-                  )}
-                </React.Fragment>
-              ))}
-            </div>
-          </div>
-        </div>
+       
       </div>
     </section>
   );

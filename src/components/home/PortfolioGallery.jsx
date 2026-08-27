@@ -43,7 +43,6 @@ const PortfolioCard = React.memo(({ item, isWider, onCardClick }) => {
         shadow-[0_0_15px_rgba(197,139,72,0.15)]
         z-10 hover:z-50 hover:scale-[1.05] hover:border-[#C58B48] 
         hover:shadow-[0_0_40px_rgba(197,139,72,0.8)]
-        group-hover:opacity-40 hover:!opacity-100
       `}
       onClick={handleClick}
     >
@@ -58,9 +57,11 @@ const PortfolioCard = React.memo(({ item, isWider, onCardClick }) => {
         }}
       />
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-60 pointer-events-none" />
+      {/* Removed black overlay - only gradient for text if needed */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
 
-      <div className="absolute top-4 right-4 w-8 h-8 rounded-full border border-[#C58B48]/50 bg-black/60 backdrop-blur-md flex items-center justify-center text-[#E9C38A] opacity-0 transform translate-y-2 transition-all duration-300 hover:bg-[#C58B48] hover:text-white group-hover/card:opacity-100">
+      {/* Arrow icon - appears on hover */}
+      <div className="absolute top-4 right-4 w-8 h-8 rounded-full border border-[#C58B48]/50 bg-black/40 backdrop-blur-sm flex items-center justify-center text-[#E9C38A] opacity-0 transform translate-y-2 transition-all duration-300 hover:bg-[#C58B48] hover:text-white group-hover/card:opacity-100 hover:opacity-100">
         <ArrowUpRight size={16} strokeWidth={1.5} />
       </div>
     </div>
@@ -70,26 +71,23 @@ const PortfolioCard = React.memo(({ item, isWider, onCardClick }) => {
 PortfolioCard.displayName = "PortfolioCard";
 
 // ==========================================
-// 2. SCROLLING MARQUEE ROW - FIXED KEYS
+// 2. SCROLLING MARQUEE ROW
 // ==========================================
 const MarqueeRow = React.memo(
   ({ items, direction = "left", speed = 40, isWider = false, onCardClick }) => {
     const rowRef = useRef(null);
     const tweenRef = useRef(null);
 
-    // ✅ Create unique keys for doubled items
     const doubledItems = useMemo(() => {
       if (!items || items.length === 0) return [];
 
       const result = [];
       items.forEach((item, idx) => {
         const baseKey = item?._id || item?.id || `item-${idx}`;
-        // First copy - add '-first' suffix
         result.push({
           ...item,
           _key: `${baseKey}-first-${idx}`,
         });
-        // Second copy - add '-second' suffix
         result.push({
           ...item,
           _key: `${baseKey}-second-${idx}`,
@@ -130,7 +128,7 @@ const MarqueeRow = React.memo(
         <div ref={rowRef} className="flex gap-0">
           {doubledItems.map((item) => (
             <PortfolioCard
-              key={item._key} // ✅ Unique key
+              key={item._key}
               item={item}
               isWider={isWider}
               onCardClick={onCardClick}
@@ -188,7 +186,6 @@ const PortfolioGallery = () => {
             items = response.data.data;
           }
 
-          // Filter out items without images
           const validItems = items.filter((item) => item?.image);
 
           if (validItems.length === 0) {
@@ -198,7 +195,6 @@ const PortfolioGallery = () => {
             return;
           }
 
-          // Shuffle and split into 3 rows
           const shuffled = [...validItems].sort(() => 0.5 - Math.random());
           const total = shuffled.length;
           const row1Count = Math.ceil(total / 3);
@@ -371,8 +367,8 @@ const PortfolioGallery = () => {
         </Button>
       </div>
 
-      {/* Marquee Gallery */}
-      <div className="w-[110vw] -ml-[5vw] overflow-visible flex flex-col items-center justify-center group pb-10">
+      {/* Marquee Gallery - Removed group-hover blur */}
+      <div className="w-[110vw] -ml-[5vw] overflow-visible flex flex-col items-center justify-center pb-10">
         {row1.length > 0 && (
           <div
             className="w-full relative z-10 border-y border-[#C58B48]/40 shadow-[0_15px_30px_rgba(0,0,0,0.3)]"

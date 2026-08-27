@@ -1,16 +1,51 @@
-// import { motion } from "framer-motion";
+// import { useRef } from "react";
+// import { motion, useMotionValue, useSpring } from "framer-motion";
 
 // const Button = ({
 //   children,
 //   variant = "primary",
 //   size = "md",
 //   shape = "rectangle",
+//   magnetic = true,
 //   className = "",
 //   ...props
 // }) => {
-//   // 1. Base Styles with Premium Depth
+//   const buttonRef = useRef(null);
+
+//   const x = useMotionValue(0);
+//   const y = useMotionValue(0);
+
+//   const springX = useSpring(x, {
+//     stiffness: 300,
+//     damping: 20,
+//   });
+
+//   const springY = useSpring(y, {
+//     stiffness: 300,
+//     damping: 20,
+//   });
+
+//   const handleMouseMove = (event) => {
+//     if (!magnetic) return;
+
+//     const rect = buttonRef.current.getBoundingClientRect();
+
+//     const moveX = event.clientX - (rect.left + rect.width / 2);
+//     const moveY = event.clientY - (rect.top + rect.height / 2);
+
+//     x.set(moveX * 0.12);
+//     y.set(moveY * 0.12);
+//   };
+
+//   const handleMouseLeave = () => {
+//     x.set(0);
+//     y.set(0);
+//   };
+
+//   // Base Styles
 //   const baseStyles = `
-//     relative overflow-hidden
+//     relative
+//     overflow-hidden
 //     inline-flex
 //     items-center
 //     justify-center
@@ -25,10 +60,12 @@
 //     group
 //     transition-all
 //     duration-500
-//     ring-1 ring-inset ring-white/10
+//     ring-1
+//     ring-inset
+//     ring-white/10
 //   `;
 
-//   // 2. Size Variations
+//   // Sizes
 //   const sizes = {
 //     xs: "px-5 py-2 text-[9px]",
 //     sm: "px-6 py-2.5 text-[10px]",
@@ -37,128 +74,283 @@
 //     xl: "px-12 py-5 text-sm",
 //   };
 
-//   // 3. Color Variants
+//   // Premium Variants
 //   const variants = {
 //     primary: `
 //       bg-[#26221C]
 //       text-[#FAF9F5]
-//       border border-[#26221C]
-//       shadow-md shadow-black/10
+//       border
+//       border-[#26221C]
+//       shadow-[0_5px_18px_rgba(38,34,28,0.14)]
+//       hover:shadow-[0_10px_28px_rgba(38,34,28,0.20)]
+//     `,
+//     champagne: `
+//       bg-[#C9A96E]
+//       text-[#211D17]
+//       border
+//       border-[#C9A96E]
+//       shadow-[0_5px_18px_rgba(201,169,110,0.18)]
+//       hover:shadow-[0_10px_28px_rgba(201,169,110,0.28)]
+//     `,
+//     bronze: `
+//       bg-[#8D6742]
+//       text-[#FAF9F5]
+//       border
+//       border-[#8D6742]
+//       shadow-[0_5px_18px_rgba(141,103,66,0.16)]
+//       hover:shadow-[0_10px_28px_rgba(141,103,66,0.24)]
+//     `,
+//     emerald: `
+//       bg-[#193B35]
+//       text-[#F8F7F1]
+//       border
+//       border-[#193B35]
+//       shadow-[0_5px_18px_rgba(25,59,53,0.16)]
+//       hover:shadow-[0_10px_28px_rgba(25,59,53,0.25)]
+//     `,
+//     wine: `
+//       bg-[#4A202A]
+//       text-[#FAF9F5]
+//       border
+//       border-[#4A202A]
+//       shadow-[0_5px_18px_rgba(74,32,42,0.16)]
+//       hover:shadow-[0_10px_28px_rgba(74,32,42,0.25)]
+//     `,
+//     navy: `
+//       bg-[#182638]
+//       text-[#F8F7F1]
+//       border
+//       border-[#182638]
+//       shadow-[0_5px_18px_rgba(24,38,56,0.16)]
+//       hover:shadow-[0_10px_28px_rgba(24,38,56,0.25)]
 //     `,
 //     secondary: `
-//       bg-transparent
-//       border border-neutral-300
-//       text-neutral-800
-//       hover:border-amber-700
+//       bg-[#F7F5EF]
+//       border
+//       border-[#D8D3C8]
+//       text-[#26221C]
+//       shadow-[0_4px_14px_rgba(38,34,28,0.06)]
+//       hover:shadow-[0_8px_22px_rgba(38,34,28,0.12)]
 //     `,
+
+//     // FIXED: Dark outline for light/white backgrounds
 //     outline: `
 //       bg-transparent
-//       border border-white/40
-//       text-white
-//       hover:border-white
+//       border
+//       border-[#26221C]/40
+//       shadow-[0_4px_16px_rgba(0,0,0,0.02)]
+//       hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]
+//       hover:border-[#26221C]
+//     `,
+
+//     // NEW: White outline for dark backgrounds/images
+//     outlineLight: `
+//       bg-transparent
+//       border
+//       border-white/40
 //       backdrop-blur-sm
+//       shadow-[0_4px_16px_rgba(255,255,255,0.04)]
+//       hover:shadow-[0_8px_24px_rgba(255,255,255,0.10)]
+//       hover:border-white
 //     `,
 //   };
 
-//   // 4. Standard Tailwind Shapes
+//   // Shapes
 //   const shapes = {
 //     rectangle: "rounded-[3px]",
 //     rounded: "rounded-xl",
 //     pill: "rounded-full",
-//     leaf: "rounded-tl-2xl rounded-br-2xl rounded-tr-[3px] rounded-bl-[3px]",
+//     leaf: `
+//       rounded-tl-2xl
+//       rounded-br-2xl
+//       rounded-tr-[3px]
+//       rounded-bl-[3px]
+//     `,
 //     arch: "rounded-t-full rounded-b-[4px]",
-//     // Custom clipped shapes mapped to empty strings here
+//     roundedCut: "rounded-tl-2xl rounded-br-2xl",
+//     soft: "rounded-[18px_4px_18px_4px]",
+//     organic: "rounded-[45%_10%_45%_10%]",
 //     cut: "",
 //     tag: "",
 //     shield: "",
 //     skew: "",
 //     blob: "",
+//     diamond: "",
+//     ticket: "",
+//     hex: "",
 //   };
 
-//   // 5. Custom Inline Styles for Unique/Funny/Premium Shapes
+//   // Custom Shapes
 //   let customShapeStyles = {};
 
 //   if (shape === "cut") {
-//     // Chamfered edges
 //     customShapeStyles = {
 //       clipPath:
 //         "polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)",
 //     };
-//   } else if (shape === "tag") {
-//     // Pointed left edge like a premium brand tag (Quirky)
+//   }
+//   if (shape === "tag") {
 //     customShapeStyles = {
 //       clipPath: "polygon(15px 0, 100% 0, 100% 100%, 15px 100%, 0 50%)",
 //     };
-//   } else if (shape === "shield") {
-//     // Royal crest / badge look (Ultra Premium)
+//   }
+//   if (shape === "shield") {
 //     customShapeStyles = {
 //       clipPath: "polygon(0 0, 100% 0, 100% 75%, 50% 100%, 0 75%)",
 //     };
-//   } else if (shape === "skew") {
-//     // Slanted parallelogram (Fun & Energetic)
+//   }
+//   if (shape === "skew") {
 //     customShapeStyles = {
 //       clipPath: "polygon(15px 0, 100% 0, calc(100% - 15px) 100%, 0 100%)",
 //     };
-//   } else if (shape === "blob") {
-//     // Organic jelly-like shape (Funny & Trendy High-End)
+//   }
+//   if (shape === "blob") {
 //     customShapeStyles = { borderRadius: "70% 30% 40% 60% / 50% 60% 40% 50%" };
 //   }
+//   if (shape === "diamond") {
+//     customShapeStyles = {
+//       clipPath:
+//         "polygon(12px 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 12px 100%, 0 50%)",
+//     };
+//   }
+//   if (shape === "ticket") {
+//     customShapeStyles = {
+//       clipPath:
+//         "polygon(0 0, 100% 0, 100% 35%, 96% 40%, 96% 60%, 100% 65%, 100% 100%, 0 100%, 0 65%, 4% 60%, 4% 40%, 0 35%)",
+//     };
+//   }
+//   if (shape === "hex") {
+//     customShapeStyles = {
+//       clipPath:
+//         "polygon(12px 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 12px 100%, 0 50%)",
+//     };
+//   }
 
-//   // 6. Hover Effects
+//   // Hover Fill Overlay Color
 //   const hoverOverlay = {
-//     primary: "bg-[#B48C50]",
+//     primary: "bg-[#E1C58D]",
+//     champagne: "bg-[#E1C58D]",
+//     bronze: "bg-[#B8895B]",
+//     emerald: "bg-[#285D52]",
+//     wine: "bg-[#713541]",
+//     navy: "bg-[#2C405A]",
 //     secondary: "bg-[#26221C]",
-//     outline: "bg-white",
+//     outline: "bg-[#26221C]", // Fills with dark charcoal on hover
+//     outlineLight: "bg-white", // Fills with white on hover
 //   };
 
+//   // Text Color Definitions
 //   const textColors = {
 //     primary: "text-[#FAF9F5] group-hover:text-white",
-//     secondary: "text-neutral-800 group-hover:text-[#FAF9F5]",
-//     outline: "text-white group-hover:text-neutral-900",
+//     champagne: "text-[#211D17] group-hover:text-[#211D17]",
+//     bronze: "text-[#FAF9F5] group-hover:text-white",
+//     emerald: "text-[#F8F7F1] group-hover:text-white",
+//     wine: "text-[#FAF9F5] group-hover:text-white",
+//     navy: "text-[#F8F7F1] group-hover:text-white",
+//     secondary: "text-[#26221C] group-hover:text-[#FAF9F5]",
+//     outline: "text-[#26221C] group-hover:text-[#FAF9F5]", // Dark text -> Light text on hover
+//     outlineLight: "text-white group-hover:text-[#26221C]", // White text -> Dark text on hover
 //   };
 
 //   return (
 //     <motion.button
-//       whileHover={{ y: -3, scale: 1.015 }}
+//       ref={buttonRef}
+//       style={{
+//         ...customShapeStyles,
+//         x: springX,
+//         y: springY,
+//       }}
+//       onMouseMove={handleMouseMove}
+//       onMouseLeave={handleMouseLeave}
+//       whileHover={{ scale: 1.015 }}
 //       whileTap={{ scale: 0.97 }}
 //       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-//       className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${shapes[shape] || ""} ${className}`}
-//       style={customShapeStyles}
+//       className={`
+//         ${baseStyles}
+//         ${variants[variant]}
+//         ${sizes[size]}
+//         ${shapes[shape] || ""}
+//         ${className}
+//       `}
 //       {...props}
 //     >
-//       {/* Premium Hover Fill */}
+//       {/* Cursor Glow */}
+//       <span
+//         className="
+//           pointer-events-none
+//           absolute
+//           -inset-10
+//           opacity-0
+//           blur-2xl
+//           transition-opacity
+//           duration-500
+//           group-hover:opacity-100
+//           bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.18),transparent_65%)]
+//         "
+//       />
+
+//       {/* Premium Fill */}
 //       <span
 //         className={`
-//           absolute inset-0 h-full w-full origin-bottom scale-y-0
-//           group-hover:scale-y-100 transition-transform duration-500
-//           ease-[0.22,1,0.36,1] ${hoverOverlay[variant]}
+//           absolute
+//           inset-0
+//           origin-bottom
+//           scale-y-0
+//           group-hover:scale-y-100
+//           transition-transform
+//           duration-500
+//           ease-[0.22,1,0.36,1]
+//           ${hoverOverlay[variant]}
 //         `}
 //       />
 
-//       {/* Elegant Shimmer Effect */}
+//       {/* Luxury Shimmer */}
 //       <span
 //         className="
-//           absolute inset-0 z-10 -translate-x-full skew-x-12
-//           bg-gradient-to-r from-transparent via-white/20 to-transparent
-//           transition-transform duration-[1200ms] ease-[0.22,1,0.36,1]
+//           absolute
+//           inset-0
+//           z-10
+//           -translate-x-full
+//           skew-x-12
+//           bg-gradient-to-r
+//           from-transparent
+//           via-white/25
+//           to-transparent
+//           transition-transform
+//           duration-[1200ms]
+//           ease-[0.22,1,0.36,1]
 //           group-hover:translate-x-[200%]
 //         "
 //       />
 
-//       {/* Background Glow */}
+//       {/* Soft Glow */}
 //       <span
 //         className="
-//           pointer-events-none absolute inset-0 bg-amber-500/15
-//           opacity-0 blur-xl transition-opacity duration-700
+//           pointer-events-none
+//           absolute
+//           inset-0
+//           bg-[#B48C50]/10
+//           opacity-0
+//           blur-xl
+//           transition-opacity
+//           duration-700
 //           group-hover:opacity-100
 //         "
 //       />
 
-//       {/* Button Content (Text & Icons) */}
+//       {/* Content */}
 //       <span
 //         className={`
-//           relative z-20 inline-flex items-center gap-2 whitespace-nowrap
-//           transition-colors duration-500 ease-out ${textColors[variant]}
+//           relative
+//           z-20
+//           inline-flex
+//           items-center
+//           gap-2
+//           whitespace-nowrap
+//           transition-colors
+//           duration-500
+//           ease-out
+//           ${textColors[variant]}
 //         `}
 //       >
 //         {children}
@@ -245,84 +437,53 @@ const Button = ({
     xl: "px-12 py-5 text-sm",
   };
 
-  // Premium Variants
-  const variants = {
-    primary: `
-      bg-[#26221C]
-      text-[#FAF9F5]
-      border
-      border-[#26221C]
-      shadow-[0_5px_18px_rgba(38,34,28,0.14)]
-      hover:shadow-[0_10px_28px_rgba(38,34,28,0.20)]
-    `,
-    champagne: `
-      bg-[#C9A96E]
-      text-[#211D17]
-      border
-      border-[#C9A96E]
-      shadow-[0_5px_18px_rgba(201,169,110,0.18)]
-      hover:shadow-[0_10px_28px_rgba(201,169,110,0.28)]
-    `,
-    bronze: `
-      bg-[#8D6742]
-      text-[#FAF9F5]
-      border
-      border-[#8D6742]
-      shadow-[0_5px_18px_rgba(141,103,66,0.16)]
-      hover:shadow-[0_10px_28px_rgba(141,103,66,0.24)]
-    `,
-    emerald: `
-      bg-[#193B35]
-      text-[#F8F7F1]
-      border
-      border-[#193B35]
-      shadow-[0_5px_18px_rgba(25,59,53,0.16)]
-      hover:shadow-[0_10px_28px_rgba(25,59,53,0.25)]
-    `,
-    wine: `
-      bg-[#4A202A]
-      text-[#FAF9F5]
-      border
-      border-[#4A202A]
-      shadow-[0_5px_18px_rgba(74,32,42,0.16)]
-      hover:shadow-[0_10px_28px_rgba(74,32,42,0.25)]
-    `,
-    navy: `
-      bg-[#182638]
-      text-[#F8F7F1]
-      border
-      border-[#182638]
-      shadow-[0_5px_18px_rgba(24,38,56,0.16)]
-      hover:shadow-[0_10px_28px_rgba(24,38,56,0.25)]
-    `,
-    secondary: `
-      bg-[#F7F5EF]
-      border
-      border-[#D8D3C8]
-      text-[#26221C]
-      shadow-[0_4px_14px_rgba(38,34,28,0.06)]
-      hover:shadow-[0_8px_22px_rgba(38,34,28,0.12)]
-    `,
+  // UNIFIED VARIANT - All buttons use the same golden color
+  const unifiedVariant = `
+    bg-[#E1C58D]
+    text-white
+    border
+    border-[#E1C58D]
+    shadow-[0_5px_18px_rgba(225,197,141,0.25)]
+    hover:shadow-[0_10px_28px_rgba(225,197,141,0.35)]
+  `;
 
-    // FIXED: Dark outline for light/white backgrounds
+  // Keep variants for backward compatibility - all use the same color
+  const variants = {
+    primary: unifiedVariant,
+    champagne: unifiedVariant,
+    bronze: unifiedVariant,
+    emerald: unifiedVariant,
+    wine: unifiedVariant,
+    navy: unifiedVariant,
+    secondary: `
+      bg-[#E1C58D]
+      text-white
+      border
+      border-[#E1C58D]
+      shadow-[0_5px_18px_rgba(225,197,141,0.25)]
+      hover:shadow-[0_10px_28px_rgba(225,197,141,0.35)]
+    `,
     outline: `
       bg-transparent
       border
-      border-[#26221C]/40
-      shadow-[0_4px_16px_rgba(0,0,0,0.02)]
-      hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]
-      hover:border-[#26221C]
+      border-[#E1C58D]
+      text-[#E1C58D]
+      shadow-[0_4px_16px_rgba(225,197,141,0.08)]
+      hover:shadow-[0_8px_24px_rgba(225,197,141,0.18)]
+      hover:bg-[#E1C58D]
+      hover:text-white
     `,
-
-    // NEW: White outline for dark backgrounds/images
     outlineLight: `
       bg-transparent
       border
-      border-white/40
+      border-white/50
       backdrop-blur-sm
+      text-white
       shadow-[0_4px_16px_rgba(255,255,255,0.04)]
-      hover:shadow-[0_8px_24px_rgba(255,255,255,0.10)]
-      hover:border-white
+      hover:shadow-[0_8px_24px_rgba(225,197,141,0.20)]
+      hover:border-[#E1C58D]
+      hover:bg-[#E1C58D]
+      hover:text-white
     `,
   };
 
@@ -397,30 +558,30 @@ const Button = ({
     };
   }
 
-  // Hover Fill Overlay Color
+  // Hover Fill - Darker golden shade on hover
   const hoverOverlay = {
-    primary: "bg-[#B48C50]",
-    champagne: "bg-[#E1C58D]",
-    bronze: "bg-[#B8895B]",
-    emerald: "bg-[#285D52]",
-    wine: "bg-[#713541]",
-    navy: "bg-[#2C405A]",
-    secondary: "bg-[#26221C]",
-    outline: "bg-[#26221C]", // Fills with dark charcoal on hover
-    outlineLight: "bg-white", // Fills with white on hover
+    primary: "bg-[#D4B07A]",
+    champagne: "bg-[#D4B07A]",
+    bronze: "bg-[#D4B07A]",
+    emerald: "bg-[#D4B07A]",
+    wine: "bg-[#D4B07A]",
+    navy: "bg-[#D4B07A]",
+    secondary: "bg-[#D4B07A]",
+    outline: "bg-[#D4B07A]",
+    outlineLight: "bg-[#D4B07A]",
   };
 
-  // Text Color Definitions
+  // Text Colors - All white
   const textColors = {
-    primary: "text-[#FAF9F5] group-hover:text-white",
-    champagne: "text-[#211D17] group-hover:text-[#211D17]",
-    bronze: "text-[#FAF9F5] group-hover:text-white",
-    emerald: "text-[#F8F7F1] group-hover:text-white",
-    wine: "text-[#FAF9F5] group-hover:text-white",
-    navy: "text-[#F8F7F1] group-hover:text-white",
-    secondary: "text-[#26221C] group-hover:text-[#FAF9F5]",
-    outline: "text-[#26221C] group-hover:text-[#FAF9F5]", // Dark text -> Light text on hover
-    outlineLight: "text-white group-hover:text-[#26221C]", // White text -> Dark text on hover
+    primary: "text-white group-hover:text-white",
+    champagne: "text-white group-hover:text-white",
+    bronze: "text-white group-hover:text-white",
+    emerald: "text-white group-hover:text-white",
+    wine: "text-white group-hover:text-white",
+    navy: "text-white group-hover:text-white",
+    secondary: "text-white group-hover:text-white",
+    outline: "text-[#E1C58D] group-hover:text-white",
+    outlineLight: "text-white group-hover:text-white",
   };
 
   return (
@@ -456,7 +617,7 @@ const Button = ({
           transition-opacity
           duration-500
           group-hover:opacity-100
-          bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.18),transparent_65%)]
+          bg-[radial-gradient(circle_at_center,rgba(225,197,141,0.25),transparent_65%)]
         "
       />
 
@@ -500,7 +661,7 @@ const Button = ({
           pointer-events-none
           absolute
           inset-0
-          bg-[#B48C50]/10
+          bg-[#E1C58D]/15
           opacity-0
           blur-xl
           transition-opacity

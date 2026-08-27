@@ -11,7 +11,7 @@ import {
   GlassWater,
   ArrowDown
 } from "lucide-react";
-import Button from "../components/ui/Button"; // Ensure this path matches your project structure
+import Button from "../components/ui/Button";
 
 // Register GSAP ScrollTrigger
 gsap.registerPlugin(ScrollTrigger);
@@ -143,7 +143,7 @@ const Services = () => {
           ease: "back.out(1.2)",
           scrollTrigger: {
             trigger: card,
-            start: "top 90%", // Trigger slightly earlier as you scroll down
+            start: "top 90%",
           },
         });
       });
@@ -166,45 +166,133 @@ const Services = () => {
     return () => ctx.revert();
   }, []);
 
-  // Array of premium fallback images to cycle through
-  const fallbackImages = [
-    "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80", // Wedding Setup
-    "https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=600&q=80", // Floral Decor
-    "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&q=80", // Hospitality/Food
-    "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&q=80", // Entertainment/Concert
-    "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&q=80", // Travel/Logistics
-    "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=600&q=80", // Event Details
-    "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?w=600&q=80", // Corporate/Venue
-    "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&q=80", // Stage/Production
-  ];
-
-  // === UPDATED DATA ARRAYS WITH ALL 25 SERVICES ===
+  // === UPDATED DATA ARRAYS WITH ALL 25 SERVICES AND LOCAL IMAGES ===
   const servicesList = [
-    { title: "Wedding Planning & Management", desc: "End-to-end wedding planning covering concepts, budgets, vendors, timelines, guest management and flawless execution from beginning to celebration." },
-    { title: "Destination Weddings", desc: "Complete destination wedding management including venue selection, hospitality, transportation, décor, entertainment, guest experiences and on-ground coordination." },
-    { title: "Corporate Events", desc: "Professional planning for conferences, seminars, launches, award ceremonies, annual events, exhibitions, networking meets and corporate celebrations." },
-    { title: "Social & Private Events", desc: "Creating memorable birthdays, anniversaries, engagements, cocktail parties, reunions and private celebrations with personalized planning and execution." },
-    { title: "Event Concept & Creative Design", desc: "Developing distinctive event concepts, themes and creative experiences that bring your vision to life through thoughtful design and storytelling." },
-    { title: "Décor & Venue Styling", desc: "Transforming venues through customized décor, floral installations, furniture, lighting, stage design and thematic elements tailored to every occasion." },
-    { title: "Event Production", desc: "Managing complete technical production including stages, structures, sound, lighting, LED screens, power, rigging and professional event equipment." },
-    { title: "Artist & Entertainment", desc: "Curating and managing singers, DJs, bands, dancers, celebrity performers, anchors, comedians and specialty artists for unforgettable entertainment experiences." },
-    { title: "Hospitality & Guest Management", desc: "Delivering seamless guest experiences through welcome desks, hospitality teams, accommodation assistance, guest communication and personalized on-ground support." },
-    { title: "Venue & Hotel Management", desc: "Sourcing, negotiating and coordinating hotels, resorts, banquet halls, convention centres and unique venues according to event requirements." },
-    { title: "Food & Beverage Management", desc: "Planning menus, catering services, beverage counters, live stations and dining experiences while coordinating quality, presentation and service standards." },
-    { title: "Event Logistics & Transportation", desc: "Coordinating vehicles, airport transfers, guest movements, equipment transportation, vendor schedules and logistics to keep every event running smoothly." },
-    { title: "Budget & Vendor Management", desc: "Planning budgets, negotiating with vendors, tracking expenses and coordinating multiple partners to deliver exceptional experiences within planned investments." },
-    { title: "Invitations & Event Collaterals", desc: "Creating bespoke invitations, stationery, signage, itineraries, welcome kits, menus, hampers and branded materials that complement your event identity." },
-    { title: "RSVP & Guest Communication", desc: "Managing invitations, confirmations, guest databases, reminders and communication to ensure accurate attendance information and smooth guest coordination." },
-    { title: "Photography & Cinematography", desc: "Coordinating professional photography and cinematography teams to capture genuine emotions, important details and unforgettable moments throughout your event." },
-    { title: "Branding & Corporate Identity", desc: "Creating event branding through creative themes, stage graphics, signage, digital assets, installations and visual elements aligned with your identity." },
-    { title: "Exhibitions & Experiential Events", desc: "Planning exhibitions, stalls, brand activations and experiential spaces designed to attract audiences, communicate messages and create meaningful brand interactions." },
-    { title: "Special Effects & Fireworks", desc: "Creating spectacular moments through fireworks, cold sparks, confetti, atmospheric effects, pyrotechnic experiences and customized visual productions." },
-    { title: "Stage & Show Management", desc: "Managing stage programming, rehearsals, artist coordination, show flow, backstage operations and technical teams for professionally executed live experiences." },
-    { title: "Celebrity & VIP Management", desc: "Coordinating celebrity appearances, VIP movements, hospitality, security requirements, green rooms and personalized experiences for distinguished guests." },
-    { title: "Brand Activations", desc: "Designing interactive brand experiences, promotional events, launches and consumer engagements that connect brands with audiences in memorable ways." },
-    { title: "Conferences & MICE Events", desc: "Managing meetings, incentives, conferences and exhibitions with professional planning, delegate management, production, hospitality and destination coordination." },
-    { title: "Event Staffing & Manpower", desc: "Providing trained event professionals including coordinators, hospitality teams, registration staff, ushers, promoters and on-ground support personnel." },
-    { title: "Complete Event Execution", desc: "Bringing every element together through centralized coordination, professional teams and detailed execution to deliver seamless events." },
+    {
+      title: "Wedding Planning & Management",
+      desc: "End-to-end wedding planning covering concepts, budgets, vendors, timelines, guest management and flawless execution from beginning to celebration.",
+      image: "/assets/service/Wedding Planning & Management.png",
+    },
+    {
+      title: "Destination Weddings",
+      desc: "Complete destination wedding management including venue selection, hospitality, transportation, décor, entertainment, guest experiences and on-ground coordination.",
+      image: "/assets/service/DESTINATION WEDDING.png",
+    },
+    {
+      title: "Corporate Events",
+      desc: "Professional planning for conferences, seminars, launches, award ceremonies, annual events, exhibitions, networking meets and corporate celebrations.",
+      image: "/assets/service/CORPORATE EVENTS.png",
+    },
+    {
+      title: "Social & Private Events",
+      desc: "Creating memorable birthdays, anniversaries, engagements, cocktail parties, reunions and private celebrations with personalized planning and execution.",
+      image: "/assets/service/Social & Private Events.png",
+    },
+    {
+      title: "Event Concept & Creative Design",
+      desc: "Developing distinctive event concepts, themes and creative experiences that bring your vision to life through thoughtful design and storytelling.",
+      image: "/assets/service/EVENT CONCEPT AND DESIGN.png",
+    },
+    {
+      title: "Décor & Venue Styling",
+      desc: "Transforming venues through customized décor, floral installations, furniture, lighting, stage design and thematic elements tailored to every occasion.",
+      image: "/assets/service/Décor & Venue Styling.png",
+    },
+    {
+      title: "Event Production",
+      desc: "Managing complete technical production including stages, structures, sound, lighting, LED screens, power, rigging and professional event equipment.",
+      image: "/assets/service/EVENT PRODUCTION.png",
+    },
+    {
+      title: "Artist & Entertainment",
+      desc: "Curating and managing singers, DJs, bands, dancers, celebrity performers, anchors, comedians and specialty artists for unforgettable entertainment experiences.",
+      image: "/assets/service/Artist & Entertainment.png",
+    },
+    {
+      title: "Hospitality & Guest Management",
+      desc: "Delivering seamless guest experiences through welcome desks, hospitality teams, accommodation assistance, guest communication and personalized on-ground support.",
+      image: "/assets/service/Hospitality & Guest Management.png",
+    },
+    {
+      title: "Venue & Hotel Management",
+      desc: "Sourcing, negotiating and coordinating hotels, resorts, banquet halls, convention centres and unique venues according to event requirements.",
+      image: "/assets/service/Venue & Hotel Management.png",
+    },
+    {
+      title: "Food & Beverage Management",
+      desc: "Planning menus, catering services, beverage counters, live stations and dining experiences while coordinating quality, presentation and service standards.",
+      image: "/assets/service/Food & Beverage Management.png",
+    },
+    {
+      title: "Event Logistics & Transportation",
+      desc: "Coordinating vehicles, airport transfers, guest movements, equipment transportation, vendor schedules and logistics to keep every event running smoothly.",
+      image: "/assets/service/Event Logistics & Transportation.png",
+    },
+    {
+      title: "Budget & Vendor Management",
+      desc: "Planning budgets, negotiating with vendors, tracking expenses and coordinating multiple partners to deliver exceptional experiences within planned investments.",
+      image: "/assets/service/Budget & Vendor Management.png",
+    },
+    {
+      title: "Invitations & Event Collaterals",
+      desc: "Creating bespoke invitations, stationery, signage, itineraries, welcome kits, menus, hampers and branded materials that complement your event identity.",
+      image: "/assets/service/Invitations & Event Collaterals.png",
+    },
+    {
+      title: "RSVP & Guest Communication",
+      desc: "Managing invitations, confirmations, guest databases, reminders and communication to ensure accurate attendance information and smooth guest coordination.",
+      image: "/assets/service/RSVP & Guest Communication.png",
+    },
+    {
+      title: "Photography & Cinematography",
+      desc: "Coordinating professional photography and cinematography teams to capture genuine emotions, important details and unforgettable moments throughout your event.",
+      image: "/assets/service/Photography & Cinematography.png",
+    },
+    {
+      title: "Branding & Corporate Identity",
+      desc: "Creating event branding through creative themes, stage graphics, signage, digital assets, installations and visual elements aligned with your identity.",
+      image: "/assets/service/BRANDING.png",
+    },
+    {
+      title: "Exhibitions & Experiential Events",
+      desc: "Planning exhibitions, stalls, brand activations and experiential spaces designed to attract audiences, communicate messages and create meaningful brand interactions.",
+      image: "/assets/service/EXHIBITIONS.png",
+    },
+    {
+      title: "Special Effects & Fireworks",
+      desc: "Creating spectacular moments through fireworks, cold sparks, confetti, atmospheric effects, pyrotechnic experiences and customized visual productions.",
+      image: "/assets/service/Special Effects & Fireworks.png",
+    },
+    {
+      title: "Stage & Show Management",
+      desc: "Managing stage programming, rehearsals, artist coordination, show flow, backstage operations and technical teams for professionally executed live experiences.",
+      image: "/assets/service/STAGE MANAGEMENT.png",
+    },
+    {
+      title: "Celebrity & VIP Management",
+      desc: "Coordinating celebrity appearances, VIP movements, hospitality, security requirements, green rooms and personalized experiences for distinguished guests.",
+      image: "/assets/service/Celebrity & VIP Management.png",
+    },
+    {
+      title: "Brand Activations",
+      desc: "Designing interactive brand experiences, promotional events, launches and consumer engagements that connect brands with audiences in memorable ways.",
+      image: "/assets/service/BRAND ACTIVATIONS.png",
+    },
+    {
+      title: "Conferences & MICE Events",
+      desc: "Managing meetings, incentives, conferences and exhibitions with professional planning, delegate management, production, hospitality and destination coordination.",
+      image: "/assets/service/Conferences & MICE Events.png",
+    },
+    {
+      title: "Event Staffing & Manpower",
+      desc: "Providing trained event professionals including coordinators, hospitality teams, registration staff, ushers, promoters and on-ground support personnel.",
+      image: "/assets/service/EVENT STAFFING.png",
+    },
+    {
+      title: "Complete Event Execution",
+      desc: "Bringing every element together through centralized coordination, professional teams and detailed execution to deliver seamless events.",
+      image: "/assets/service/COMPLETE EVENT EXECUTION.png",
+    },
   ];
 
   const processSteps = [
@@ -229,7 +317,6 @@ const Services = () => {
             className="w-full h-full object-cover opacity-90 scale-110"
             style={{ maskImage: 'linear-gradient(to right, transparent 0%, black 30%)', WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 30%)' }}
           />
-          {/* <div className="absolute inset-0 bg-gradient-to-t from-[#FDFBF7] via-transparent to-transparent" /> */}
         </motion.div>
 
         {/* Decorative Floral Overlay Left */}
@@ -333,16 +420,16 @@ const Services = () => {
                     <div className="w-full pt-[120%] relative rounded-t-full overflow-hidden mb-6 bg-gray-100 border border-[#EBE3D5] flex-shrink-0">
                       <div className="absolute inset-0 rounded-t-full overflow-hidden">
                         <img 
-                          src={fallbackImages[index % fallbackImages.length]} 
+                          src={service.image} 
                           alt={service.title} 
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" 
+                          onError={(e) => {
+                            e.target.src = "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80";
+                          }}
                         />
                         <div className="absolute inset-0 bg-[#FDFBF7]/30 mix-blend-overlay group-hover:bg-transparent transition-colors duration-500" />
                         
-                        {/* Service Number Badge Overlay */}
-                        <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full border border-white/50 shadow-sm z-10">
-                           <span className="font-montserrat text-[9px] font-bold tracking-widest text-[#C58B48]">{String(index + 1).padStart(2, '0')}</span>
-                        </div>
+                       
                       </div>
                     </div>
 
